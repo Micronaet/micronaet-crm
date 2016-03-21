@@ -8,11 +8,52 @@
             <field name="arch" type="xml">
                 <field name="product_manager" position="after">
                     <group colspan="2">
-                        <separator string="Catalog" />
-                        <field name="catalog_ids" />
+                        <field name="catalog_ids" widget="many2many_tags"/>
                     </group>   
                 </field>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="view_product_product_catalog_form">
+            <field name="name">product.product.catalog.form</field>
+            <field name="model">product.product.catalog</field>
+            <field name="arch" type="xml">
+                <form string="Catalog" version="7.0">        
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" /> 
+                            <newline/>
+                            <separator string="Note" colspan="4"/>
+                            <field name="note" />
+                        </group>
+                    <sheet>        
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_product_product_catalog_tree">
+            <field name="name">product.product.catalog.form</field>
+            <field name="model">product.product.catalog</field>
+            <field name="arch" type="xml">
+                <tree string="Catalog">
+                    <field name="name" /> 
+                    <field name="note" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_product_product_catalog">
+            <field name="name">Catalog</field>
+            <field name="res_model">product.product.catalog</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_model_name_form"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem 
+            parent="stock.menu_product_in_config_stock" 
+            id="menu_product_product_catalog" 
+            action="action_product_product_catalog_tree"/>
+        
     </data>
 </openerp>
