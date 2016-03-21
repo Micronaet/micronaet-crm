@@ -47,6 +47,8 @@ class ProductProductCatalog(orm.Model):
     _columns = {
         'name': fields.char('Catalog', size=64, required=True), 
         'note': fields.text('Note'),
+        'from_date': fields.date('From date'),
+        'to_date': fields.date('To date'),
         }
 
 class ProductTemplate(orm.Model):

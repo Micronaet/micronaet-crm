@@ -31,6 +31,7 @@
         'base',
         'crm',
         'product',
+        'stock',
         ],
     'init_xml': [],
     'demo': [],
