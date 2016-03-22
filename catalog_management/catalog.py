@@ -84,4 +84,9 @@ class ProductProduct(orm.Model):
         'sortable_from': fields.date('Order from'),
         'sortable_to': fields.date('Order to'), # TODO used?
         }
+
+    _defaults = {
+        'sortable': lambda *x: True,
+        }    
+        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
