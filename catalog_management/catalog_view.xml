@@ -1,6 +1,19 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <record model="ir.ui.view" id="view_product_productcatalog_search">
+            <field name="name">product.product.catalog.search</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="status" />                    
+                    <filter name="sortable_yes" string="Sortable" domain="[('sortable','=',True)]"/>
+                    <filter name="sortable_no" string="Not sortable" domain="[('sortable','=',False)]"/>
+                </field>
+                <!--TODO<filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>-->
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_product_product_catelog_form">
             <field name="name">product.product.form</field>
             <field name="model">product.product</field>
@@ -8,11 +21,11 @@
             <field name="arch" type="xml">
                 <field name="product_manager" position="after">
                     <group colspan="2">
-                        <field name="gamma" />
+                        <field name="status" />
                         <field name="catalog_ids" widget="many2many_tags"/>
                         <field name="sortable" />
-                        <field name="sortable_from" attrs="{'invisible':[('sortable','=',False)]}"/>
-                        <field name="sortable_to" attrs="{'invisible':[('sortable','=',False)]}" />
+                        <!--<field name="sortable_from" attrs="{'invisible':[('sortable','=',False)]}"/>
+                        <field name="sortable_to" attrs="{'invisible':[('sortable','=',False)]}" />-->
                     </group>   
                 </field>
             </field>

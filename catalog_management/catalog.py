@@ -61,17 +61,17 @@ class ProductTemplate(orm.Model):
             'product.product.catalog', 'product_catalog_rel', 
             'product_id', 'catalog_id', 
             'Catalog'), 
-        'gamma': fields.selection([
+        'status': fields.selection([
             ('catalog', 'Catalog'),
             ('out', 'Out catalog'),
             ('stock', 'Stock'),
             ('obsolete', 'Obsolete'),
             ('sample', 'Sample'),
-            ], 'Gamma')
+            ], 'Gamma', required=True)
         }
 
     _defaults = {
-        'gamma': lambda *x: 'gamma',
+        'status': lambda *x: 'catalog',
         }    
 
 class ProductProduct(orm.Model):
