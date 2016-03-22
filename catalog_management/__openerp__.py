@@ -23,6 +23,9 @@
     'category': 'CRM',
     'description': '''        
         WIP module for manage lead creation extra info
+        Manage Catalog status of product
+        Manage gamma specification for status of product
+        Manage parameter for reordering information for sale.order
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',
@@ -30,6 +33,7 @@
     'depends': [
         'base',
         'crm',
+        'sale',
         'product',
         'stock',
         ],

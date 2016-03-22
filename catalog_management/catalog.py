@@ -61,6 +61,27 @@ class ProductTemplate(orm.Model):
             'product.product.catalog', 'product_catalog_rel', 
             'product_id', 'catalog_id', 
             'Catalog'), 
+        'gamma': fields.selection([
+            ('catalog', 'Catalog'),
+            ('out', 'Out catalog'),
+            ('stock', 'Stock'),
+            ('obsolete', 'Obsolete'),
+            ('sample', 'Sample'),
+            ], 'Gamma')
         }
+
+    _defaults = {
+        'gamma': lambda *x: 'gamma',
+        }    
+
+class ProductProduct(orm.Model):
+    """ Model name: ProductProduct
+    """    
+    _inherit = 'product.product'
     
+    _columns = {
+        'sortable': fields.boolean('Sortable'),
+        'sortable_from': fields.date('Order from'),
+        'sortable_to': fields.date('Order to'), # TODO used?
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

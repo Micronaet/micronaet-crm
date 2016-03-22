@@ -8,12 +8,17 @@
             <field name="arch" type="xml">
                 <field name="product_manager" position="after">
                     <group colspan="2">
+                        <field name="gamma" />
                         <field name="catalog_ids" widget="many2many_tags"/>
+                        <field name="sortable" />
+                        <field name="sortable_from" attrs="{'invisible':[('sortable','=',False)]}"/>
+                        <field name="sortable_to" attrs="{'invisible':[('sortable','=',False)]}" />
                     </group>   
                 </field>
             </field>
         </record>
         
+        <!--product.product.catalog-->
         <record model="ir.ui.view" id="view_product_product_catalog_form">
             <field name="name">product.product.catalog.form</field>
             <field name="model">product.product.catalog</field>
@@ -32,7 +37,6 @@
                 </form>
             </field>
         </record>
-
         <record model="ir.ui.view" id="view_product_product_catalog_tree">
             <field name="name">product.product.catalog.tree</field>
             <field name="model">product.product.catalog</field>
