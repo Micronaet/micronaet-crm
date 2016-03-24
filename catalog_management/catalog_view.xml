@@ -22,7 +22,7 @@
 
                 </field>
                 <filter name="template_id" position="after">
-                    <filter name="group_status" string="Gamma" context="{'group_by': 'status_id'}"/>
+                    <filter name="group_status" string="Gamma" context="{'group_by': 'status'}"/>
                 </filter>    
                 
             </field>
