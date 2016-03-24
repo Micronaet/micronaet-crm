@@ -67,11 +67,12 @@ class ProductTemplate(orm.Model):
             ('stock', 'Stock'),
             ('obsolete', 'Obsolete'),
             ('sample', 'Sample'),
+            ('todo', 'Todo'),
             ], 'Gamma', required=True)
         }
 
     _defaults = {
-        'status': lambda *x: 'catalog',
+        'status': lambda *x: 'todo',
         }    
 
 class ProductProduct(orm.Model):

@@ -7,11 +7,24 @@
             <field name="inherit_id" ref="product.product_search_form_view"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
+                    <newline/>
+                    <filter name="status_todo" string="Gamma>todo" domain="[('status','=','todo')]"/>
+                    <filter name="status_catalog" string="Gamma>catalog" domain="[('status','=','catalog')]"/>
+                    <filter name="status_out" string="Gamma>out" domain="[('status','=','out')]"/>
+                    <filter name="status_obsolete" string="Gamma>obsolete" domain="[('status','=','obsolete')]"/>
+                    <filter name="status_stock" string="Gamma>stock" domain="[('status','=','stock')]"/>
+                    <filter name="status_sample" string="Gamma>sample" domain="[('status','=','sample')]"/>
+                    <newline/>
+
                     <field name="status" />                    
                     <filter name="sortable_yes" string="Sortable" domain="[('sortable','=',True)]"/>
                     <filter name="sortable_no" string="Not sortable" domain="[('sortable','=',False)]"/>
+
                 </field>
-                <!--TODO<filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>-->
+                <filter name="template_id" position="after">
+                    <filter name="group_status" string="Gamma" context="{'group_by': 'status_id'}"/>
+                </filter>    
+                
             </field>
         </record>
         <record model="ir.ui.view" id="view_product_product_catelog_form">
