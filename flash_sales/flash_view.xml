@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_res_partner_flash_sale_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="opt_out" position="after">
+                    <field name="flash_sale" />
+                </field>
+            </field>
+        </record>
+    </data>
+</openerp>
+
