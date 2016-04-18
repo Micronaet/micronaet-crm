@@ -18,22 +18,24 @@
 ###############################################################################
 
 {
-    'name': '',
+    'name': 'Flash sales partner',
     'version': '0.1',
-    'category': '',
+    'category': 'CRM',
     'description': '''        
+        Add check for partner
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'sale',
         ],
     'init_xml': [],
     'demo': [],
     'data': [
         #'security/ir.model.access.csv',    
-        #'_view.xml',
+        'flash_view.xml',
         ],
     'active': False,
     'installable': True,
