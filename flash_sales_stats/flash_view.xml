@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_statistic_invoice_flash_search">
+            <field name="name">statistic.invoice.search</field>
+            <field name="model">statistic.invoice</field>
+            <field name="inherit_id" ref="accounting_statistic_invoice.view_statistic_invoice_search"/>
+            <field name="arch" type="xml">
+                <filter name="trend_on" position="before">
+                    <filter name="flash_sale_on" domain="[('flash_sale','=',True)]" string="Flash sale ON"/>
+                    <filter name="flash_sale_off" domain="[('flash_sale','=',False)]" string="Flash sale OFF"/>
+                    <newline />
+                </filter>    
+            </field>
+        </record>                        
+
+        <record model="ir.ui.view" id="view_statistic_invoice_flash_tree">
+            <field name="name">statistic.invoice.tree</field>
+            <field name="model">statistic.invoice</field>
+            <field name="inherit_id" ref="accounting_statistic_invoice.view_statistic_invoice_tree"/>
+            <field name="arch" type="xml">
+                <field name="visible" position="after">
+                    <field name="flash_sale" invisible="1"/>
+                </field>    
+            </field>
+        </record>
+    </data>
+</openerp>
+
