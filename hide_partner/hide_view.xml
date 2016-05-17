@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_res_partner_hide_form">
+            <field name="name">res.partner.hideform</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="street" position="before">
+                    <field name="hide_partner" invisible="1" />
+                    <button name="button_hide_off" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-normal"/>
+                    <button name="button_hide_on" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-yes" />
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_res_partner_hide_tree">
+            <field name="name">res.partner.hideform</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <field name="display_name" position="before">
+                    <field name="hide_partner" invisible="1" />
+                    <button name="button_hide_off" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-normal"/>
+                    <button name="button_hide_on" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-yes" />
+                </field>
+            </field>
+        </record>
+        
+        <record model="ir.actions.act_window" id="action_partner_hided">
+            <field name="name">Partner hided</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="domain">[('hide_partner', '=', True)]</field>
+        </record>
+        
+        <menuitem 
+            parent="base.menu_partner_form" 
+            id="menu_action_partner_hided_tree" 
+            action="action_partner_hided"/>        
+    </data>
+</openerp>
+
