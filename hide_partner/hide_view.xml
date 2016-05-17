@@ -8,8 +8,8 @@
             <field name="arch" type="xml">
                 <field name="street" position="before">
                     <field name="hide_partner" invisible="1" />
-                    <button name="button_hide_off" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-normal"/>
-                    <button name="button_hide_on" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-yes" />
+                    <button name="button_show" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-yes"/>
+                    <button name="button_hide" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-normal" />
                 </field>
             </field>
         </record>
@@ -20,8 +20,8 @@
             <field name="arch" type="xml">
                 <field name="display_name" position="before">
                     <field name="hide_partner" invisible="1" />
-                    <button name="button_hide_off" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-normal"/>
-                    <button name="button_hide_on" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-yes" />
+                    <button name="button_show" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-yes"/>
+                    <button name="button_hide" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-normal" />
                 </field>
             </field>
         </record>

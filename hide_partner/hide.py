@@ -46,14 +46,14 @@ class ResPartner(orm.Model):
     # -------
     # Button:
     # -------
-    def button_hide_off(self, cr, uid, ids, context=None):
+    def button_hide(self, cr, uid, ids, context=None):
         '''
         '''
         return self.write(cr, uid, ids, {
             'hide_partner': True,
             }, context=context)
 
-    def button_hide_on(self, cr, uid, ids, context=None):
+    def button_show(self, cr, uid, ids, context=None):
         '''
         '''
         return self.write(cr, uid, ids, {
