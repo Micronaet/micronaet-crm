@@ -49,15 +49,17 @@ class ResPartner(orm.Model):
     def button_hide(self, cr, uid, ids, context=None):
         '''
         '''
+        _logger.warning('Hide partner')
         return self.write(cr, uid, ids, {
-            'hide_partner': True,
+            'hide_partner': False,
             }, context=context)
 
     def button_show(self, cr, uid, ids, context=None):
         '''
         '''
+        _logger.warning('Show partner')
         return self.write(cr, uid, ids, {
-            'hide_partner': False,
+            'hide_partner': True,
             }, context=context)
     
     _columns = {
