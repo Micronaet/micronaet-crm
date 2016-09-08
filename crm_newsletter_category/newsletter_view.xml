@@ -1,6 +1,18 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--crm.newsletter.category-->
+        <record model="ir.ui.view" id="view_crm_newsletter_category_tree">
+            <field name="name">crm.newsletter.category.form</field>
+            <field name="model">crm.newsletter.category</field>
+            <field name="arch" type="xml">
+                <tree string="Newsletter category" version="7.0">        
+                    <field name="name" />
+                    <separator string="Note" colspan="4"/>
+                    <field name="note" nolabel="1" colspan="4"/>                            
+                </tree>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_crm_newsletter_category_form">
             <field name="name">crm.newsletter.category.form</field>
             <field name="model">crm.newsletter.category</field>
@@ -12,10 +24,26 @@
                             <separator string="Note" colspan="4"/>
                             <field name="note" nolabel="1" colspan="4"/>                            
                         </group>
-                    <sheet>        
+                    </sheet>        
                 </form>
             </field>
         </record>
+        <record model="ir.actions.act_window" id="action_crm_newsletter_category">
+            <field name="name">Newsletter category</field>
+            <field name="res_model">crm.newsletter.category</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_crm_newsletter_category_form"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem 
+            parent="base.menu_base_config" 
+            id="menu_crm_newsletter_category" 
+            action="action_crm_newsletter_category"
+            sequence="50"
+            />
+        
     </data>
 </openerp>
 

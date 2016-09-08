@@ -9,6 +9,13 @@
             <field name="arch" type="xml">
                 <tree string="Import mail error" editable="bottom">        
                     <field name="name" readonly="1"/>
+                    <field name="city" readonly="1" />
+                    <field name="country_id" readonly="1" />
+                    <field name="state_id" readonly="1" />
+                    <field name="phone" readonly="1" />
+                    <field name="mobile" readonly="1" />
+                    <field name="fax" readonly="1" />
+                    <field name="website" />
                     <field name="email" />
                     <field name="address_error" />
                     <field name="address_error_text" />
@@ -42,7 +49,6 @@
             parent="base.menu_base_config" 
             id="menu_res_company_import_email" 
             action="action_res_company_import_form"/>
-        
     </data>
 </openerp>
 
