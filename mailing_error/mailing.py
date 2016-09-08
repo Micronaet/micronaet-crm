@@ -41,8 +41,8 @@ _logger = logging.getLogger(__name__)
 class ResPartner(orm.Model):
     """ Model name: ResPartner
     """    
-    _inherit = 'res.partner'
-    
+    _inherit = 'res.company'
+
     def import_mail_problem_address(self, cr, uid, ids, context=None):
         ''' Check error message folder and parse name for check error in 
             partner mail address
@@ -62,8 +62,8 @@ class ResPartner(orm.Model):
         # Get list of partner problems and return custom tree list
         # ---------------------------------------------------------------------
         model_pool = self.pool.get('ir.model.data')
-        view_id = model_pool.get_object_reference(
-            'mailing_error', 'view_res_company_mailing_error')[1]
+        view_id = model_pool.get_object_reference(cr, uid, 
+            'mailing_error', 'view_res_partner_mailing_error')[1]
     
         return {
             'type': 'ir.actions.act_window',
@@ -79,10 +79,15 @@ class ResPartner(orm.Model):
             'target': 'current', # 'new'
             'nodestroy': False,
             }            
-        
+
+class ResPartner(orm.Model):
+    """ Model name: ResPartner
+    """    
+    _inherit = 'res.partner'
+            
     _columns = {
         'address_error': fields.boolean('Address error'),
-        'address_error_text': fields.boolean(
+        'address_error_text': fields.text(
             'Address error text', 
             help='Text for email error'),
         }
