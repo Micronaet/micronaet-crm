@@ -41,7 +41,18 @@
             id="menu_crm_newsletter_category" 
             action="action_crm_newsletter_category"
             sequence="50"
-            />        
+            />    
+            
+        <record model="ir.ui.view" id="view_res_partner_newsletter_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="title" position="after">
+                    <field name="newsletter_category_id" />
+                </field>
+            </field>
+        </record>       
     </data>
 </openerp>
 

@@ -48,4 +48,14 @@ class CrmNewsletterCategory(orm.Model):
         'name': fields.char('Category', size=80, required=True),
         'note': fields.text('Note'),
         }
+
+class ResPartner(orm.Model):
+    """ Model name: ResPartner
+    """    
+    _inherit = 'res.partner'
+
+    _columns = {
+        'newsletter_category_id': fields.many2one(
+            'crm.newsletter.category', 'Newsletter category'), 
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
