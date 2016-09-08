@@ -18,6 +18,7 @@
 #
 ###############################################################################
 import os
+import re
 import sys
 import logging
 import openerp
@@ -34,7 +35,6 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT, 
     DATETIME_FORMATS_MAP, 
     float_compare)
-import re
 from os import listdir
 from os.path import isfile, join
 from email.parser import Parser
@@ -51,41 +51,61 @@ class ResPartner(orm.Model):
         ''' Check error message folder and parse name for check error in 
             partner mail address
         '''
+        # Utility:
+        def clean(all_mail, mail_sent):
+        ''' Remove not necessary mail
+        '''
+        res = []
+        for email in all_mail:
+            if email in mail_sent and email not in res:
+                res.append(email)       
+        return res        
+
         partner_pool = self.pool.get('res.partner')
         
+        # Read base folder for mailing
         error_path = self.pool.get('res.company').get_base_local_folder(
             cr, uid, subfolder='mailing_error', context=context)
-
+            
+        # Read 2 subfolder for mailing:    
+        mail_path = os.path.join(error_path, 'mail')
+        csv_path = os.path.join(error_path, 'csv')
+        
+        # Create if not existe 2 subfolder paths
+        os.system('mkdir -p %s' % mail_path)
+        os.system('mkdir -p %s' % csv_path)
+        
         # ---------------------------------------------------------------------
         # Read all mail in newsletter
         # ---------------------------------------------------------------------
-        mail_sent = []
-    for address in open('/home/anna/Scrivania/Mail/mail.csv', 'r'):
-        mail_sent.append(address.strip().replace('\t', ''))
-    def clean(all_mail):
-    ''' Remove not necessary mail
-    '''
-    res = []
-    for email in all_mail:
-        if email in mail_sent and email not in res:
-            res.append(email)       
-    return res        
+        file_mail = os.path.join(csv_path, 'mail.csv')
+        mail_sent = {}
+        for address in open(file_mail, 'r'):
+            address = address.strip().replace('\t', '')
+            
+            partner_ids = partner_pool.search(cr, uid, [
+                ('email', '=', address),
+                ], context=context)
+            
+            mail_sent[address] = partner_ids
+            
         # ---------------------------------------------------------------------
         # Read all mail in error mail folder
-    for mail_file in [f for f in listdir(error_path)]:
-        mail_fullfile = join(error_path, mail_file)
-        message = Parser().parse(open(mail_fullfile, 'r'))
-        state = 'Not delivered'
+        # ---------------------------------------------------------------------
+        for mail_file in [f for f in listdir(error_path)]:
+            mail_fullfile = join(error_path, mail_file)
+            message = Parser().parse(open(mail_fullfile, 'r'))
+            state = 'Not delivered'
+            
+             # Extract list of mail:
+            all_mail = clean(re.findall(r'[\w\.-]+@[\w\.-]+', message.as_string()))
         
-         # Extract list of mail:
-        all_mail = clean(re.findall(r'[\w\.-]+@[\w\.-]+', message.as_string()))
-    
-         # Extract mail:    
-    try:    
-       mail_address = mail.split("<")[1].split(">")[0]
-    except:
-       mail_address = mail
-    subject = message['subject'].replace('\n','').replace('\r','')
+             # Extract mail:    
+        try:    
+           mail_address = mail.split("<")[1].split(">")[0]
+        except:
+           mail_address = mail
+        subject = message['subject'].replace('\n','').replace('\r','')
         
         # ---------------------------------------------------------------------
         # Search customer mail for mark problem
