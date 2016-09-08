@@ -34,6 +34,10 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT, 
     DATETIME_FORMATS_MAP, 
     float_compare)
+import re
+from os import listdir
+from os.path import isfile, join
+from email.parser import Parser
 
 
 _logger = logging.getLogger(__name__)
@@ -55,12 +59,33 @@ class ResPartner(orm.Model):
         # ---------------------------------------------------------------------
         # Read all mail in newsletter
         # ---------------------------------------------------------------------
-        
-
+        mail_sent = []
+    for address in open('/home/anna/Scrivania/Mail/mail.csv', 'r'):
+        mail_sent.append(address.strip().replace('\t', ''))
+    def clean(all_mail):
+    ''' Remove not necessary mail
+    '''
+    res = []
+    for email in all_mail:
+        if email in mail_sent and email not in res:
+            res.append(email)       
+    return res        
         # ---------------------------------------------------------------------
         # Read all mail in error mail folder
-        # ---------------------------------------------------------------------
+    for mail_file in [f for f in listdir(error_path)]:
+        mail_fullfile = join(error_path, mail_file)
+        message = Parser().parse(open(mail_fullfile, 'r'))
+        state = 'Not delivered'
         
+         # Extract list of mail:
+        all_mail = clean(re.findall(r'[\w\.-]+@[\w\.-]+', message.as_string()))
+    
+         # Extract mail:    
+    try:    
+       mail_address = mail.split("<")[1].split(">")[0]
+    except:
+       mail_address = mail
+    subject = message['subject'].replace('\n','').replace('\r','')
         
         # ---------------------------------------------------------------------
         # Search customer mail for mark problem
