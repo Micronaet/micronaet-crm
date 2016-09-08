@@ -51,19 +51,20 @@ class ResPartner(orm.Model):
         '''
         # Utility:
         def clean(all_mail, mail_sent):
-        ''' Remove not necessary mail
-        '''
-        res = []
-        for email in all_mail:
-            if email in mail_sent and email not in res:
-                res.append(email)       
-        return res        
+            ''' Remove not necessary mail
+            '''
+            res = []
+            for email in all_mail:
+                if email in mail_sent and email not in res:
+                    res.append(email)       
+            return res        
 
         partner_pool = self.pool.get('res.partner')
         
         # Read base folder for mailing
         error_path = self.pool.get('res.company').get_base_local_folder(
             cr, uid, subfolder='mailing_error', context=context)
+        error_path = os.path.expanduser(error_path)    
             
         # Read 2 subfolder for mailing:    
         mail_path = os.path.join(error_path, 'mail')
@@ -79,12 +80,12 @@ class ResPartner(orm.Model):
         file_mail = os.path.join(csv_path, 'mail.csv')
         mail_sent = {}
         for address in open(file_mail, 'r'):
-            address = address.strip().replace('\t', '')
+            address = address.strip()
             
             partner_ids = partner_pool.search(cr, uid, [
                 ('email', '=', address),
                 ], context=context)
-            
+            # TODO test partner not present
             mail_sent[address] = partner_ids
             
         # ---------------------------------------------------------------------
@@ -106,14 +107,14 @@ class ResPartner(orm.Model):
                 )
             
             for mail_found in all_mail:
-                partner_error = mail_sent.get(mail_found, False)                
-                if partner_error:
-                    partner_pool.write(cr, uid, partner_error, {
+                partner_error_ids = mail_sent.get(mail_found, False)                
+                if partner_error_ids:
+                    partner_pool.write(cr, uid, partner_error_ids, {
                         'address_error': True,
-                        'address_error_text': 'From: %s\nto: %s\nSubject' % (
+                        'address_error_text': 'Subject: %s\nFrom: %s To: %s' % (
+                            subject,
                             mail_from,
                             mail_to,
-                            subject,
                             )
                         }, context=context)
                     # TODO delete file after update res.partner   
@@ -127,7 +128,7 @@ class ResPartner(orm.Model):
             
 
         # ---------------------------------------------------------------------
-        # Search customer mail for mark problem
+        # Search customer mail for mark problem        
         # ---------------------------------------------------------------------
         partner_error_ids = partner_pool.search(cr, uid, [
             ('address_error', '=', True),
