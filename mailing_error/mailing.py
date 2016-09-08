@@ -43,16 +43,42 @@ class ResPartner(orm.Model):
     """    
     _inherit = 'res.partner'
     
-    def import_mail_problem_address(self, cr, uid, context=None):
+    def import_mail_problem_address(self, cr, uid, ids, context=None):
         ''' Check error message folder and parse name for check error in 
             partner mail address
         '''
-        self.pool.get('res.company').get_base_local_folder(
+        error_path = self.pool.get('res.company').get_base_local_folder(
             cr, uid, subfolder='mailing_error', context=context)
 
-        # TODO import procedure
-            
-        return True
+        # ---------------------------------------------------------------------
+        # Read all mail in error mail folder
+        # ---------------------------------------------------------------------
+        
+        # ---------------------------------------------------------------------
+        # Search customer mail for mark problem
+        # ---------------------------------------------------------------------
+        
+        # ---------------------------------------------------------------------
+        # Get list of partner problems and return custom tree list
+        # ---------------------------------------------------------------------
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference(
+            'mailing_error', 'view_res_company_mailing_error')[1]
+    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Mailing error'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'res.partner',
+            'view_id': view_id, # False
+            'views': [(view_id, 'tree'), (False, 'form')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }            
         
     _columns = {
         'address_error': fields.boolean('Address error'),
