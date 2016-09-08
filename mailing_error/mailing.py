@@ -35,8 +35,6 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT, 
     DATETIME_FORMATS_MAP, 
     float_compare)
-from os import listdir
-from os.path import isfile, join
 from email.parser import Parser
 
 
@@ -92,24 +90,46 @@ class ResPartner(orm.Model):
         # ---------------------------------------------------------------------
         # Read all mail in error mail folder
         # ---------------------------------------------------------------------
-        for mail_file in [f for f in listdir(error_path)]:
-            mail_fullfile = join(error_path, mail_file)
+        for mail_file in [f for f in os.listdir(mail_path)]:
+            mail_fullfile = os.path.join(mail_path, mail_file)
             message = Parser().parse(open(mail_fullfile, 'r'))
-            state = 'Not delivered'
+
+            # Parse message parameters:
+            subject = message['subject'].replace('\n','').replace('\r','')
+            mail_to = message['to']
+            mail_from = message['from']
             
-             # Extract list of mail:
-            all_mail = clean(re.findall(r'[\w\.-]+@[\w\.-]+', message.as_string()))
-        
-             # Extract mail:    
-        try:    
-           mail_address = mail.split("<")[1].split(">")[0]
-        except:
-           mail_address = mail
-        subject = message['subject'].replace('\n','').replace('\r','')
-        
+             # Extract list of mail address in mail text file:
+            all_mail = clean(
+                re.findall(r'[\w\.-]+@[\w\.-]+', message.as_string()),
+                mail_sent,
+                )
+            
+            for mail_found in all_mail:
+                partner_error = mail_sent.get(mail_found, False)                
+                if partner_error:
+                    partner_pool.write(cr, uid, partner_error, {
+                        'address_error': True,
+                        'address_error_text': 'From: %s\nto: %s\nSubject' % (
+                            mail_from,
+                            mail_to,
+                            subject,
+                            )
+                        }, context=context)
+                    # TODO delete file after update res.partner   
+                    
+                
+            # Extract mail:    
+            #try:    
+            #   mail_address = mail.split('<')[1].split('>')[0]
+            #except:
+            #   mail_address = mail
+            
+
         # ---------------------------------------------------------------------
         # Search customer mail for mark problem
         # ---------------------------------------------------------------------
+        
         
         # ---------------------------------------------------------------------
         # Get list of partner problems and return custom tree list
