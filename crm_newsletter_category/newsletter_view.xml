@@ -6,9 +6,8 @@
             <field name="name">crm.newsletter.category.form</field>
             <field name="model">crm.newsletter.category</field>
             <field name="arch" type="xml">
-                <tree string="Newsletter category" version="7.0">        
+                <tree string="Newsletter category">        
                     <field name="name" />
-                    <separator string="Note" colspan="4"/>
                     <field name="note" nolabel="1" colspan="4"/>                            
                 </tree>
             </field>
@@ -33,7 +32,7 @@
             <field name="res_model">crm.newsletter.category</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="view_id" ref="view_crm_newsletter_category_form"/>
+            <field name="view_id" ref="view_crm_newsletter_category_tree"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
@@ -42,8 +41,7 @@
             id="menu_crm_newsletter_category" 
             action="action_crm_newsletter_category"
             sequence="50"
-            />
-        
+            />        
     </data>
 </openerp>
 
