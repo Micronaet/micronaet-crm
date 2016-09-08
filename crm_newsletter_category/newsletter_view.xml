@@ -1,6 +1,79 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--res.partner-->
+        <record model="ir.ui.view" id="view_res_partner_newsletter_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="title" position="after">
+                    <field name="newsletter_category_id" />
+                </field>
+            </field>
+        </record>       
+        <record model="ir.ui.view" id="view_res_partner_newsletter_search">
+            <field name="name">res.partner.search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Search newsletter partner" version="7.0">        
+                    <field name="name" />
+                    <field name="city" />
+                    <field name="country_id" />
+                    <field name="state_id" />
+                    <field name="phone" />
+                    <field name="mobile" />
+                    <field name="fax" />
+                    <field name="website" />
+                    <field name="email" />
+                    <field name="newsletter_category_id" />
+                    
+                    <filter name="has_newsletter_category" string="Newsletter category" domain="[('newsletter_category_id','!=',False)]"/>
+                    
+                    <group expand="0" string="Group By...">
+                        <filter name="group_newsletter" string="Newsletter" context="{'group_by': 'newsletter_category_id'}"/>
+                        <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                        <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                        <filter name="group_state" string="State" context="{'group_by': 'state_id'}"/>
+                    </group>                
+                </search>
+            </field>
+        </record>        
+        <record model="ir.ui.view" id="view_res_partner_newsletter_tree">
+            <field name="name">res.partner.newsletter.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="String">
+                    <field name="name" readonly="1"/>
+                    <field name="city" readonly="1" />
+                    <field name="country_id" readonly="1" />
+                    <field name="state_id" readonly="1" />
+                    <field name="phone" readonly="1" />
+                    <field name="mobile" readonly="1" />
+                    <field name="fax" readonly="1" />
+                    <field name="website" />
+                    <field name="email" />
+                    <field name="newsletter_category_id" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_res_partner_newletter">
+            <field name="name">Lead partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_newsletter_tree"/>
+            <field name="view_id" ref="view_res_partner_newsletter_search"/>            
+            <field name="context">{'default_is_company': True, 'default_is_address': False}</field>
+            <field name="domain">[('is_company', '=', True),('is_address', '=', True)]</field>
+        </record>
+        <menuitem 
+            parent="base.menu_sales" 
+            id="menu_res_partner_newletter" 
+            action="action_res_partner_newletter"
+            sequence="20"
+            />        
+
         <!--crm.newsletter.category-->
         <record model="ir.ui.view" id="view_crm_newsletter_category_tree">
             <field name="name">crm.newsletter.category.form</field>
@@ -42,17 +115,6 @@
             action="action_crm_newsletter_category"
             sequence="50"
             />    
-            
-        <record model="ir.ui.view" id="view_res_partner_newsletter_form">
-            <field name="name">res.partner.form</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
-            <field name="arch" type="xml">
-                <field name="title" position="after">
-                    <field name="newsletter_category_id" />
-                </field>
-            </field>
-        </record>       
     </data>
 </openerp>
 
