@@ -129,7 +129,9 @@ class ResPartner(orm.Model):
         # ---------------------------------------------------------------------
         # Search customer mail for mark problem
         # ---------------------------------------------------------------------
-        
+        partner_error_ids = partner_pool.search(cr, uid, [
+            ('address_error', '=', True),
+            ], context=context)
         
         # ---------------------------------------------------------------------
         # Get list of partner problems and return custom tree list
@@ -138,8 +140,6 @@ class ResPartner(orm.Model):
         view_id = model_pool.get_object_reference(cr, uid, 
             'mailing_error', 'view_res_partner_mailing_error')[1]
         
-        domain = []    
-    
         return {
             'type': 'ir.actions.act_window',
             'name': _('Mailing error'),
@@ -149,7 +149,7 @@ class ResPartner(orm.Model):
             'res_model': 'res.partner',
             'view_id': view_id, # False
             'views': [(view_id, 'tree'), (False, 'form')],
-            'domain': domain,
+            'domain': [('id', 'in', partner_error_ids)],
             'context': context,
             'target': 'current', # 'new'
             'nodestroy': False,
@@ -157,7 +157,7 @@ class ResPartner(orm.Model):
 
 class ResPartner(orm.Model):
     """ Model name: ResPartner
-    """    
+    """
     _inherit = 'res.partner'
             
     _columns = {
