@@ -47,12 +47,20 @@ class ResPartner(orm.Model):
         ''' Check error message folder and parse name for check error in 
             partner mail address
         '''
+        partner_pool = self.pool.get('res.partner')
+        
         error_path = self.pool.get('res.company').get_base_local_folder(
             cr, uid, subfolder='mailing_error', context=context)
 
         # ---------------------------------------------------------------------
+        # Read all mail in newsletter
+        # ---------------------------------------------------------------------
+        
+
+        # ---------------------------------------------------------------------
         # Read all mail in error mail folder
         # ---------------------------------------------------------------------
+        
         
         # ---------------------------------------------------------------------
         # Search customer mail for mark problem
@@ -64,6 +72,8 @@ class ResPartner(orm.Model):
         model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference(cr, uid, 
             'mailing_error', 'view_res_partner_mailing_error')[1]
+        
+        domain = []    
     
         return {
             'type': 'ir.actions.act_window',
@@ -74,7 +84,7 @@ class ResPartner(orm.Model):
             'res_model': 'res.partner',
             'view_id': view_id, # False
             'views': [(view_id, 'tree'), (False, 'form')],
-            'domain': [],
+            'domain': domain,
             'context': context,
             'target': 'current', # 'new'
             'nodestroy': False,
