@@ -59,18 +59,19 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
         '''
         assert len(ids) == 1, 'Only one wizard record!'        
         wiz_proxy = self.browse(cr, uid, ids, context=context)[0]
+        # type_id = wiz_proxy.type_id, # TODO
 
         # Pool used:
         partner_pool = self.pool.get('res.partner')
-        campaign_pool = self.pool.get('crm.tracking.campaign')
+        newsletter_pool = self.pool.get('crm.newsletter.category')
         
-        # Read campaign elements:
-        campaign_db = {}
-        campaign_ids = campaign_pool.search(cr, uid, [], context=context)
-        for campaign in campaign_pool.browse(
-                cr, uid, campaign_ids, context=context):
-            if campaign.name not in campaign_db:
-                campaign_db[campaign.name] = campaign.id
+        # Read newsletter elements:
+        newsletter_db = {}
+        newsletter_ids = newsletter_pool.search(cr, uid, [], context=context)
+        for newsletter in newsletter_pool.browse(
+                cr, uid, newsletter_ids, context=context):
+            if newsletter.name not in newsletter_db:
+                newsletter_db[newsletter.name] = newsletter.id
         
         # Read base folder for mailing
         camcard_path = self.pool.get('res.company').get_base_local_folder(
@@ -95,7 +96,6 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
         # ---------------------------------------------------------------------
         start_row = 1 # no header
         max_row = 10000
-        import pdb; pdb.set_trace()
         for row in range(1, max_row):            
             # Read fields:
             try: # Test if last line
@@ -120,9 +120,9 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
             mobile1 = sheet.cell(row, 15).value
             mobile2 = sheet.cell(row, 16).value
             mobileO = sheet.cell(row, 17).value
-            telephone1 = sheet.cell(row, 18).value
-            telephone2 = sheet.cell(row, 19).value
-            telephoneO = sheet.cell(row, 20).value
+            phone1 = sheet.cell(row, 18).value
+            phone2 = sheet.cell(row, 19).value
+            phoneO = sheet.cell(row, 20).value
             fax1 = sheet.cell(row, 21).value
             fax2 = sheet.cell(row, 22).value
             faxO = sheet.cell(row, 23).value
@@ -141,73 +141,69 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
             
             key = '%s-%s-%s-%s' % (name, company1, company2, companyO)
             
-            # Get campaign ID
-            if group not in campaign_db:
-                campaign_db[group] = campaign_pool.create(cr, uid, {
+            # Get newsletter_category_id ID
+            if group not in newsletter_db:
+                newsletter_db[group] = newsletter_pool.create(cr, uid, {
                     'name': group,
                     }, context=context)
                     
-            type_id = campaign_db[group]
+            newsletter_category_id = newsletter_db[group]
                 
-            mask = '<b>Name:</b> %s (%s %s)</br>' +
-                'Industry: %s Location: %s</br>' +
-                'Company 1: %s Dep.: %s Title: %s</br>' +
-                'Company 2: %s Dep.: %s Title: %s</br>' +
-                'Company Other: %s Dep.: %s Title: %s</br>' +
-                'Mobile: %s   %s   %s</br>' +
-                'Phone: %s   %s   %s</br>' +
-                'Fax: %s   %s   %s</br>' +
-                'Email: %s   %s   %s</br>' + 
-                'Address: %s   %s   %s</br>' + 
-                'Link: %s</br>' +
-                'Birthday: %s Anniversary: %s</br>' +
-                'Group: %s</br>' +
-                'Note: %s</br>'
-                
-            partner_ids = res_partner.search(cr, uid, [
-                ('camcard_key', '=', key)], context=context)    
-            
-            camcard_text = mask % (
-                    name,
-                    first_name,
-                    last_name,
-                    industry,
-                    location,
+            camcard_text = '''
+                '<b>Name:</b> %s (%s %s)</br>
+                'Industry: %s Location: %s</br>
+                'Company 1: %s Dep.: %s Title: %s</br>
+                'Company 2: %s Dep.: %s Title: %s</br>
+                'Company Other: %s Dep.: %s Title: %s</br>
+                'Mobile: %s   %s   %s</br>
+                'Phone: %s   %s   %s</br>
+                'Fax: %s   %s   %s</br>
+                'Email: %s   %s   %s</br>
+                'Address: %s   %s   %s</br>
+                'Link: %s Nickname: %s</br>
+                'Birthday: %s Anniversary: %s</br>
+                'Group: %s</br>
+                'Note: %s</br>''' % (
+                    name, first_name, last_name,
+                    industry, location,
                     company1, dept1, title1,
                     company2, dept2, title2,
                     companyO, deptO, titleO,
                     mobile1, mobile2, mobileO,
-                    telephone1, telephone2, telephoneO, 
+                    phone1, phone2, phoneO, 
                     fax1, fax2, faxO,
                     email1, email2, emailO,
                     address1, address2, addressO,
-                    link, 
-                    birthday,
-                    anniversary,
+                    link, nickname,
+                    birthday, anniversary,
                     group,
-                    nickname,
                     note,
                     )
-                    
             data = {
-                'name': '%s (%s)' (name, (company1 or company2 or companyO)),
-                'mobile': mobile1 or mobile2 or mobileO
+                'name': '%s (%s)' % (name, (company1 or company2 or companyO)),
+                'mobile': mobile1 or mobile2 or mobileO,
                 'phone': phone1 or phone2 or phoneO,
                 'fax': fax1 or fax2 or faxO,
                 'email': email1 or email2 or emailO,
                 'street': address1 or address2 or addressO,                
-                'note': camcard_text,
-                'type_id': type_id,
+                'comment': camcard_text,
+                'newsletter_category_id': newsletter_category_id,
+                #'type_id': type_id, # TODO
                 
                 'camcard_key': key,
                 'camcard': True,
                 'camcard_date': create,
-                'camcart_text': camcard_text,
+                'camcard_text': camcard_text,
                 }
+
+            partner_ids = partner_pool.search(cr, uid, [
+                ('camcard_key', '=', key)], context=context)    
             if partner_ids:    
-                res_partner.write(cr, uid, partner_ids, data, context=context)
+                partner_pool.write(cr, uid, partner_ids, data, context=context)
+                _logger.info('%s Update %s' % (row, key))
             else:                
-                res_partner.create(cr, uid, data, context=context)
+                partner_pool.create(cr, uid, data, context=context)
+                _logger.info('%s Create %s' % (row, key))
         
         '''model_pool = self.pool.get('ir.model.data')
         view_id = model_pool.get_object_reference('module_name', 'view_res_partner_newsletter_tree')[1]

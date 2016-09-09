@@ -50,6 +50,7 @@ class ResPartner(orm.Model):
     
     _columns = {
         'camcard': fields.boolean('Camcard origin'),
+        'camcard_key': fields.text('Camcard key'),
         'camcard_date': fields.date('Date'),
         'camcard_text': fields.text(
             'Camcard data', 
