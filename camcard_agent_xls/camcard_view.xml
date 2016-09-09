@@ -67,10 +67,10 @@
             <field name="name">Camcard partner</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree</field>
+            <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_camcard_tree"/>
-            <field name="search_view_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>            
-            <field name="context">{'default_is_company': True}</field>
+            <field name="search_view_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>
+            <field name="context">{'default_is_company':True, 'form_view_ref':'xmlrpc_operation_partner.view_insert_res_partner_form'}</field>
             <field name="domain">[('camcard','=',True),('is_company','=',True),('parent_id','=',False),('is_address','=',False)]</field>
         </record>
         <menuitem 

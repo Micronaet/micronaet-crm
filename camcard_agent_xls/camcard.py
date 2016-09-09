@@ -45,8 +45,25 @@ class ResPartner(orm.Model):
     
     def open_partner_event(self, cr, uid, ids, context=None):
         ''' TODO return partner form
-        '''
-        return {}
+        '''    
+        model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference(cr, uid, 
+            'xmlrpc_operation_partner', 'view_insert_res_partner_form')[1]
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Partner form manadatory'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'res.partner',
+            'view_id': view_id, 
+            'views': [(view_id, 'form'),(False, 'tree')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
     
     _columns = {
         'camcard': fields.boolean('Camcard origin'),

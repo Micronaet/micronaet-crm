@@ -33,6 +33,7 @@
         'crm_newsletter_category',
         'company_base_folder',
         'base_accounting_program', # for type_id field
+        #'xmlrpc_operation_partner', # for mandatory fields partner form
         ],
     'init_xml': [],
     'demo': [],

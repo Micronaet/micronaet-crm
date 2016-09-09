@@ -32,6 +32,7 @@
         'crm_newsletter_category', 
         'sql_partner',
         #'sql_partner_agent',
+        'xmlrpc_operation_partner',
         ],
     'init_xml': [],
     'demo': [],
