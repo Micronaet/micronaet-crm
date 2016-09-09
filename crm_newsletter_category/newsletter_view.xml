@@ -74,7 +74,7 @@
             parent="base.menu_sales" 
             id="menu_res_partner_newletter" 
             action="action_res_partner_newletter_tree"
-            sequence="5"
+            sequence="2"
             />        
 
         <!--crm.newsletter.category-->
