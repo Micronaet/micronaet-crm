@@ -26,11 +26,14 @@
                     <field name="fax" />
                     <field name="website" />
                     <field name="email" />
+                    <field name="type_id" />
                     <field name="newsletter_category_id" />
                     
                     <filter name="has_newsletter_category" string="Newsletter category" domain="[('newsletter_category_id','!=',False)]"/>
+                    <filter name="is_company_true" string="Company" domain="[('is_company','=',True)]"/>
                     
                     <group expand="0" string="Group By...">
+                        <filter name="group_type" string="Campaign" context="{'group_by': 'type_id'}"/>
                         <filter name="group_newsletter" string="Newsletter" context="{'group_by': 'newsletter_category_id'}"/>
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
                         <filter name="group_state" string="State" context="{'group_by': 'state_id'}"/>
@@ -52,6 +55,7 @@
                     <field name="fax" readonly="1" />
                     <field name="website" />
                     <field name="email" />
+                    <field name="type_id" />
                     <field name="newsletter_category_id" />
                 </tree>
             </field>
@@ -63,8 +67,8 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_newsletter_tree"/>
             <field name="search_view_id" ref="view_res_partner_newsletter_search"/>            
-            <field name="context">{'default_is_company': True, 'default_is_address': False}</field>
-            <field name="domain">[('parent_id','=',False)('is_address', '=', True)]</field> <!--('is_company', '=', True),-->
+            <field name="context">{'default_is_company': True}</field>
+            <field name="domain">[('is_company', '=', True),('parent_id','=',False)('is_address', '=', False)]</field>
         </record>
         <menuitem 
             parent="base.menu_sales" 

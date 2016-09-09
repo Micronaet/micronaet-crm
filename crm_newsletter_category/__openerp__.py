@@ -29,6 +29,7 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'base_accounting_program', # for type_id field
         ],
     'init_xml': [],
     'demo': [],

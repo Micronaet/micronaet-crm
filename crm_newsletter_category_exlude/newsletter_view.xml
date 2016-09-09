@@ -8,8 +8,8 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="crm_newsletter_category.view_res_partner_newsletter_tree"/>
             <field name="search_view_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>            
-            <field name="context">{'default_is_company': True, 'default_is_address': False}</field>
-            <field name="domain">[('parent_id','=',False),('is_address', '=', True),('sql_customer_code', '=', False),('sql_supplier_code', '=', False),('sql_destination_code', '=', False)]</field>
+            <field name="context">{'default_is_company': True}</field>
+            <field name="domain">[('is_company', '=', True),('parent_id','=',False),('is_address', '=', True),('sql_customer_code', '=', False),('sql_supplier_code', '=', False),('sql_destination_code', '=', False)]</field>
         </record>
     </data>
 </openerp>
