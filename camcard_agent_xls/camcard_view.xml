@@ -26,7 +26,7 @@
                     <filter name="is_camcard" string="Camcard" domain="[('is_camcard','=',True)]"/>
                 </filter>    
                     
-                <filter name="group_create" position="after">
+                <filter name="group_country" position="after">
                     <filter name="group_camcard" string="Camcard" context="{'group_by': 'camcard'}"/>
                 </filter>
             </field>
