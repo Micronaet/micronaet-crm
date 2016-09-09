@@ -151,19 +151,19 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
                 
             camcard_text = '''
                 '<b>Name:</b> %s (%s %s)</br>
-                'Industry: %s Location: %s</br>
-                'Company 1: %s Dep.: %s Title: %s</br>
-                'Company 2: %s Dep.: %s Title: %s</br>
-                'Company Other: %s Dep.: %s Title: %s</br>
-                'Mobile: %s   %s   %s</br>
-                'Phone: %s   %s   %s</br>
-                'Fax: %s   %s   %s</br>
-                'Email: %s   %s   %s</br>
-                'Address: %s   %s   %s</br>
-                'Link: %s Nickname: %s</br>
-                'Birthday: %s Anniversary: %s</br>
-                'Group: %s</br>
-                'Note: %s</br>''' % (
+                '<b>Industry:</b> %s <b>Location:</b> %s</br>
+                '<b>Company 1:</b> %s <b>Dep.:</b> %s <b>Title:</b> %s</br>
+                '<b>Company 2:</b> %s <b>Dep.:</b> %s <b>Title:</b> %s</br>
+                '<b>Company Other:</b> %s <b>Dep.:</b> %s <b>Title:</b> %s</br>
+                '<b>Mobile:</b> %s   %s   %s</br>
+                '<b>Phone:</b> %s   %s   %s</br>
+                '<b>Fax:</b> %s   %s   %s</br>
+                '<b>Email:</b> %s   %s   %s</br>
+                '<b>Address:</b> %s   %s   %s</br>
+                '<b>Link:</b> %s <b>Nickname:</b> %s</br>
+                '<b>Birthday:</b> %s <b>Anniversary:</b> %s</br>
+                '<b>Group:</b> %s</br>
+                '<b>Note:</b> %s</br>''' % (
                     name, first_name, last_name,
                     industry, location,
                     company1, dept1, title1,
@@ -180,6 +180,8 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
                     note,
                     )
             data = {
+                'is_company': True,
+                'user_id': uid,
                 'name': '%s (%s)' % (name, (company1 or company2 or companyO)),
                 'mobile': mobile1 or mobile2 or mobileO,
                 'phone': phone1 or phone2 or phoneO,

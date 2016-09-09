@@ -54,7 +54,7 @@
                     <field name="email" />
                     <field name="type_id" />
                     <field name="newsletter_category_id" />
-                    <field name="camcard_text" />
+                    <field name="camcard_text" widget="html" readonly="1"/>
                     <!--<field name="sql_customer_code" />
                     <field name="sql_supplier_code" />
                     <field name="sql_destination_code" />-->
