@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--res.partner-->
+        <!--<record model="ir.ui.view" id="view_res_partner_camcard_form">
+            <field name="name">res.partner.camcard.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="title" position="after">
+                    <field name="newsletter_category_id" />
+                </field>
+            </field>
+        </record>-->        
+        
+        <!--<record model="ir.ui.view" id="view_res_partner_camcard_search">
+            <field name="name">res.partner.camcard.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>
+            <field name="arch" type="xml">
+                <field name="type_id" position="after">
+                    <field name="camcard_text" />
+                </field>    
+                    
+                <filter name="has_newsletter_category" position="after">
+                    <filter name="is_camcard" string="Camcard" domain="[('is_camcard','=',True)]"/>
+                </filter>    
+                    
+                <filter name="group_create" position="after">
+                    <filter name="group_camcard" string="Camcard" context="{'group_by': 'camcard'}"/>
+                </filter>
+            </field>
+        </record>        -->
+        
+        <record model="ir.ui.view" id="view_res_partner_camcard_tree">
+            <field name="name">res.partner.newsletter.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="String" editable="bottom">
+                    <field name="camcard" invisible="1"/>
+                    <field name="name" readonly="1"/>
+                    <field name="create_date" />
+                    <field name="city" />
+                    <field name="country_id" />
+                    <field name="state_id" />
+                    <field name="user_id" readonly="1" />
+                    <field name="phone"  />
+                    <field name="mobile" />
+                    <field name="fax" />
+                    <field name="website" />
+                    <field name="email" />
+                    <field name="type_id" />
+                    <field name="newsletter_category_id" />
+                    <field name="camcard_text" />
+                    <field name="sql_customer_code" />
+                    <field name="sql_supplier_code" />
+                    <field name="sql_destination_code" />
+                    <field name="type_id" />
+                    <button name="open_partner_event" string="Open partner" type="object" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_res_partner_camcard_tree">
+            <field name="name">Camcard partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_camcard_tree"/>
+            <field name="search_view_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>            
+            <field name="context">{'default_is_company': True}</field>
+            <field name="domain">[('camcard','=',True),('is_company', '=', True),('parent_id','=',False),('is_address', '=', False)]</field>
+        </record>
+        <menuitem 
+            parent="base.menu_sales" 
+            id="menu_res_partner_camcard" 
+            action="action_res_partner_camcard_tree"
+            sequence="2"
+            />        
+
+    </data>
+</openerp>
+
