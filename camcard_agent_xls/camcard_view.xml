@@ -39,11 +39,12 @@
                 <tree string="String" editable="bottom">
                     <field name="camcard" invisible="1"/>
                     <field name="name" readonly="1"/>
-                    <field name="create_date" />
+                    <field name="create_date" invisible="1"/>
+                    <field name="user_id" invisible="1" />
+                    <field name="street" />
                     <field name="city" />
                     <field name="country_id" />
                     <field name="state_id" />
-                    <field name="user_id" readonly="1" />
                     <field name="phone"  />
                     <field name="mobile" />
                     <field name="fax" />
@@ -52,9 +53,9 @@
                     <field name="type_id" />
                     <field name="newsletter_category_id" />
                     <field name="camcard_text" />
-                    <field name="sql_customer_code" />
+                    <!--<field name="sql_customer_code" />
                     <field name="sql_supplier_code" />
-                    <field name="sql_destination_code" />
+                    <field name="sql_destination_code" />-->
                     <field name="type_id" />
                     <button name="open_partner_event" string="Open partner" type="object" />
                 </tree>
@@ -71,7 +72,7 @@
             <field name="domain">[('camcard','=',True),('is_company', '=', True),('parent_id','=',False),('is_address', '=', False)]</field>
         </record>
         <menuitem 
-            parent="base.menu_sales" 
+            parent="crm_newsletter_category.menu_res_partner_newletter" 
             id="menu_res_partner_camcard" 
             action="action_res_partner_camcard_tree"
             sequence="2"
