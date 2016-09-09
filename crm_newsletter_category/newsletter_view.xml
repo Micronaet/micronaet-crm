@@ -73,8 +73,8 @@
         <menuitem 
             parent="base.menu_sales" 
             id="menu_res_partner_newletter" 
-            action="action_res_partner_newletter"
-            sequence="20"
+            action="action_res_partner_newletter_tree"
+            sequence="5"
             />        
 
         <!--crm.newsletter.category-->
