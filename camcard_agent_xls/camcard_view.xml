@@ -13,7 +13,7 @@
             </field>
         </record>-->        
         
-        <!--<record model="ir.ui.view" id="view_res_partner_camcard_search">
+        <record model="ir.ui.view" id="view_res_partner_camcard_search">
             <field name="name">res.partner.camcard.search</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>
@@ -30,7 +30,7 @@
                     <filter name="group_camcard" string="Camcard" context="{'group_by': 'camcard'}"/>
                 </filter>
             </field>
-        </record>        -->
+        </record>
         
         <record model="ir.ui.view" id="view_res_partner_camcard_tree">
             <field name="name">res.partner.newsletter.tree</field>
@@ -38,6 +38,8 @@
             <field name="arch" type="xml">
                 <tree string="String" editable="bottom">
                     <field name="camcard" invisible="1"/>
+                    <field name="customer" />
+                    <field name="supplier" />
                     <field name="name" readonly="1"/>
                     <field name="create_date" invisible="1"/>
                     <field name="user_id" invisible="1" />
@@ -57,7 +59,7 @@
                     <field name="sql_supplier_code" />
                     <field name="sql_destination_code" />-->
                     <field name="type_id" />
-                    <button name="open_partner_event" string="Open partner" type="object" />
+                    <button name="open_partner_event" string="Open partner" type="object" icon="STOCK_SAVE_AS"/>
                 </tree>
             </field>
         </record>
@@ -65,11 +67,11 @@
             <field name="name">Camcard partner</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree</field>
             <field name="view_id" ref="view_res_partner_camcard_tree"/>
             <field name="search_view_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>            
             <field name="context">{'default_is_company': True}</field>
-            <field name="domain">[('camcard','=',True),('is_company', '=', True),('parent_id','=',False),('is_address', '=', False)]</field>
+            <field name="domain">[('camcard','=',True),('is_company','=',True),('parent_id','=',False),('is_address','=',False)]</field>
         </record>
         <menuitem 
             parent="crm_newsletter_category.menu_res_partner_newletter" 

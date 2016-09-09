@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
 #
 #    Copyright (C) 2001-2014 Micronaet SRL (<http://www.micronaet.it>).
@@ -16,31 +17,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
+from . import import_wizard
 
-{
-    'name': 'Cam Card agent: XLS',
-    'version': '0.1',
-    'category': 'CRM',
-    'description': '''        
-        Cam Card agent for import XLS contacts
-        ''',
-    'author': 'Micronaet S.r.l. - Nicola Riolini',
-    'website': 'http://www.micronaet.it',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'crm',
-        'crm_newsletter_category',
-        'company_base_folder',
-        'base_accounting_program', # for type_id field
-        ],
-    'init_xml': [],
-    'demo': [],
-    'data': [
-        'camcard_view.xml',
-        'wizard/import_wizard_view.xml',
-        ],
-    'active': False,
-    'installable': True,
-    'auto_install': False,
-    }
+# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

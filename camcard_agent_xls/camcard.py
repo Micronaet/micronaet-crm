@@ -44,17 +44,13 @@ class ResPartner(orm.Model):
     _inherit = 'res.partner'
     
     def open_partner_event(self, cr, uid, ids, context=None):
-        ''' TODO return form partner 
+        ''' TODO return partner form
         '''
         return {}
     
-    def camcard_import_xls(self, cr, uid, ids, context=None):
-        ''' Camcard import procedure
-        '''
-        return True
-        
     _columns = {
         'camcard': fields.boolean('Camcard origin'),
+        'camcard_date': fields.date('Date'),
         'camcard_text': fields.text(
             'Camcard data', 
             help='All data will be placed here after parsed in partner fields',

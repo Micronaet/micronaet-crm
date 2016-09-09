@@ -1,0 +1,230 @@
+# -*- coding: utf-8 -*-
+##############################################################################
+#
+#    Copyright (C) 2014 Abstract (http://www.abstract.it)
+#    Copyright (C) 2014 Agile Business Group (http://www.agilebg.com)
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##############################################################################
+
+import os
+import sys
+import logging
+import openerp
+import base64
+import xlrd
+import openerp.netsvc as netsvc
+import openerp.addons.decimal_precision as dp
+from openerp import models, api, fields
+from openerp.osv import osv
+from openerp.tools.translate import _
+from openerp.exceptions import Warning
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from openerp import tools
+from openerp.tools.translate import _
+from openerp.tools.float_utils import float_round as round
+from openerp import SUPERUSER_ID#, api
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
+    DEFAULT_SERVER_DATETIME_FORMAT, 
+    DATETIME_FORMATS_MAP, 
+    float_compare)
+
+_logger = logging.getLogger(__name__)
+
+
+class ResPartnerCcamcardImportWizard(models.TransientModel):
+    ''' Wizard import camcard contact 
+    '''
+    _name = 'res.partner.camcard.import.wizard'
+
+    _columns = {
+        #'type_id': fields.many2one('crm.tracking.campaign', 'Campaign'),
+        }
+
+    def camcard_import_xls(self, cr, uid, ids, context=None):
+        ''' Camcard import procedure
+        '''
+        assert len(ids) == 1, 'Only one wizard record!'        
+        wiz_proxy = self.browse(cr, uid, ids, context=context)[0]
+
+        # Pool used:
+        partner_pool = self.pool.get('res.partner')
+        campaign_pool = self.pool.get('crm.tracking.campaign')
+        
+        # Read campaign elements:
+        campaign_db = {}
+        campaign_ids = campaign_pool.search(cr, uid, [], context=context)
+        for campaign in campaign_pool.browse(
+                cr, uid, campaign_ids, context=context):
+            if campaign.name not in campaign_db:
+                campaign_db[campaign.name] = campaign.id
+        
+        # Read base folder for mailing
+        camcard_path = self.pool.get('res.company').get_base_local_folder(
+            cr, uid, subfolder='camcard', context=context)
+        camcard_path = os.path.expanduser(camcard_path)  
+            
+        # ---------------------------------------------------------------------
+        # Read XLS camcard file sheet:
+        # ---------------------------------------------------------------------
+        filename = os.path.join(camcard_path, 'camcard.xlsx')
+        try:
+            book = xlrd.open_workbook(filename)
+        except:
+            raise osv.except_osv(
+                _('Error:'), 
+                _('No camcard XLSX file: %s') % filename,
+                )
+        sheet = book.sheet_by_index(0)
+
+        # ---------------------------------------------------------------------
+        # Read all mail in error mail folder
+        # ---------------------------------------------------------------------
+        start_row = 1 # no header
+        max_row = 10000
+        import pdb; pdb.set_trace()
+        for row in range(1, max_row):            
+            # Read fields:
+            try: # Test if last line
+                create = sheet.cell(row, 0).value                
+            except:    
+                break # no more row
+            
+            name = sheet.cell(row, 1).value
+            first_name = sheet.cell(row, 2).value
+            last_name = sheet.cell(row, 3).value
+            industry = sheet.cell(row, 4).value
+            location = sheet.cell(row, 5).value
+            company1 = sheet.cell(row, 6).value
+            dept1 = sheet.cell(row, 7).value
+            title1 = sheet.cell(row, 8).value
+            company2 = sheet.cell(row, 9).value
+            dept2 = sheet.cell(row, 10).value
+            title2 = sheet.cell(row, 11).value
+            companyO = sheet.cell(row, 12).value
+            deptO = sheet.cell(row, 13).value
+            titleO = sheet.cell(row, 14).value
+            mobile1 = sheet.cell(row, 15).value
+            mobile2 = sheet.cell(row, 16).value
+            mobileO = sheet.cell(row, 17).value
+            telephone1 = sheet.cell(row, 18).value
+            telephone2 = sheet.cell(row, 19).value
+            telephoneO = sheet.cell(row, 20).value
+            fax1 = sheet.cell(row, 21).value
+            fax2 = sheet.cell(row, 22).value
+            faxO = sheet.cell(row, 23).value
+            email1 = sheet.cell(row, 24).value
+            email2 = sheet.cell(row, 25).value
+            emailO = sheet.cell(row, 26).value
+            address1 = sheet.cell(row, 27).value
+            address2 = sheet.cell(row, 28).value
+            addressO = sheet.cell(row, 29).value
+            link = sheet.cell(row, 30).value
+            birthday = sheet.cell(row, 31).value
+            anniversary = sheet.cell(row, 32).value
+            group = sheet.cell(row, 33).value # newsletter
+            nickname = sheet.cell(row, 34).value
+            note = sheet.cell(row, 35).value
+            
+            key = '%s-%s-%s-%s' % (name, company1, company2, companyO)
+            
+            # Get campaign ID
+            if group not in campaign_db:
+                campaign_db[group] = campaign_pool.create(cr, uid, {
+                    'name': group,
+                    }, context=context)
+                    
+            type_id = campaign_db[group]
+                
+            mask = '<b>Name:</b> %s (%s %s)</br>' +
+                'Industry: %s Location: %s</br>' +
+                'Company 1: %s Dep.: %s Title: %s</br>' +
+                'Company 2: %s Dep.: %s Title: %s</br>' +
+                'Company Other: %s Dep.: %s Title: %s</br>' +
+                'Mobile: %s   %s   %s</br>' +
+                'Phone: %s   %s   %s</br>' +
+                'Fax: %s   %s   %s</br>' +
+                'Email: %s   %s   %s</br>' + 
+                'Address: %s   %s   %s</br>' + 
+                'Link: %s</br>' +
+                'Birthday: %s Anniversary: %s</br>' +
+                'Group: %s</br>' +
+                'Note: %s</br>'
+                
+            partner_ids = res_partner.search(cr, uid, [
+                ('camcard_key', '=', key)], context=context)    
+            
+            camcard_text = mask % (
+                    name,
+                    first_name,
+                    last_name,
+                    industry,
+                    location,
+                    company1, dept1, title1,
+                    company2, dept2, title2,
+                    companyO, deptO, titleO,
+                    mobile1, mobile2, mobileO,
+                    telephone1, telephone2, telephoneO, 
+                    fax1, fax2, faxO,
+                    email1, email2, emailO,
+                    address1, address2, addressO,
+                    link, 
+                    birthday,
+                    anniversary,
+                    group,
+                    nickname,
+                    note,
+                    )
+                    
+            data = {
+                'name': '%s (%s)' (name, (company1 or company2 or companyO)),
+                'mobile': mobile1 or mobile2 or mobileO
+                'phone': phone1 or phone2 or phoneO,
+                'fax': fax1 or fax2 or faxO,
+                'email': email1 or email2 or emailO,
+                'street': address1 or address2 or addressO,                
+                'note': camcard_text,
+                'type_id': type_id,
+                
+                'camcard_key': key,
+                'camcard': True,
+                'camcard_date': create,
+                'camcart_text': camcard_text,
+                }
+            if partner_ids:    
+                res_partner.write(cr, uid, partner_ids, data, context=context)
+            else:                
+                res_partner.create(cr, uid, data, context=context)
+        
+        '''model_pool = self.pool.get('ir.model.data')
+        view_id = model_pool.get_object_reference('module_name', 'view_res_partner_newsletter_tree')[1]
+    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Result for view_name'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            #'res_id': 1,
+            'res_model': 'model.name',
+            'view_id': view_id, # False
+            'views': [(False, 'tree'), (False, 'form')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }'''
+        return True
+
