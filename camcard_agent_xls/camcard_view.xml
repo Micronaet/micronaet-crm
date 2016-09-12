@@ -58,7 +58,6 @@
                     <!--<field name="sql_customer_code" />
                     <field name="sql_supplier_code" />
                     <field name="sql_destination_code" />-->
-                    <field name="type_id" />
                     <button name="open_partner_event" string="Open partner" type="object" icon="STOCK_SAVE_AS"/>
                 </tree>
             </field>
