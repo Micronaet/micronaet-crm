@@ -43,7 +43,7 @@
                     </group>                
                 </search>
             </field>
-        </record>        
+        </record>
         <record model="ir.ui.view" id="view_res_partner_newsletter_tree">
             <field name="name">res.partner.newsletter.tree</field>
             <field name="model">res.partner</field>
