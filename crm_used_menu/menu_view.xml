@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <menuitem name="CRM" id="menu_partner_crm_root" parent="crm_newsletter_category.menu_res_partner_newletter" sequence="10" />        
+            <menuitem name="Leads" id="menu_crm_leads" parent="menu_partner_crm_root" 
+                action="crm.crm_case_category_act_leads_all" 
+                sequence="10" groups="base.group_sale_manager"/>
+                
+            <menuitem id="menu_crm_config_opportunity" name="Opportunities"
+                action="crm.crm_case_category_act_oppor11"
+                parent="menu_partner_crm_root" sequence="20" groups="base.group_sale_manager"/>
+
+            <!--<menuitem id="menu_crm_config_phonecall" name="Phone Calls"
+                action=""
+                parent="menu_partner_crm_root" sequence="40" groups="base.group_sale_salesman"/>-->
+    </data>
+</openerp>
+
