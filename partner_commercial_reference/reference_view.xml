@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <record model="ir.ui.view" id="view_res_partner_refecente_form">
-            <field name="name">res.partner.form</field>
+        <record model="ir.ui.view" id="view_res_partner_reference_form">
+            <field name="name">res.partner.reference.form</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//page[3]">
-                    <page string="Refecence">
+                <xpath expr="//page[3]" position="after">
+                    <page string="Reference">
                         <group colspan="4" col="4">
                             <field name="reference_status" />
-                            <field name="refecente_date" />
-                            <separator string="Reference" colspan="4"/>
-                            <field name="reference_text" colspan="4" nolabel="1"/>
-                        </group>    
+                            <field name="reference_date" attrs="{'invisible': [('reference_status','=','not')]}"/>
+                            <separator string="Reference" colspan="4" attrs="{'invisible': [('reference_status','=','not')]}"/>
+                            <field name="reference_text" colspan="4" nolabel="1" attrs="{'invisible': [('reference_status','=','not')]}"/>
+                        </group>
                     </page>
                 </xpath>
             </field>
         </record>
-        <record model="ir.ui.view" id="view_res_partner_tree">
-            <field name="name">res.partner.tree</field>
+        <record model="ir.ui.view" id="view_res_partner_reference_tree">
+            <field name="name">res.partner.reference.tree</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_tree"/>
             <field name="arch" type="xml">

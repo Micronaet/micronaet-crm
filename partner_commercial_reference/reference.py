@@ -45,13 +45,13 @@ class ResPartner(orm.Model):
     
     _columns = {
         'reference_status': fields.selection([
-            ('not', 'Not ask'),
+            ('not', 'Not asked'),
             ('asked', 'Asked'),
             ('positive', 'Positive'),
             ('negative', 'Negative'),
             ], 'Reference status'),            
         'reference_text': fields.text('Reference text'),
-        'refetence_date': fields.date('Reference date'),
+        'reference_date': fields.date('Reference date'),
         }
         
     _defaults = {
