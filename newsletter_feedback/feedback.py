@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 import openerp
+import xlrd
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
@@ -79,13 +80,13 @@ class ResCompany(orm.Model):
             self, cr, uid, ids, context=None):
         ''' Import procedure for esit of last newsletter
         '''
-        filename = '/home/administrator/photo/xls/newsletter/log.xls'
+        filename = '/home/administrator/photo/xls/newsletter/errori.xls'
         _logger.info('Start import procedure on file: %s' % filename)
 
         # Pool used:
         news_pool = self.pool.get('crm.newsletter.feedback.log')
-        product_pool = self.pool.get('res.partner')
-        category_pool = self.pool.get('crm.newsletter.feedback.log')
+        partner_pool = self.pool.get('res.partner')
+        category_pool = self.pool.get('crm.newsletter.feedback.category')
 
         try:
             WB = xlrd.open_workbook(filename)
@@ -107,13 +108,19 @@ class ResCompany(orm.Model):
             date = WS.cell(row, 0).value
             error = WS.cell(row, 1).value      
             email = WS.cell(row, 2).value
-            active = WS.cell(row, 3).value
-            remove = WS.cell(row, 4).value
+            active = WS.cell(row, 3).value or False # transform in boolean
+            remove = WS.cell(row, 4).value or False # transform in boolean
             
-            if not email or not data:
+            if not email or not date:
                 _logger.error('Jump line: %s' % i)
                 continue
                 
+            #date = datetime.strptime(date, '%d/%m/%Y')
+            date = '%s-%s-%s' % (
+                date[-4:],
+                date[3:5],
+                date[:2],
+                )
             # Category management:
             if error and error not in error_db:          
                  error = error.lower()  
@@ -145,12 +152,12 @@ class ResCompany(orm.Model):
                 }, context=context)
             
             # Update partner form:
-            partner_pool.write(cr, uid, partner_ids, {
+            partner_pool.write(cr, uid, partner_id, {
                 'news_feedback_id': category_id,
                 'news_feedback_date': date,
-                'news_opt_out': opt_out,                
-                }, context=context)
-                 
+                'news_opt_out': remove,                
+                }, context=context)            
+            _logger.info('News log updated: %s' % i)
         return True    
 
 
