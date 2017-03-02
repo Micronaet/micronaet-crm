@@ -102,7 +102,7 @@ class ResCompany(orm.Model):
 
         error_db = {}
         i = 0
-        import pdb; pdb.set_trace()
+
         for row in range(1, WS.nrows):
             i += 1
             # Read fields
