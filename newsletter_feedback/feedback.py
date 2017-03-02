@@ -45,12 +45,11 @@ class CrmNewsletterFeedbackCategory(orm.Model):
     
     _name = 'crm.newsletter.feedback.category'
     _description = 'Newsletter feedback'
-
     
     _columns = {
         'name': fields.char('Category', size=64, required=True),
         'not_newsletter': fields.boolean('Not use', 
-            help='No newsletter sent from now')
+            help='No newsletter sent from now'),
         'note': fields.text('Note'),    
         }
 
