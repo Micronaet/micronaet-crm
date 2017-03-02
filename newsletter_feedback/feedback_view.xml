@@ -1,7 +1,67 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <record model="ir.ui.view" id="view_res_company_temp_script_form">
+            <field name="name">res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[2]" position="after">
+                    <page string="Newsletter management">
+                        <group colspan="4" col="4">
+                            <button name="import_newsletter_feedback_category" string="Import esit" type="object" />
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>        
 
+        <record model="ir.ui.view" id="view_partner_newsletter_form">
+            <field name="name">res.partner.newsletter.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Newsletter log" version="7.0">        
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                            <field name="newsletter_ids">
+                                <tree string="Log" editable="bottom">
+                                    <field name="date" />
+                                    <field name="opt_out" />
+                                    <field name="category_id" />                                    
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>        
+                </form>
+            </field>
+        </record>
+        
+        <record model="ir.ui.view" id="view_inherit_partner_newsletter_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[2]" position="after">
+                    <page string="Newsletter">
+                        <field name="newsletter_ids">
+                            <group col="4" colspan="4">
+                                <field name="news_feedback_id" />  
+                                <field name="news_feedback_date" />
+                                <field name="news_opt_out" />
+                                <field name="newsletter_ids" readonly="1">
+                                    <tree string="Log" editable="bottom">
+                                        <field name="date" />
+                                        <field name="opt_out" />
+                                        <field name="category_id" />                                    
+                                    </tree>
+                                </field>
+                            </group>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
     </data>
 </openerp>
 
