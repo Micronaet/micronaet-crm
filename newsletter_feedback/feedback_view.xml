@@ -20,6 +20,21 @@
         </record>        
 
         <!--res.partner-->
+        <record model="ir.ui.view" id="view_res_partner_news_search">
+            <field name="name">res.partner.newsletter.feedback.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[3]" position="after">
+                    <field name="news_feedback_id" />
+                </xpath>    
+                <!--<xpath expr="//filter[3]" position="after">
+                    <filter name="new_optout" string="News optout" domain="[('news_opt_out','=',True)]"/>
+                    <filter name="group_feedback_category" string="News category" context="{'group_by': 'news_feedback_id'}"/>
+                    <filter name="group_feedback_date" string="News date" context="{'group_by': 'news_feedback_date'}"/>
+                </xpath>-->
+            </field>
+        </record>        
         <record model="ir.ui.view" id="view_partner_newsletter_form">
             <field name="name">res.partner.newsletter.form</field>
             <field name="model">res.partner</field>
@@ -52,7 +67,8 @@
                             <field name="news_feedback_id" />  
                             <field name="news_feedback_date" />
                             <field name="news_opt_out" />
-                            <field name="newsletter_ids" readonly="1">
+                            
+                            <field name="newsletter_ids" readonly="1" colspan="4" nolabel="1">
                                 <tree string="Log" editable="bottom">
                                     <field name="date" />
                                     <field name="opt_out" />

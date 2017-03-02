@@ -1,3 +1,4 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 access_crm_newsletter_feedback_category_user,crm.newsletter.feedback.category,model_crm_newsletter_feedback_category,base.group_user,1,1,1,1
+access_crm_newsletter_feedback_log_user,crm.newsletter.feedback.log,model_crm_newsletter_feedback_log,base.group_user,1,1,1,1
 
