@@ -68,6 +68,7 @@ class ProductTemplate(orm.Model):
             ('obsolete', 'Obsolete'),
             ('sample', 'Sample'),
             ('promo', 'Promo'),
+            ('parent', 'Padre'),
             ('todo', 'Todo'),
             ], 'Gamma', required=True)
         }
