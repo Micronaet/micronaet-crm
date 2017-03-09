@@ -1,0 +1,288 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record model="ir.ui.view" id="view_crm_form_lite_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="CRM lite view" version="7.0">        
+                    <header>
+                    </header>
+                    <sheet>
+                        <field name="image" widget="image" class="oe_left oe_avatar" options="{'preview_image': 'image_medium', 'size': [90, 90]}" />
+                        <div class="oe_title oe_left">
+                            <div class="oe_edit_only">
+                                <label for="name"/>
+                                (
+                                <field name="is_company" on_change="onchange_type(is_company)" class="oe_inline" />
+                                <label for="is_company" string="E' un'Azienda?"/>
+                                <field name="is_address" />
+                                <label for="is_address" string="E' un indirizzo?"/>
+                                )
+                                        
+                            </div>
+                            <h1>
+                                <field name="name" default_focus="1" placeholder="Nome" modifiers="{'required': true}"/>
+                            </h1>
+                            <field name="parent_id" placeholder="Azienda" domain="[('is_company', '=', True)]" context="{'default_is_company': True}" attrs="{'invisible': ['&amp;',('is_company','=', True),('is_address','=',False)], 'required': [('is_address','=',True)]}" on_change="onchange_address(use_parent_address, parent_id)" modifiers="{'invisible': ['&amp;', ['is_company', '=', true], ['is_address', '=', false]], 'required': [['is_address', '=', true]]}"/>
+                            <field name="category_id" widget="many2many_tags" placeholder="Tags..." />
+                            <label for="group_tag_id"/>
+                            <field name="group_tag_id" attrs="{'invisible':[('is_company','=',False)]}" modifiers="{'invisible': [['is_company', '=', false]]}"/>
+                        </div>
+                        
+                        <div class="oe_right oe_button_box" name="buttons">
+                            <button class="oe_inline oe_stat_button" type="action" attrs="{'invisible': [('customer', '=', False)]}" name="318" icon="fa-star" context="{'search_default_partner_id': active_id}" modifiers="{'invisible': [['customer', '=', false]]}">
+                                <field string="Opportunità" name="opportunity_count" widget="statinfo" readonly="1"/>
+                            </button>
+                            <button class="oe_inline oe_stat_button" type="object" name="schedule_meeting" icon="fa-calendar" context="{'partner_id': active_id}">
+                                <field string="Appuntamenti" name="meeting_count" widget="statinfo" readonly="1"/>
+                            </button>
+                            <button class="oe_inline oe_stat_button" type="action" name="309" icon="fa-phone" context="{'search_default_partner_id': active_id, 'default_duration': 1.0}">
+                                <field string="Chiamate" name="phonecall_count" widget="statinfo" readonly="1"/>
+                            </button>
+                            <!--<button type="action" class="oe_stat_button" id="invoice_button" icon="fa-pencil-square-o" name="665" attrs="{'invisible': [('customer', '=', False)]}" context="{'search_default_partner_id': active_id,'default_partner_id': active_id}" modifiers="{'invisible': [['customer', '=', false]]}">
+                                <div>
+                                    <strong>
+                                        <field name="total_invoiced" widget="monetary" readonly="1"/>
+                                    </strong>
+                                    <br/>
+                                    Fatturato
+                                </div>
+                            </button>-->
+                            <button class="oe_inline oe_stat_button" type="action" name="367" attrs="{'invisible': [('customer', '=', False)]}" icon="fa-strikethrough" modifiers="{'invisible': [['customer', '=', false]]}">
+                                <field string="Vendite" name="sale_order_count" widget="statinfo" readonly="1"/>
+                            </button>
+                            <button class="oe_inline oe_stat_button" name="490" type="action" attrs="{'invisible': [('supplier', '=', False)]}" icon="fa-pencil-square-o" help="Fatture di acquisto" modifiers="{'invisible': [['supplier', '=', false]]}">
+                                <field string="Supplier Inv." name="supplier_invoice_count" widget="statinfo" readonly="1"/>
+                            </button>
+                            <button class="oe_inline oe_stat_button" name="489" type="action" attrs="{'invisible': [('supplier', '=', False)]}" icon="fa-shopping-cart" modifiers="{'invisible': [['supplier', '=', false]]}">
+                                <field string="Acquisti" name="purchase_order_count" widget="statinfo" readonly="1"/>
+                            </button>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <label for="type" invisible="1" modifiers="{'invisible': true}"/>
+                                <div name="div_type" invisible="1" modifiers="{'invisible': true}">
+                                    <field class="oe_inline" name="type" />
+                                    <label for="use_parent_address" class="oe_edit_only"/>
+                                    <field name="use_parent_address" class="oe_edit_only oe_inline" on_change="onchange_address(use_parent_address, parent_id)" />
+                                </div>
+                                <label for="street" string="Indirizzo"/>
+                                <div>
+                                    <div class="oe_edit_only">
+                                        <field name="use_parent_address" class="oe_inline" on_change="onchange_address(use_parent_address, parent_id)" attrs="{'invisible': ['|', ('is_company', '=', True),('parent_id', '=', False)]}" modifiers="{'invisible': ['|', ['is_company', '=', true], ['parent_id', '=', false]]}"/>
+                                        <label for="use_parent_address" attrs="{'invisible': ['|', ('is_company', '=', True), ('parent_id', '=', False)]}" modifiers="{'invisible': ['|', ['is_company', '=', true], ['parent_id', '=', false]]}"/>
+                                    </div>
+                                    <button name="open_parent" type="object" string="(edit company address)" class="oe_link oe_edit_only" attrs="{'invisible': ['|',('parent_id','=', False),('use_parent_address','=',False)]}" modifiers="{'invisible': ['|', ['parent_id', '=', false], ['use_parent_address', '=', false]]}"/>
+                                    <field name="hide_partner" invisible="1" modifiers="{'invisible': true}"/>
+                                    <button name="button_show" string="Show" type="object" attrs="{'invisible':[('hide_partner','=',True)]}" icon="gtk-yes" modifiers="{'invisible': [['hide_partner', '=', true]]}"/>
+                                    <button name="button_hide" string="Hide" type="object" attrs="{'invisible':[('hide_partner','=',False)]}" icon="gtk-normal" modifiers="{'invisible': [['hide_partner', '=', false]]}"/>
+                                    <field name="street" placeholder="Street..." attrs="{'readonly': [('use_parent_address','=',True)]}" modifiers="{'readonly': [['use_parent_address', '=', true]]}"/>
+                                    <field name="street2" attrs="{'readonly': [('use_parent_address','=',True)]}" modifiers="{'readonly': [['use_parent_address', '=', true]]}"/>
+                                    <field name="zip_id" options="{'create_name_field': 'city'}" placeholder="Completamento città" attrs="{'invisible': [('use_parent_address','=',True)]}" class="oe_edit_only" on_change="1" modifiers="{'invisible': [['use_parent_address', '=', true]]}"/>
+                                    <div class="address_format">
+                                        <field name="city" placeholder="Città" style="width: 40%" attrs="{'readonly': [('use_parent_address','=',True)]}" modifiers="{'readonly': [['use_parent_address', '=', true]]}"/>
+                                        <field name="state_id" class="oe_no_button" placeholder="Provincia" style="width: 37%" options="{'no_open': True}" on_change="onchange_state(state_id)" attrs="{'readonly': [('use_parent_address','=',True)]}" modifiers="{'readonly': [['use_parent_address', '=', true]]}"/>
+                                        <field name="zip" placeholder="ZIP" style="width: 20%" attrs="{'readonly': [('use_parent_address','=',True)]}" modifiers="{'readonly': [['use_parent_address', '=', true]]}"/>
+                                    </div>
+                                    <field name="country_id" placeholder="Nazione" class="oe_no_button" options="{'no_open': True, 'no_create': True}" attrs="{'readonly': [('use_parent_address','=',True)]}" modifiers="{'readonly': [['use_parent_address', '=', true]]}"/>
+                                </div>
+                                <field name="website" widget="url" placeholder="e.g. www.odoo.com" />
+                                <button name="print_stock_status_report" string="Print stock status" help="Status report for stock" type="object" attrs="{'invisible':['|',('is_company', '=', False),('supplier', '=', False)]}" modifiers="{'invisible': ['|', ['is_company', '=', false], ['supplier', '=', false]]}"/>
+                            </group>
+                            <group>
+                                <field name="function" placeholder="e.g. Sales Director" attrs="{'invisible': [('is_company','=', True)]}" modifiers="{'invisible': [['is_company', '=', true]]}"/>
+                                <field name="phone" />
+                                <field name="mobile" />
+                                <field name="fax" />
+                                <field name="user_ids" invisible="1" modifiers="{'invisible': true}"/>
+                                <field name="email" widget="email" attrs="{'required': [('user_ids','!=', [])]}" modifiers="{'required': [['user_ids', '!=', []]]}"/>
+                                <field name="title" options="{'no_open': True}" />
+                                <field name="statistic_category_id" />
+                            </group>
+                        </group>
+                        <notebook colspan="4">
+                            <page string="Contatti" attrs="{'invisible': [('is_company','=',False), ('child_ids', '=', [])]}" autofocus="autofocus" modifiers="{'invisible': [['is_company', '=', false], ['child_ids', '=', []]]}">
+                                <field name="child_ids" mode="kanban" context="{'default_parent_id': active_id, 'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_supplier': supplier, 'default_customer': customer, 'default_use_parent_address': True}" />
+                            </page>
+
+                            <page string="Email">
+                                <group colspan="4" col="4" name="email_group">
+                                    <separator string="CRM:" colspan="4"/>
+                                    <field name="email_pricelist" />
+                                    <field name="email_promotional" />
+                                    <separator string="Offerte:" colspan="4"/>
+                                    <field name="email_quotation" />
+                                    <field name="email_order" />
+                                    <field name="email_confirmation" />
+                                    <separator string="Fatture:" colspan="4"/>
+                                    <field name="email_ddt" />
+                                    <field name="email_picking" />
+                                    <field name="email_invoice" />
+                                    <field name="email_payment" />
+                                </group>
+                            </page>
+
+                            <page string="Indirizzi" attrs="{'invisible': [('is_company','=',False)]}" modifiers="{'invisible': [['is_company', '=', false]]}">
+                                <field name="address_ids" context="{'default_parent_id': active_id, 'default_is_address':1, 'default_name': name}" mode="tree" />
+                            </page>
+
+                            <page string="CRM">
+                                <group colspan="4" col="4">
+                                    <separator string="Extra info gestionale" colspan="4"/>
+                                    <field name="type_id" />
+                                    <field name="zone_id" />
+                                </group>
+                            </page>
+                            <page name="internal_notes" string="Note Interne">
+                                <field name="comment" placeholder="Put an internal note..." />
+                            </page>
+                            <!--<page string="FIDO">
+                                <group colspan="4" col="4">
+                                    <separator string="FIDO" colspan="4"/>
+                                    <field name="fido_ko" />
+                                    <newline/>
+                                    <field name="fido_date" attrs="{'invisible':[('fido_ko', '=', True)]}" modifiers="{'invisible': [['fido_ko', '=', true]]}"/>
+                                    <field name="fido_total" attrs="{'invisible':[('fido_ko', '=', True)]}" modifiers="{'invisible': [['fido_ko', '=', true]]}"/>
+                                    <field name="uncovered_state" readonly="1"/>
+                                    <field name="uncovered_amount" readonly="1"/>
+                                    <separator string="Apri pagamento" colspan="4"/>
+                                    <field name="open_payment_ids" readonly="1" nolabel="1" colspan="4" readonly="1"/>
+                                    <separator string="Apri ordine" colspan="4"/>
+                                    <field name="open_order_ids" readonly="1" nolabel="1" colspan="4" readonly="1"/>
+                                    <separator string="Apri DDT" colspan="4"/>
+                                    <field name="open_picking_ids" readonly="1" nolabel="1" colspan="4" readonly="1"/>
+                                </group>
+                            </page>-->
+                            <page name="sales_purchases" string="Vendite e Acquisti">
+                                <group>
+                                    <group>
+                                        <field name="user_id" context="{'default_groups_ref': ['base.group_partner_manager']}" />
+                                        <field name="section_id" completion="1" invisible="1" modifiers="{'invisible': true}"/>
+                                        <field name="is_agent" />
+                                        <field name="sql_agent_code" />
+                                        <field name="agent_id" />
+                                        <field name="user_agent_id" />
+                                        <field name="company_id" options="{'no_create': True}" invisible="1" modifiers="{'invisible': true}"/>
+                                    </group>
+                                    <group>
+                                        <field name="customer" />
+                                        <field name="supplier" />
+                                        <field name="is_vector" />
+                                        <field name="transport_number" attrs="{'invisible':[('is_vector','=',False)]}" modifiers="{'invisible': [['is_vector', '=', false]]}"/>
+                                        <field name="default_carrier_id" attrs="{'invisible':[('is_vector','=',True)]}" modifiers="{'invisible': [['is_vector', '=', true]]}"/>
+                                    </group>
+                                    <group>
+                                        <field name="ref" />
+                                        <field name="csv_import_code" />
+                                        <field name="show_codebar" />
+                                        <field name="sql_import" readonly="1" readonly="1"/>
+                                        <field name="sql_customer_code" />
+                                        <field name="sql_supplier_code" />
+                                        <field name="sql_destination_code" />
+                                        <field name="lang" />
+                                        <separator string="Sconto concesso:" colspan="4"/>
+                                        <field name="discount_rates" on_change="onchange_discount_rates(discount_rates)" />
+                                        <field name="discount_value" />
+                                        <newline/>
+                                        <field name="date" />
+                                    </group>
+                                    <group>
+                                        <field name="active" />
+                                        <field name="use_partic" />
+                                        <field name="opt_out" />
+                                        <field name="used_campaign" />
+                                        <field name="flash_sale" />
+                                        <field name="notify_email" widget="radio" modifiers="{'required': true}"/>
+                                    </group>
+                                    <group string="Informazioni spedizione">
+                                        <field name="goods_description_id" widget="selection" />
+                                        <field name="carriage_condition_id" widget="selection" />
+                                        <field name="transportation_reason_id" widget="selection" />
+                                        <field name="transportation_method_id" widget="selection" />
+                                    </group>
+                                </group>
+                                <group>
+                                    <group name="pricelists" attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)]}" modifiers="{'invisible': [['is_company', '=', false], ['parent_id', '!=', false]]}">
+                                        <field name="property_product_pricelist" />
+                                        <field name="property_product_pricelist_purchase" />
+                                        <field name="sale_currency_id" />
+                                    </group>
+                                    <group>
+                                        <field name="property_stock_customer" domain="[('usage','=','customer')]" />
+                                        <field name="property_stock_supplier" domain="[('usage','=','supplier')]" />
+                                        <field name="property_delivery_carrier" />
+                                    </group>
+                                    <div name="parent_pricelists" attrs="{'invisible': ['|',('is_company','=',True),('parent_id','=',False)]}" modifiers="{'invisible': ['|', ['is_company', '=', true], ['parent_id', '=', false]]}">
+                                        <p>
+                                            Pricelists are managed on 
+                                            <button name="open_commercial_entity" type="object" string="the parent company" class="oe_link"/>
+                                        </p>
+                                    </div>
+                                </group>
+                            </page>
+
+                            <page string="Contabilità" col="4" name="accounting" attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)]}" modifiers="{'invisible': [['is_company', '=', false], ['parent_id', '!=', false]]}">
+                                <group>
+                                    <group>
+                                        <field name="property_account_position" widget="selection" />
+                                        <field name="cost_currency_id" />
+                                        <field name="transport_id" />
+                                        <label for="vat"/>
+                                        <div name="vat_info">
+                                            <field name="vat" on_change="vat_change(vat)" placeholder="e.g. IT0533192309" class="oe_inline" />
+                                            <button colspan="2" name="button_check_vat" string="Verifica Validità" type="object" icon="gtk-execute" class="oe_inline"/>
+                                            <field name="vat_subjected" class="oe_inline" />
+                                        </div>
+                                        <label for="fiscalcode"/>
+                                        <div name="fiscalcode_info">
+                                            <field name="fiscalcode" class="oe_inline" />
+                                            <button name="647" string="Calcola C.F." type="action" icon="gtk-execute" colspan="2"/>
+                                            <field name="individual" colspan="1" invisible="1" modifiers="{'invisible': true}"/>
+                                            <group name="private">
+                                                <field name="is_private" />
+                                                <newline/>
+                                                <field name="private_name" attrs="{'required':[('is_private','=',True)]}" modifiers="{'required': [['is_private', '=', true]]}"/>
+                                                <field name="private_surname" attrs="{'required':[('is_private','=',True)]}" modifiers="{'required': [['is_private', '=', true]]}"/>
+                                            </group>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <field name="last_reconciliation_date" />
+                                    </group>
+                                    <group>
+                                        <field name="property_account_receivable" modifiers="{'required': true}"/>
+                                        <field name="property_payment_term" widget="selection" />
+                                        <group colspan="4" col="4">
+                                            <separator string="Particolarità giorni pagamento" colspan="4"/>
+                                            <field name="pay_days_fix_delivery" />
+                                            <field name="pay_days_fix_delivery_extra" attrs="{'invisible':[('pay_days_fix_delivery','=',0)]}" modifiers="{'invisible': [['pay_days_fix_delivery', '=', 0]]}"/>
+                                            <field name="pay_days_m1" />
+                                            <field name="pay_days_m1_days" />
+                                            <field name="pay_days_m2" />
+                                            <field name="pay_days_m2_days" />
+                                        </group>
+                                        <field name="credit" readonly="1"/>
+                                        <field name="credit_limit" />
+                                    </group>
+                                    <group>
+                                        <field name="property_account_payable" modifiers="{'required': true}"/>
+                                        <field name="property_supplier_payment_term" widget="selection" />
+                                        <field name="debit" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" />
+                        <field name="message_ids" widget="mail_thread" options="{'display_log_button': true, 'thread_level': 1}" />
+                    </div>
+                </form>
+            </field>
+        </record>
+    </data>
+    
+</openerp>
+
