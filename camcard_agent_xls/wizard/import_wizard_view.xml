@@ -3,12 +3,12 @@
     <data>
         <record id="view_res_partner_camcard_import_wizard" model="ir.ui.view">
             <field name="name">Camcard import:</field>
-            <field name="model">res.partner.camcard.import.wizard</field>
+            <field name="model">res.partner.camcard.import.xls.wizard</field>
             <field name="arch" type="xml">
               <form string="Fabric status">
-                  <!--<group>
-                     <field name="type_id" />
-                  </group>-->
+                  <group>
+                     <field name="mode" />
+                  </group>
                   
                   <footer>
                         <button name="camcard_import_xls" string="Import" type="object" class="oe_highlight"/>
@@ -21,7 +21,7 @@
         <record id="action_res_partner_camcard_import_wizard" model="ir.actions.act_window">
             <field name="name">Import camcard XLS</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">res.partner.camcard.import.wizard</field>
+            <field name="res_model">res.partner.camcard.import.xls.wizard</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_res_partner_camcard_import_wizard"/>

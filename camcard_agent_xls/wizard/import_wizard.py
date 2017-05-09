@@ -22,49 +22,126 @@
 import os
 import sys
 import logging
-import openerp
-import base64
 import xlrd
+import openerp
 import openerp.netsvc as netsvc
 import openerp.addons.decimal_precision as dp
-from openerp import models, api, fields
-from openerp.osv import osv
-from openerp.tools.translate import _
-from openerp.exceptions import Warning
+from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from openerp import SUPERUSER_ID
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp import SUPERUSER_ID#, api
 from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
     DEFAULT_SERVER_DATETIME_FORMAT, 
     DATETIME_FORMATS_MAP, 
     float_compare)
 
+
 _logger = logging.getLogger(__name__)
 
 
-class ResPartnerCcamcardImportWizard(models.TransientModel):
+class ResPartnerCamcardImportWizard(osv.osv_memory):
     ''' Wizard import camcard contact 
     '''
-    _name = 'res.partner.camcard.import.wizard'
+    _name = 'res.partner.camcard.import.xls.wizard'
 
     _columns = {
         #'type_id': fields.many2one('crm.tracking.campaign', 'Campaign'),
+        'mode': fields.selection([
+            ('camcard', 'Camcard'),
+            ('xls', 'XLS (name, email)'),
+            ], 'Mode', required=True),
         }
 
+    _defaults = {
+        # Default value:
+        'mode': lambda *x: 'camcard',
+        }
+
+    # Utility:
+    def name_email_import_xls(self, cr, uid, ids, sheet, context=None):
+        ''' Import name and email with same wizard
+        '''
+        # Pool used:
+        partner_pool = self.pool.get('res.partner')
+
+        start_row = 1 # no header
+
+        for row in range(1, sheet.nrows):
+            # Read fields:            
+            name = sheet.cell(row, 0).value
+            email = sheet.cell(row, 1).value
+
+            if not name:
+                _logger.error('End import, no name: %s' % row)
+                break
+
+            if not email:
+                _logger.error('Yump mail jump line: %s' % row)
+                continue
+
+            data = {
+                'is_company': True,
+                'customer': False,
+                'supplier': False,
+                'user_id': uid,
+                'name': name,
+                'email': email.lower(),
+                #'newsletter_category_id': newsletter_category_id,
+                #'type_id': type_id, # TODO
+                }
+                
+            partner_ids = partner_pool.search(cr, uid, [
+                ('email', '=', email),
+                ], context=context)    
+            if partner_ids:    
+                #partner_pool.write(cr, uid, partner_ids, data, context=context)
+                _logger.warning('%s Mail yet present: %s' % (row, email))
+            else:
+                partner_pool.create(cr, uid, data, context=context)
+                _logger.info('%s Create %s' % (row, name))        
+        return True
+    
     def camcard_import_xls(self, cr, uid, ids, context=None):
         ''' Camcard import procedure
         '''
         assert len(ids) == 1, 'Only one wizard record!'        
+        
         wiz_proxy = self.browse(cr, uid, ids, context=context)[0]
+        mode = wiz_proxy.mode
         # type_id = wiz_proxy.type_id, # TODO
 
         # Pool used:
         partner_pool = self.pool.get('res.partner')
         newsletter_pool = self.pool.get('crm.newsletter.category')
         
+        # Read base folder for mailing
+        camcard_path = self.pool.get('res.company').get_base_local_folder(
+            cr, uid, subfolder='camcard', context=context)
+        camcard_path = os.path.expanduser(camcard_path)  
+
+        # ---------------------------------------------------------------------
+        # Read XLS camcard file sheet:
+        # ---------------------------------------------------------------------        
+        filename = os.path.join(camcard_path, '%s.xlsx' % mode)
+        try:
+            book = xlrd.open_workbook(filename)
+            _logger.info('Read XLSX file: %s' % filename)
+        except:
+            raise osv.except_osv(
+                _('Error:'), 
+                _('No camcard XLSX file: %s') % filename,
+                )
+        sheet = book.sheet_by_index(0)
+
+        # Mode > xls: 
+        if mode == 'xls': 
+            return  self.name_email_import_xls(
+                cr, uid, ids, sheet, context=context)
+        
+        # Mode > camcard:    
         # Read newsletter elements:
         newsletter_db = {}
         newsletter_ids = newsletter_pool.search(cr, uid, [], context=context)
@@ -72,24 +149,6 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
                 cr, uid, newsletter_ids, context=context):
             if newsletter.name not in newsletter_db:
                 newsletter_db[newsletter.name] = newsletter.id
-        
-        # Read base folder for mailing
-        camcard_path = self.pool.get('res.company').get_base_local_folder(
-            cr, uid, subfolder='camcard', context=context)
-        camcard_path = os.path.expanduser(camcard_path)  
-            
-        # ---------------------------------------------------------------------
-        # Read XLS camcard file sheet:
-        # ---------------------------------------------------------------------
-        filename = os.path.join(camcard_path, 'camcard.xlsx')
-        try:
-            book = xlrd.open_workbook(filename)
-        except:
-            raise osv.except_osv(
-                _('Error:'), 
-                _('No camcard XLSX file: %s') % filename,
-                )
-        sheet = book.sheet_by_index(0)
 
         # ---------------------------------------------------------------------
         # Read all mail in error mail folder
@@ -206,23 +265,5 @@ class ResPartnerCcamcardImportWizard(models.TransientModel):
             else:                
                 partner_pool.create(cr, uid, data, context=context)
                 _logger.info('%s Create %s' % (row, key))
-        
-        '''model_pool = self.pool.get('ir.model.data')
-        view_id = model_pool.get_object_reference('module_name', 'view_res_partner_newsletter_tree')[1]
-    
-        return {
-            'type': 'ir.actions.act_window',
-            'name': _('Result for view_name'),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            #'res_id': 1,
-            'res_model': 'model.name',
-            'view_id': view_id, # False
-            'views': [(False, 'tree'), (False, 'form')],
-            'domain': [],
-            'context': context,
-            'target': 'current', # 'new'
-            'nodestroy': False,
-            }'''
         return True
 
