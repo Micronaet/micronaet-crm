@@ -18,22 +18,23 @@
 ###############################################################################
 
 {
-    'name': '',
+    'name': 'CRM view',
     'version': '0.1',
-    'category': '',
+    'category': 'CRM',
     'description': '''        
+        Form view for manage CRM inforamtions
         ''',
     'author': 'Micronaet S.r.l. - Nicola Riolini',
     'website': 'http://www.micronaet.it',
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'crm',
         ],
     'init_xml': [],
     'demo': [],
     'data': [
-        #'security/ir.model.access.csv',    
-        #'_view.xml',
+        'crm_view.xml',
         ],
     'active': False,
     'installable': True,

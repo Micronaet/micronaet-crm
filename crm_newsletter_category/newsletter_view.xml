@@ -72,7 +72,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_newsletter_tree"/>
             <field name="search_view_id" ref="view_res_partner_newsletter_search"/>            
-            <field name="context">{'default_is_company': True}</field>
+            <field name="context">{'default_is_company': True,'default_customer': False,'default_supplier': False}</field>
             <field name="domain">[('is_company', '=', True),('parent_id','=',False),('is_address', '=', False)]</field>
         </record>
         <menuitem 
