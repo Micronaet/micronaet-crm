@@ -1,0 +1,176 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* catalog_management
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:24+0000\n"
+"PO-Revision-Date: 2017-08-04 15:08+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: catalog_management
+#: model:ir.actions.act_window,name:catalog_management.action_product_product_catalog
+#: model:ir.ui.menu,name:catalog_management.menu_product_product_catalog
+#: view:product.product.catalog:catalog_management.view_product_product_catalog_form
+#: view:product.product.catalog:catalog_management.view_product_product_catalog_tree
+#: field:product.product.catalog,name:0 field:product.template,catalog_ids:0
+#: selection:product.template,status:0
+msgid "Catalog"
+msgstr "Catalogo"
+
+#. module: catalog_management
+#: field:product.product.catalog,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: catalog_management
+#: field:product.product.catalog,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: catalog_management
+#: field:product.product.catalog,from_date:0
+msgid "From date"
+msgstr "Dalla data"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+#: field:product.template,status:0
+msgid "Gamma"
+msgstr "Gamma"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Gamma>catalog"
+msgstr "Gamma>catalogo"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Gamma>obsolete"
+msgstr "Gamma>obsoleto"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Gamma>out"
+msgstr "Gamma>fuori"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Gamma>sample"
+msgstr "Gamma>campione"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Gamma>stock"
+msgstr "Gamma>stock"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Gamma>todo"
+msgstr "Gamma>da fare"
+
+#. module: catalog_management
+#: field:product.product.catalog,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: catalog_management
+#: field:product.product.catalog,write_uid:0
+msgid "Last Updated by"
+msgstr "Aggiornamento di"
+
+#. module: catalog_management
+#: field:product.product.catalog,write_date:0
+msgid "Last Updated on"
+msgstr "Aggiornamento il"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+msgid "Not sortable"
+msgstr "Non ordinabile"
+
+#. module: catalog_management
+#: view:product.product.catalog:catalog_management.view_product_product_catalog_form
+#: field:product.product.catalog,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Obsolete"
+msgstr "Obsoleto"
+
+#. module: catalog_management
+#: field:product.product,sortable_from:0
+msgid "Order from"
+msgstr "Da ordine"
+
+#. module: catalog_management
+#: field:product.product,sortable_to:0
+msgid "Order to"
+msgstr "All'ordine"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Out catalog"
+msgstr "Fuori catalogo"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Padre"
+msgstr "Padre"
+
+#. module: catalog_management
+#: model:ir.model,name:catalog_management.model_product_product
+msgid "Product"
+msgstr "Prodotto"
+
+#. module: catalog_management
+#: model:ir.model,name:catalog_management.model_product_template
+msgid "Product Template"
+msgstr "Modello Prodotto"
+
+#. module: catalog_management
+#: model:ir.model,name:catalog_management.model_product_product_catalog
+msgid "Product catalog"
+msgstr "Catalogo prodotto"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Promo"
+msgstr "Promo"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Sample"
+msgstr "Campione"
+
+#. module: catalog_management
+#: view:product.product:catalog_management.view_product_productcatalog_search
+#: field:product.product,sortable:0
+msgid "Sortable"
+msgstr "Ordinabile"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Stock"
+msgstr "Stock"
+
+#. module: catalog_management
+#: field:product.product.catalog,to_date:0
+msgid "To date"
+msgstr "Alla data"
+
+#. module: catalog_management
+#: selection:product.template,status:0
+msgid "Todo"
+msgstr "Da fare"

@@ -1,0 +1,150 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* camcard_agent_xls
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:23+0000\n"
+"PO-Revision-Date: 2017-08-04 14:48+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: camcard_agent_xls
+#: help:res.partner,camcard_text:0
+msgid "All data will be placed here after parsed in partner fields"
+msgstr ""
+"Tutti i dati vengono messi qui dopo essere analizzati nei campi partner"
+
+#. module: camcard_agent_xls
+#: view:res.partner:camcard_agent_xls.view_res_partner_camcard_search
+#: selection:res.partner.camcard.import.xls.wizard,mode:0
+msgid "Camcard"
+msgstr "Camcard"
+
+#. module: camcard_agent_xls
+#: field:res.partner,camcard_text:0
+msgid "Camcard data"
+msgstr "Dati camcard"
+
+#. module: camcard_agent_xls
+#: field:res.partner,camcard_key:0
+msgid "Camcard key"
+msgstr "Chiave camcard"
+
+#. module: camcard_agent_xls
+#: field:res.partner,camcard:0
+msgid "Camcard origin"
+msgstr "Origine camcard"
+
+#. module: camcard_agent_xls
+#: model:ir.actions.act_window,name:camcard_agent_xls.action_res_partner_camcard_tree
+#: model:ir.ui.menu,name:camcard_agent_xls.menu_res_partner_camcard
+msgid "Camcard partner"
+msgstr "Partner camcard"
+
+#. module: camcard_agent_xls
+#: view:res.partner.camcard.import.xls.wizard:camcard_agent_xls.view_res_partner_camcard_import_wizard
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: camcard_agent_xls
+#: field:res.partner.camcard.import.xls.wizard,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: camcard_agent_xls
+#: field:res.partner.camcard.import.xls.wizard,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: camcard_agent_xls
+#: field:res.partner,camcard_date:0
+msgid "Date"
+msgstr "Date"
+
+#. module: camcard_agent_xls
+#: code:addons/camcard_agent_xls/wizard/import_wizard.py:134
+#, python-format
+msgid "Error:"
+msgstr "Errore:"
+
+#. module: camcard_agent_xls
+#: view:res.partner.camcard.import.xls.wizard:camcard_agent_xls.view_res_partner_camcard_import_wizard
+msgid "Fabric status"
+msgstr "Stato materiale"
+
+#. module: camcard_agent_xls
+#: field:res.partner.camcard.import.xls.wizard,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: camcard_agent_xls
+#: view:res.partner.camcard.import.xls.wizard:camcard_agent_xls.view_res_partner_camcard_import_wizard
+msgid "Import"
+msgstr "Importato"
+
+#. module: camcard_agent_xls
+#: model:ir.actions.act_window,name:camcard_agent_xls.action_res_partner_camcard_import_wizard
+#: model:ir.ui.menu,name:camcard_agent_xls.menu_res_partner_camcard_import_wizard
+msgid "Import camcard XLS"
+msgstr "Imposta camcard XLS"
+
+#. module: camcard_agent_xls
+#: field:res.partner.camcard.import.xls.wizard,write_uid:0
+msgid "Last Updated by"
+msgstr "Aggiornato da"
+
+#. module: camcard_agent_xls
+#: field:res.partner.camcard.import.xls.wizard,write_date:0
+msgid "Last Updated on"
+msgstr "Aggiornato il"
+
+#. module: camcard_agent_xls
+#: field:res.partner.camcard.import.xls.wizard,mode:0
+msgid "Mode"
+msgstr "Modalità"
+
+#. module: camcard_agent_xls
+#: code:addons/camcard_agent_xls/wizard/import_wizard.py:135
+#, python-format
+msgid "No camcard XLSX file: %s"
+msgstr "Nessun file camcard XLSX: %s"
+
+#. module: camcard_agent_xls
+#: view:res.partner:camcard_agent_xls.view_res_partner_camcard_tree
+msgid "Open partner"
+msgstr "Apri partner"
+
+#. module: camcard_agent_xls
+#: model:ir.model,name:camcard_agent_xls.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: camcard_agent_xls
+#: code:addons/camcard_agent_xls/camcard.py:55
+#, python-format
+msgid "Partner form manadatory"
+msgstr "Scheda partner obbligatoria"
+
+#. module: camcard_agent_xls
+#: view:res.partner:camcard_agent_xls.view_res_partner_camcard_tree
+msgid "String"
+msgstr "Stringa"
+
+#. module: camcard_agent_xls
+#: selection:res.partner.camcard.import.xls.wizard,mode:0
+msgid "XLS (name, email)"
+msgstr "XLS (nome, email)"
+
+#. module: camcard_agent_xls
+#: view:res.partner.camcard.import.xls.wizard:camcard_agent_xls.view_res_partner_camcard_import_wizard
+msgid "or"
+msgstr "o"

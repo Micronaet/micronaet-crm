@@ -1,0 +1,161 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* newsletter_feedback
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:28+0000\n"
+"PO-Revision-Date: 2017-08-06 11:07+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: newsletter_feedback
+#: field:res.partner,newsletter_ids:0
+msgid "Activity log"
+msgstr "Log attività"
+
+#. module: newsletter_feedback
+#: code:addons/newsletter_feedback/feedback.py:97
+#, python-format
+msgid "Cannot read XLS file: %s"
+msgstr "Impossibile leggere il file XLS: %s"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,name:0
+msgid "Category"
+msgstr "Categoia"
+
+#. module: newsletter_feedback
+#: model:ir.model,name:newsletter_feedback.model_res_company
+msgid "Companies"
+msgstr "Aziende"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,create_uid:0
+#: field:crm.newsletter.feedback.log,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,create_date:0
+#: field:crm.newsletter.feedback.log,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.log,date:0
+msgid "Date"
+msgstr "Data"
+
+#. module: newsletter_feedback
+#: code:addons/newsletter_feedback/feedback.py:96
+#, python-format
+msgid "Error XLSX"
+msgstr "Errore XLSX"
+
+#. module: newsletter_feedback
+#: help:crm.newsletter.feedback.log,category_id:0
+#: help:res.partner,news_feedback_id:0
+msgid "Esit of newsletter"
+msgstr "Esito della newsletter"
+
+#. module: newsletter_feedback
+#: field:res.partner,news_feedback_date:0
+msgid "Feedback date"
+msgstr "Data feedback"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,id:0
+#: field:crm.newsletter.feedback.log,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: newsletter_feedback
+#: view:res.company:newsletter_feedback.view_res_company_temp_script_form
+msgid "Import esit"
+msgstr "Importa esito"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,write_uid:0
+#: field:crm.newsletter.feedback.log,write_uid:0
+msgid "Last Updated by"
+msgstr "Aggiornamento di"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,write_date:0
+#: field:crm.newsletter.feedback.log,write_date:0
+msgid "Last Updated on"
+msgstr "Aggiornamento il"
+
+#. module: newsletter_feedback
+#: view:res.partner:newsletter_feedback.view_inherit_partner_newsletter_form
+#: view:res.partner:newsletter_feedback.view_partner_newsletter_form
+msgid "Log"
+msgstr "Log"
+
+#. module: newsletter_feedback
+#: view:res.partner:newsletter_feedback.view_inherit_partner_newsletter_form
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#. module: newsletter_feedback
+#: model:ir.model,name:newsletter_feedback.model_crm_newsletter_feedback_log
+msgid "Newsletter activity"
+msgstr "Attività newsletter"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.log,category_id:0
+#: field:res.partner,news_feedback_id:0
+msgid "Newsletter category"
+msgstr "Categoria newsletter"
+
+#. module: newsletter_feedback
+#: model:ir.model,name:newsletter_feedback.model_crm_newsletter_feedback_category
+msgid "Newsletter feedback"
+msgstr "Feedback newsletter"
+
+#. module: newsletter_feedback
+#: view:res.partner:newsletter_feedback.view_partner_newsletter_form
+msgid "Newsletter log"
+msgstr "Log newsletter"
+
+#. module: newsletter_feedback
+#: view:res.company:newsletter_feedback.view_res_company_temp_script_form
+msgid "Newsletter management"
+msgstr "Gestione newsletter"
+
+#. module: newsletter_feedback
+#: help:crm.newsletter.feedback.category,not_newsletter:0
+msgid "No newsletter sent from now"
+msgstr "Nessuna newsletter spedita da ora"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,not_newsletter:0
+msgid "Not use"
+msgstr "Non usato"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.category,note:0
+#: field:crm.newsletter.feedback.log,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.log,opt_out:0
+#: field:res.partner,news_opt_out:0
+msgid "Opt out"
+msgstr "Opt out"
+
+#. module: newsletter_feedback
+#: field:crm.newsletter.feedback.log,partner_id:0
+#: model:ir.model,name:newsletter_feedback.model_res_partner
+msgid "Partner"
+msgstr "Partner"

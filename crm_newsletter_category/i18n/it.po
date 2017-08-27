@@ -1,0 +1,126 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* crm_newsletter_category
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-27 16:24+0000\n"
+"PO-Revision-Date: 2017-08-04 16:03+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Campaign"
+msgstr "Campagna"
+
+#. module: crm_newsletter_category
+#: field:crm.newsletter.category,name:0
+msgid "Category"
+msgstr "Categoria"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Company"
+msgstr "Azienda"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Country"
+msgstr "Nazione"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Create date"
+msgstr "Data creazione"
+
+#. module: crm_newsletter_category
+#: field:crm.newsletter.category,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: crm_newsletter_category
+#: field:crm.newsletter.category,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Group By..."
+msgstr "Raggruppa per..."
+
+#. module: crm_newsletter_category
+#: field:crm.newsletter.category,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: crm_newsletter_category
+#: field:crm.newsletter.category,write_uid:0
+msgid "Last Updated by"
+msgstr "Aggiornato da"
+
+#. module: crm_newsletter_category
+#: field:crm.newsletter.category,write_date:0
+msgid "Last Updated on"
+msgstr "Aggiornato il"
+
+#. module: crm_newsletter_category
+#: model:ir.actions.act_window,name:crm_newsletter_category.action_res_partner_newletter_tree
+#: model:ir.ui.menu,name:crm_newsletter_category.menu_res_partner_newletter
+msgid "Lead partner"
+msgstr "Partner lead"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#. module: crm_newsletter_category
+#: view:crm.newsletter.category:crm_newsletter_category.view_crm_newsletter_category_form
+#: view:crm.newsletter.category:crm_newsletter_category.view_crm_newsletter_category_tree
+#: model:ir.actions.act_window,name:crm_newsletter_category.action_crm_newsletter_category
+#: model:ir.model,name:crm_newsletter_category.model_crm_newsletter_category
+#: model:ir.ui.menu,name:crm_newsletter_category.menu_crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+#: field:res.partner,newsletter_category_id:0
+msgid "Newsletter category"
+msgstr "Categoria newsletter"
+
+#. module: crm_newsletter_category
+#: view:crm.newsletter.category:crm_newsletter_category.view_crm_newsletter_category_form
+#: field:crm.newsletter.category,note:0
+msgid "Note"
+msgstr "Note"
+
+#. module: crm_newsletter_category
+#: model:ir.model,name:crm_newsletter_category.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "Search newsletter partner"
+msgstr "Cerca partner newsletter"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "State"
+msgstr "Provincia"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_tree
+msgid "String"
+msgstr "Stringa"
+
+#. module: crm_newsletter_category
+#: view:res.partner:crm_newsletter_category.view_res_partner_newsletter_search
+msgid "User"
+msgstr "Utente"
