@@ -17,6 +17,7 @@
                     <field name="country_id" />
                     <field name="newsletter_category_id" />
                     <field name="type_id" />
+                    <field name="crm_level" />
                 </tree>
             </field>
         </record>
@@ -82,6 +83,7 @@
                             <field name="country_id" />
                             <field name="newsletter_category_id" />
                             <field name="type_id" />
+                            <field name="crm_level" />
                         </group>
                     </sheet>
                 </form>
@@ -93,14 +95,19 @@
             <field name="arch" type="xml">
                 <search string="Partner CRM" version="7.0">        
                     <field name="name" />
+                    <field name="country_id" />
+                    <field name="newsletter_category_id" />
+                    <field name="type_id" />
+                    <field name="crm_level" />
+                    
                     <field name="crm_level" filter_domain="[('crm_level','=', 0)]"/>
                     <field name="crm_level" filter_domain="[('crm_level','&gt;', 0)]"/>
                     
                     <group expand="4" string="CRM Group">
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
-                        <filter name="group_crm" string="CRM Level" context="{'group_by': 'crm_level'}"/>
                         <filter name="group_newsletter" string="Newsletter" context="{'group_by': 'newsletter_category_id'}"/>
-                        <filter name="group_type" string="Statistic category" context="{'group_by': 'type_id'}"/>
+                        <filter name="group_type" string="Campaign" context="{'group_by': 'type_id'}"/>
+                        <filter name="group_crm" string="CRM Level" context="{'group_by': 'crm_level'}"/>
                     </group>                
                 </search>
             </field>
