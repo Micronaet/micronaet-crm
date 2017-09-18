@@ -31,7 +31,8 @@
     'depends': [
         'base',
         'crm',
-        'crm_newsletter_category',
+        'crm_newsletter_category', # newsletter_category_id
+        'campaign_base', # type_id
         ],
     'init_xml': [],
     'demo': [],

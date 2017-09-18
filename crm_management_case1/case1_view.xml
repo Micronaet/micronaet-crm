@@ -41,7 +41,26 @@
                 </form>
             </field>
         </record>
-        
+        <record model="ir.ui.view" id="view_res_partner_crm_search">
+            <field name="name">res.partner.crm.search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Partner CRM" version="7.0">        
+                    <field name="name" />
+                    <field name="partner_id" filter_domain="[('partner_id','>', 0)]"/>
+                    <field name="partner_id" filter_domain="[('partner_id','=', 0)]"/>              
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_res_partner_crm">
+            <field name="name">res.partner.crm</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_crm_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
     </data>
 </openerp>
 
