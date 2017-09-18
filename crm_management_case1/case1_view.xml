@@ -97,38 +97,10 @@
                     <field name="crm_level" filter_domain="[('crm_level','&gt;', 0)]"/>
                     
                     <group expand="4" string="CRM Group">
-                        <filter name="group_CRM" string="CRM Group" context="{'group_by': 'group_CRM'}"/>
-                        <filter string="Status" context="{'group_by': 'state'}" />
-                    </group>                
-                </search>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="view_model_name_search">
-            <field name="name">model.name.search</field>
-            <field name="model">model.name</field>
-            <field name="arch" type="xml">
-                <search string="String" version="7.0">        
-                    <field name="name" />
-                    <field name="partner_id" filter_domain="[('partner_id','=',self)]"/>
-                    <filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>
-                    <group expand="0" string="Group By...">
-                        <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
-                        <filter string="Status" context="{'group_by': 'state'}" />
-                    </group>                
-                </search>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="view_model_name_search">
-            <field name="name">model.name.search</field>
-            <field name="model">model.name</field>
-            <field name="arch" type="xml">
-                <search string="String" version="7.0">        
-                    <field name="name" />
-                    <field name="partner_id" filter_domain="[('partner_id','=',self)]"/>
-                    <filter name="state_draft" string="Draft state" domain="[('state','=','draft')]"/>
-                    <group expand="0" string="Group By...">
-                        <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
-                        <filter string="Status" context="{'group_by': 'state'}" />
+                        <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                        <filter name="group_crm" string="CRM Level" context="{'group_by': 'crm_level'}"/>
+                        <filter name="group_newsletter" string="Newsletter" context="{'group_by': 'newsletter_category_id'}"/>
+                        <filter name="group_type" string="Statistic category" context="{'group_by': 'type_id'}"/>
                     </group>                
                 </search>
             </field>
@@ -139,6 +111,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_crm_tree"/>
+            <field name="search_view_id" ref="view_res_partner_crm_search"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>        
