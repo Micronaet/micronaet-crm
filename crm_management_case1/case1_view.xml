@@ -27,6 +27,51 @@
                 <form string="Partner CRM" version="7.0">        
                     <sheet>
                         <group col="4" colspan="4">
+                            <field name="image" widget="image" class="oe_left oe_avatar" options="{'preview_image': 'image_medium', 'size': [90, 90]}" />
+                                <div class="oe_title oe_left">
+                                    <div class="oe_edit_only">
+                                        <label for="name" />
+                                            (                                                    
+                                        <field name="is_company" on_change="onchange_type(is_company)" class="oe_inline" />
+                                        <label for="is_company" string="Is company?"/>
+                                        <field name="is_address" />
+                                        <label for="is_address" string="Is address?"/>
+                                            )                                                
+                                    </div>
+                                    <h1>
+                                        <field name="name" default_focus="1" placeholder="Name" required="1" />
+                                    </h1>
+                                    <field name="parent_id" placeholder="Company" domain="[('is_company', '=', True)]" context="{'default_is_company': True}" attrs="{'invisible': ['&amp;',('is_company','=', True),('is_address','=',False)], 'required': [('is_address','=',True)]}" on_change="onchange_address(use_parent_address, parent_id)" />
+                                    <field name="category_id" widget="many2many_tags" placeholder="Tags..." />
+                                    <label for="group_tag_id"/>
+                                    <field name="group_tag_id" attrs="{'invisible':[('is_company','=',False)]}" />
+                                </div>
+                                <div class="oe_right oe_button_box" name="buttons">
+                                    <!--<button class="oe_inline oe_stat_button" type="action" attrs="{'invisible': ['|',('use_partic','=',False),('is_company', '=', False)]}" name="665" icon="fa-list" context="{'search_default_partner_id': active_id}">
+                                        <div>
+                                            Particolarità prezzo
+                                        </div>
+                                    </button>-->
+                                    <!--<button class="oe_inline oe_stat_button" type="action" attrs="{'invisible': [('customer', '=', False)]}" name="392" icon="fa-star" context="{'search_default_partner_id': active_id}" >
+                                        <field string="Opportunità" name="opportunity_count" widget="statinfo" readonly="1"/>
+                                    </button>-->
+                                    <button class="oe_inline oe_stat_button" type="object" name="schedule_meeting" icon="fa-calendar" context="{'partner_id': active_id}">
+                                        <field string="Appointment" name="meeting_count" widget="statinfo" readonly="1" />
+                                    </button>
+                                    <!--<button class="oe_inline oe_stat_button" type="action" name="383" icon="fa-phone" context="{'search_default_partner_id': active_id, 'default_duration': 1.0}">
+                                        <field string="Calls" name="phonecall_count" widget="statinfo" readonly="1" />
+                                    </button>-->
+                                    <!--<button type="action" class="oe_stat_button" id="invoice_button" icon="fa-pencil-square-o" name="663" attrs="{'invisible': [('customer', '=', False)]}" context="{'search_default_partner_id': active_id,'default_partner_id': active_id}">
+                                        <div>
+                                            <strong>
+                                                <field name="total_invoiced" widget="monetary" readonly="1"/>
+                                            </strong>
+                                            <br/>
+                                            Invoiced
+                                        </div>
+                                    </button>-->
+                                </div>
+
                             <field name="name" />
                             <field name="phone" />
                             <field name="mobile" />
