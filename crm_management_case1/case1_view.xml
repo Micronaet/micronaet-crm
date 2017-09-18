@@ -81,6 +81,7 @@
                             <field name="city" />
                             <field name="country_id" />
                             <field name="newsletter_category_id" />
+                            <field name="type_id" />
                         </group>
                     </sheet>
                 </form>
