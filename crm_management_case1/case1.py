@@ -38,4 +38,22 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 
 _logger = logging.getLogger(__name__)
 
+class ResPartner(orm.Model):
+    """ Model name: ResPartner
+    """
+    
+    _inherit = 'res.partner'
+    
+    _columns = {
+        'crm_level': fields.selection([
+            (0, 'No important'),
+            (1, 'Low important'),
+            (2, 'Medium important'),
+            (3, 'Important'),
+            ], 'CRM ')
+        }
+    
+    _defaults = {
+        'crm_level': lambda *x: 0,
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
