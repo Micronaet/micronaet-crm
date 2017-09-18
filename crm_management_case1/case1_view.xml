@@ -47,13 +47,13 @@
             <field name="arch" type="xml">
                 <search string="Partner CRM" version="7.0">        
                     <field name="name" />
-                    <field name="crm_level_0" filter_domain="[('crm_level','=', 0)]"/>
-                    <field name="crm_level_important" filter_domain="[('crm_level','&gt;', 0)]"/>              
+                    <field name="crm_level" filter_domain="[('crm_level','=', 0)]"/>
+                    <field name="crm_level" filter_domain="[('crm_level','&gt;', 0)]"/>              
                 </search>
             </field>
         </record>
         <record model="ir.actions.act_window" id="action_res_partner_crm">
-            <field name="name">res.partner.crm</field>
+            <field name="name">All partner</field>
             <field name="res_model">res.partner</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
