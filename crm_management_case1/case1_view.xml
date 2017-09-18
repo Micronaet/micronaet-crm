@@ -94,10 +94,16 @@
                 <search string="Partner CRM" version="7.0">        
                     <field name="name" />
                     <field name="crm_level" filter_domain="[('crm_level','=', 0)]"/>
-                    <field name="crm_level" filter_domain="[('crm_level','&gt;', 0)]"/>              
+                    <field name="crm_level" filter_domain="[('crm_level','&gt;', 0)]"/>
+                    <group expand="0" string="Group By...">
+                        <filter name="crm_level" string="CRM level" context="{'group_by': 'crm_level_group'}"/>
+                        <filter string="Status" context="{'group_by': 'state'}" />
+                        </group>                
+                    </sheet>
                 </search>
             </field>
         </record>
+        
         <record model="ir.actions.act_window" id="action_res_partner_crm">
             <field name="name">All partner</field>
             <field name="res_model">res.partner</field>
