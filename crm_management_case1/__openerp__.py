@@ -30,7 +30,8 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
-        'crm'
+        'crm',
+        'crm_newsletter_category',
         ],
     'init_xml': [],
     'demo': [],
