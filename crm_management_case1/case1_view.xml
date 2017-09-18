@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <!--res.partner-->
+        <record model="ir.ui.view" id="view_res_partner_crm_tree">
+            <field name="name">res.partner.crm.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Partner CRM">        
+                    <field name="name" />
+                    
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_res_partner_crm_form">
+            <field name="name">res.partner.crm.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Partner CRM" version="7.0">        
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="name" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</openerp>
+
