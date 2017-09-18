@@ -16,7 +16,7 @@
                     <field name="city" />
                     <field name="country_id" />
                     <field name="newsletter_category_id" />
-                    <field name="type_id" />
+                    <!--<field name="type_id" />-->
                 </tree>
             </field>
         </record>
@@ -47,8 +47,8 @@
             <field name="arch" type="xml">
                 <search string="Partner CRM" version="7.0">        
                     <field name="name" />
-                    <field name="partner_id" filter_domain="[('partner_id','>', 0)]"/>
-                    <field name="partner_id" filter_domain="[('partner_id','=', 0)]"/>              
+                    <field name="crm_level" filter_domain="[('crm_level','>', 0)]"/>
+                    <field name="crm_level" filter_domain="[('crm_level','=', 0)]"/>              
                 </search>
             </field>
         </record>
@@ -61,19 +61,10 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
-        
         <menuitem 
-            parent="base.menu_base_partner" 
-            id="crm_case1_root" 
-            name="CRM Management"
-            sequence="1"
-            />
-            <menuitem 
-                parent="crm_case1_root" 
-                id="menu_res_partner_crm" 
-                action="action_res_partner_crm"
-                sequence="10"
-                />
+            parent="" 
+            id="menu_action_openerp_model_tree" 
+            action="view_res_partner_crm_tree"/>
         
     </data>
 </openerp>
