@@ -6,7 +6,7 @@
             <field name="name">res.partner.crm.tree</field>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <tree string="Partner CRM">        
+                <tree string="Partner CRM (green=accounting)" colors="green:sql_destination_code != False or sql_agent_code != False or sql_supplier_code != False or sql_customer_code != False">
                     <field name="name" />
                     <field name="phone" />
                     <field name="mobile" />
@@ -17,6 +17,10 @@
                     <field name="country_id" />
                     <field name="newsletter_category_id" />
                     <field name="type_id" />
+                    <field name="sql_customer_code" />
+                    <field name="sql_supplier_code" />
+                    <field name="sql_destination_code" />
+                    <field name="sql_agent_code" />
                     <field name="crm_level" />
                 </tree>
             </field>
@@ -83,6 +87,12 @@
                             <field name="country_id" />
                             <field name="newsletter_category_id" />
                             <field name="type_id" />
+
+                            <field name="sql_customer_code" />
+                            <field name="sql_supplier_code" />
+                            <field name="sql_destination_code" />
+                            <field name="sql_agent_code" />
+
                             <field name="crm_level" />
                         </group>
                     </sheet>
