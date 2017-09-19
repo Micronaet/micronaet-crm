@@ -179,7 +179,27 @@
             <field name="search_view_id" ref="view_res_partner_crm_search"/>
             <field name="context">{}</field>
             <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>
-        </record>        
+        </record>
+        <record model="ir.actions.act_window" id="action_res_partner_crm_lead_1">
+            <field name="name">All partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_crm_tree"/>
+            <field name="search_view_id" ref="view_res_partner_crm_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False),('crm_level','=', 1)]</field>
+        </record>
+        <record model="ir.actions.act_window" id="action_res_partner_crm_lead_234">
+            <field name="name">All partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_crm_tree"/>
+            <field name="search_view_id" ref="view_res_partner_crm_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False),('crm_level','&gt;', 1)]</field>
+        </record>                              
         <menuitem 
             parent="base.menu_base_partner" 
             id="menu_case1_root" 
