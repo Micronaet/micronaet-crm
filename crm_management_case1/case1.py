@@ -50,7 +50,7 @@ class ResPartner(orm.Model):
             (2, 'Low important'),
             (3, 'Medium important'),
             (4, 'Important'),
-            ], 'CRM ')
+            ], 'CRM')
         }
     
     _defaults = {

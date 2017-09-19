@@ -170,6 +170,16 @@
             <field name="context">{}</field>
             <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>
         </record>        
+        <record model="ir.actions.act_window" id="action_res_partner_crm_lead">
+            <field name="name">All partner</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_crm_tree"/>
+            <field name="search_view_id" ref="view_res_partner_crm_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>
+        </record>        
         <menuitem 
             parent="base.menu_base_partner" 
             id="menu_case1_root" 
@@ -178,13 +188,32 @@
             />        
             <menuitem 
                 parent="menu_case1_root"
-                id="menu_action_openerp_model_tree" 
+                id="menu_case1_all_partner" 
                 action="action_res_partner_crm"
                 sequence="10"
                 />        
+                <menuitem 
+                    parent="menu_case1_all_partner" 
+                    id="menu_case1_all_leads" 
+                    action="action_res_partner_crm_lead"
+                    sequence="10"
+                    />
+                <menuitem 
+                    parent="menu_case1_all_partner" 
+                    id="menu_case1_all_leads_level_1" 
+                    action="action_res_partner_crm_lead_1"
+                    sequence="20"
+                    />
+                <menuitem 
+                    parent="menu_case1_all_partner" 
+                    id="menu_case1_all_leads_level_gt_1" 
+                    action="action_res_partner_crm_lead_234"
+                    sequence="30"
+                    />
+                
             <menuitem 
                 parent="menu_case1_root"
-                id="menu_action_openerp_model_insert_tree" 
+                id="menu_case1_catalogation_leads" 
                 action="action_res_partner_insert_crm"
                 sequence="20"
                 />        
