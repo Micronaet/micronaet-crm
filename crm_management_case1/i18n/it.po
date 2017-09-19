@@ -1,0 +1,158 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* crm_management_case1
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-19 06:29+0000\n"
+"PO-Revision-Date: 2017-09-19 08:31+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: it\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Agent"
+msgstr "Agente"
+
+#. module: crm_management_case1
+#: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm
+#: model:ir.ui.menu,name:crm_management_case1.menu_action_openerp_model_tree
+msgid "All partner"
+msgstr "Tutti i partner"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+msgid "Appointment"
+msgstr "Appuntamento"
+
+#. module: crm_management_case1
+#: field:res.partner,crm_level:0
+msgid "CRM "
+msgstr "CRM "
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "CRM Group"
+msgstr "Gruppo CRM"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "CRM Level"
+msgstr "Livello CRM"
+
+#. module: crm_management_case1
+#: model:ir.ui.menu,name:crm_management_case1.menu_case1_root
+msgid "CRM Management"
+msgstr "Gestione CRM"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Campaign"
+msgstr "Campagna"
+
+#. module: crm_management_case1
+#: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_insert_crm
+#: model:ir.ui.menu,name:crm_management_case1.menu_action_openerp_model_insert_tree
+msgid "Catalog lead"
+msgstr "Catalogazione lead"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+msgid "Company"
+msgstr "Azienda"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Country"
+msgstr "Nazione"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Destination"
+msgstr "Destinazione"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+#: selection:res.partner,crm_level:0
+msgid "Important"
+msgstr "Importante"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+msgid "Is address?"
+msgstr "E' indirizzo?"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+msgid "Is company?"
+msgstr "E' azienda?"
+
+#. module: crm_management_case1
+#: selection:res.partner,crm_level:0
+msgid "Low important"
+msgstr "Bassa importanza"
+
+#. module: crm_management_case1
+#: selection:res.partner,crm_level:0
+msgid "Medium important"
+msgstr "Media importanza"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+msgid "Name"
+msgstr "Nome"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#. module: crm_management_case1
+#: selection:res.partner,crm_level:0
+msgid "No important"
+msgstr "Nessuna importanza"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Not important"
+msgstr "Non importante"
+
+#. module: crm_management_case1
+#: model:ir.model,name:crm_management_case1.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Partner CRM"
+msgstr "Partner CRM"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_insert_tree
+#: view:res.partner:crm_management_case1.view_res_partner_crm_tree
+msgid "Partner CRM (green=accounting)"
+msgstr "Partner CRM (verde=contabilità)"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_search
+msgid "Supplier"
+msgstr "Venditore"
+
+#. module: crm_management_case1
+#: view:res.partner:crm_management_case1.view_res_partner_crm_form
+msgid "Tags..."
+msgstr "Tags..."

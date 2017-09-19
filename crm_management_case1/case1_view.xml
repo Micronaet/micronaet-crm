@@ -25,6 +25,29 @@
                 </tree>
             </field>
         </record>
+        <record model="ir.ui.view" id="view_res_partner_crm_insert_tree">
+            <field name="name">res.partner.crm.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Partner CRM (green=accounting)" colors="green:sql_destination_code != False or sql_agent_code != False or sql_supplier_code != False or sql_customer_code != False" editable="bottom">
+                    <field name="name" />
+                    <field name="phone" />
+                    <field name="mobile" />
+                    <field name="fax" />
+                    <field name="email" />
+                    <field name="street" />
+                    <field name="city" />
+                    <field name="country_id" />
+                    <field name="newsletter_category_id" />
+                    <field name="type_id" />
+                    <field name="sql_customer_code" />
+                    <field name="sql_supplier_code" />
+                    <field name="sql_destination_code" />
+                    <field name="sql_agent_code" />
+                    <field name="crm_level" />
+                </tree>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_res_partner_crm_form">
             <field name="name">res.partner.crm.form</field>
             <field name="model">res.partner</field>
@@ -76,7 +99,7 @@
                                         </div>
                                     </button>-->
                                 </div>
-
+                            <field name="active" />
                             <field name="name" />
                             <field name="phone" />
                             <field name="mobile" />
@@ -110,8 +133,13 @@
                     <field name="type_id" />
                     <field name="crm_level" />
                     
-                    <field name="crm_level" filter_domain="[('crm_level','=', 0)]"/>
-                    <field name="crm_level" filter_domain="[('crm_level','&gt;', 0)]"/>
+                    <filter name="crm_level_0" string="Not important" domain="[('crm_level','=', 0)]"/>
+                    <filter name="crm_level_gt_0" string="Important" domain="[('crm_level', '&gt;', 0)]"/>
+                    
+                    <filter name="is_customer" string="Customer" domain="[('sql_customer_code','!=', 0)]"/>
+                    <filter name="is_supplier" string="Supplier" domain="[('sql_supplier_code','!=', 0)]"/>
+                    <filter name="is_destination" string="Destination" domain="[('sql_destination_code','!=', 0)]"/>
+                    <filter name="is_agent" string="Agent" domain="[('sql_agent_code','!=', 0)]"/>
                     
                     <group expand="4" string="CRM Group">
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
@@ -132,6 +160,16 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>        
+        <record model="ir.actions.act_window" id="action_res_partner_insert_crm">
+            <field name="name">Catalog lead</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_crm_insert_tree"/>
+            <field name="search_view_id" ref="view_res_partner_crm_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>
+        </record>        
         <menuitem 
             parent="base.menu_base_partner" 
             id="menu_case1_root" 
@@ -143,6 +181,12 @@
                 id="menu_action_openerp_model_tree" 
                 action="action_res_partner_crm"
                 sequence="10"
+                />        
+            <menuitem 
+                parent="menu_case1_root"
+                id="menu_action_openerp_model_insert_tree" 
+                action="action_res_partner_insert_crm"
+                sequence="20"
                 />        
     </data>
 </openerp>
