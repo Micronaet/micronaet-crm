@@ -133,13 +133,13 @@
                     <field name="type_id" />
                     <field name="crm_level" />
                     
-                    <filter name="crm_level_0" string="Not important" domain="[('crm_level','=', 0)]"/>
-                    <filter name="crm_level_gt_0" string="Important" domain="[('crm_level', '&gt;', 0)]"/>
+                    <filter name="crm_level_0" string="Not important" domain="[('crm_level','=', 1)]"/>
+                    <filter name="crm_level_gt_0" string="Important" domain="[('crm_level', '&gt;', 1)]"/>
                     
-                    <filter name="is_customer" string="Customer" domain="[('sql_customer_code','!=', 0)]"/>
-                    <filter name="is_supplier" string="Supplier" domain="[('sql_supplier_code','!=', 0)]"/>
-                    <filter name="is_destination" string="Destination" domain="[('sql_destination_code','!=', 0)]"/>
-                    <filter name="is_agent" string="Agent" domain="[('sql_agent_code','!=', 0)]"/>
+                    <filter name="is_customer" string="Customer" domain="[('sql_customer_code','!=', False)]"/>
+                    <filter name="is_supplier" string="Supplier" domain="[('sql_supplier_code','!=', False)]"/>
+                    <filter name="is_destination" string="Destination" domain="[('sql_destination_code','!=', False)]"/>
+                    <filter name="is_agent" string="Agent" domain="[('sql_agent_code','!=', False)]"/>
                     
                     <group expand="4" string="CRM Group">
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>

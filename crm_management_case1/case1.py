@@ -46,14 +46,14 @@ class ResPartner(orm.Model):
     
     _columns = {
         'crm_level': fields.selection([
-            (0, 'No important'),
-            (1, 'Low important'),
-            (2, 'Medium important'),
-            (3, 'Important'),
+            (1, 'No important'),
+            (2, 'Low important'),
+            (3, 'Medium important'),
+            (4, 'Important'),
             ], 'CRM ')
         }
     
     _defaults = {
-        'crm_level': lambda *x: 0,
+        'crm_level': lambda *x: 1,
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
