@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-29 12:12+0000\n"
-"PO-Revision-Date: 2017-09-29 14:12+0100\n"
+"PO-Revision-Date: 2017-09-29 14:14+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr "Agente"
 #: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm_lead
 #: model:ir.ui.menu,name:crm_management_case1.menu_case1_all_leads
 msgid "All lead"
-msgstr "Tutte le lead\t"
+msgstr "Tutte le lead"
 
 #. module: crm_management_case1
 #: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm_lead_234
