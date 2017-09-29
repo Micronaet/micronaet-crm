@@ -47,9 +47,11 @@ class ResPartner(orm.Model):
     def open_original_form_partner(self, cr, uid, ids, context=None):
         '''
         '''
-        #model_pool = self.pool.get('ir.model.data')
-        #view_id = model_pool.get_object_reference(
-        #    cr, uid, 'module_name', 'view_name')[1]
+        model_pool = self.pool.get('ir.model.data')
+        tree_id = model_pool.get_object_reference(
+            cr, uid, 
+            'crm_management_case1', 'view_res_partner_crm_insert_tree'
+            )[1]
     
         return {
             'type': 'ir.actions.act_window',
@@ -59,7 +61,10 @@ class ResPartner(orm.Model):
             'res_id': ids[0],
             'res_model': 'res.partner',
             #'view_id': view_id, # False
-            'views': [(False, 'tree'), (False, 'form')],
+            'views': [
+                (False, 'form'),
+                (tree_id, 'tree'),
+                ],
             'domain': [],
             'context': context,
             'target': 'current', # 'new'
