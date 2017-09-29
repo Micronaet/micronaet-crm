@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-19 06:29+0000\n"
-"PO-Revision-Date: 2017-09-19 08:31+0100\n"
+"POT-Creation-Date: 2017-09-29 12:12+0000\n"
+"PO-Revision-Date: 2017-09-29 14:12+0100\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,8 +23,26 @@ msgid "Agent"
 msgstr "Agente"
 
 #. module: crm_management_case1
+#: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm_lead
+#: model:ir.ui.menu,name:crm_management_case1.menu_case1_all_leads
+msgid "All lead"
+msgstr "Tutte le lead\t"
+
+#. module: crm_management_case1
+#: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm_lead_234
+#: model:ir.ui.menu,name:crm_management_case1.menu_case1_all_leads_level_gt_1
+msgid "All lead important"
+msgstr "Tutte le lead importanti"
+
+#. module: crm_management_case1
+#: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm_lead_1
+#: model:ir.ui.menu,name:crm_management_case1.menu_case1_all_leads_level_1
+msgid "All lead not important"
+msgstr "Tutte le lead non importanti"
+
+#. module: crm_management_case1
 #: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_crm
-#: model:ir.ui.menu,name:crm_management_case1.menu_action_openerp_model_tree
+#: model:ir.ui.menu,name:crm_management_case1.menu_case1_all_partner
 msgid "All partner"
 msgstr "Tutti i partner"
 
@@ -35,8 +53,8 @@ msgstr "Appuntamento"
 
 #. module: crm_management_case1
 #: field:res.partner,crm_level:0
-msgid "CRM "
-msgstr "CRM "
+msgid "CRM"
+msgstr "CRM"
 
 #. module: crm_management_case1
 #: view:res.partner:crm_management_case1.view_res_partner_crm_search
@@ -60,7 +78,7 @@ msgstr "Campagna"
 
 #. module: crm_management_case1
 #: model:ir.actions.act_window,name:crm_management_case1.action_res_partner_insert_crm
-#: model:ir.ui.menu,name:crm_management_case1.menu_action_openerp_model_insert_tree
+#: model:ir.ui.menu,name:crm_management_case1.menu_case1_catalogation_leads
 msgid "Catalog lead"
 msgstr "Catalogazione lead"
 
@@ -132,6 +150,7 @@ msgstr "Non importante"
 
 #. module: crm_management_case1
 #: model:ir.model,name:crm_management_case1.model_res_partner
+#: view:res.partner:crm_management_case1.view_res_partner_crm_insert_tree
 msgid "Partner"
 msgstr "Partner"
 
