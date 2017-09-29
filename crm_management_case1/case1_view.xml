@@ -45,6 +45,7 @@
                     <field name="sql_destination_code" />
                     <field name="sql_agent_code" />
                     <field name="crm_level" />
+                    <button name="open_original_form_partner" string="Partner" type="object" />
                 </tree>
             </field>
         </record>
@@ -168,7 +169,7 @@
             <field name="view_id" ref="view_res_partner_crm_insert_tree"/>
             <field name="search_view_id" ref="view_res_partner_crm_search"/>
             <field name="context">{}</field>
-            <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>
+            <!--<field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>-->
         </record>        
         <record model="ir.actions.act_window" id="action_res_partner_crm_lead">
             <field name="name">All lead</field>
@@ -203,7 +204,7 @@
         <menuitem 
             parent="base.menu_base_partner" 
             id="menu_case1_root" 
-            sequence="1"            
+            sequence="0"            
             name="CRM Management"
             />        
             <menuitem 

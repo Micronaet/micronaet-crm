@@ -44,6 +44,28 @@ class ResPartner(orm.Model):
     
     _inherit = 'res.partner'
     
+    def open_original_form_partner(self, cr, uid, ids, context=None):
+        '''
+        '''
+        #model_pool = self.pool.get('ir.model.data')
+        #view_id = model_pool.get_object_reference(
+        #    cr, uid, 'module_name', 'view_name')[1]
+    
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Partner'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': ids[0],
+            'res_model': 'res.partner',
+            #'view_id': view_id, # False
+            'views': [(False, 'tree'), (False, 'form')],
+            'domain': [],
+            'context': context,
+            'target': 'current', # 'new'
+            'nodestroy': False,
+            }
+    
     _columns = {
         'crm_level': fields.selection([
             (1, 'No important'),
