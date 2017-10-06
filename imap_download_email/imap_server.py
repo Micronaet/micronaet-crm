@@ -48,10 +48,12 @@ class ImapServerCategory(orm.Model):
     _order = 'name'
 
     # TODO create overridable procedure for manage the type of import
-    def parse_imap_message(self, cr, uid, new_mail, context=context):
+    def import_read_email(self, cr, iud, context=None):
         ''' Parse message list passed (ID: message)
         '''
         mgs_ids = []
+        
+        '''
         # Pool used:
         user_pool = self.pool.get('res.users')
         partner_pool = self.pool.get('res.partner')
@@ -122,7 +124,7 @@ class ImapServerCategory(orm.Model):
             # TODO remove file after confirm
             #f_eml.close()
             
-            msg_ids.append(msg_id) # at the end (for delete message)             
+            msg_ids.append(msg_id) # at the end (for delete message)'''
         return msg_ids
     
     _columns = {  
@@ -146,7 +148,7 @@ class ImapServer(orm.Model):
     # Download IMAP server procedure:
     # -------------------------------------------------------------------------
     def force_import_email_document(self, cr, uid, ids, context=None):
-        ''' Force import passed server
+        ''' Force import passed server import all email in object
         '''
         category_pool = self.pool.get('imap.server.category')        
         _logger.info('Start read # %s IMAP server' % (
@@ -156,8 +158,7 @@ class ImapServer(orm.Model):
         now = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         # Read all server:
         for address in self.browse(cr, uid, ids, context=context):
-            new_email = {}
-            
+            delete_ids = []
             server = address.host #'%s:%s' % (address.host, address.port)
 
             # -----------------------------------------------------------------
@@ -189,29 +190,66 @@ class ImapServer(orm.Model):
                 esit, result = mail.fetch(msg_id, '(RFC822)')
                 eml_string = result[0][1]
                 message = email.message_from_string(eml_string)
-                new_mail[msg_id] = message
 
+                record = {
+                    'To': False,
+                    'From': False,
+                    'Date': False,
+                    'Received': False,
+                    'Message-ID': False,
+                    'Subject': False,        
+                    }
                 
-            #_logger.info('End read IMAP %s [tot msg: %s]' % (
-            #    address.name,
-            #    tot,
-            #    ))
+                # Populate parameters:
+                for (param, value) in message.items():
+                    if param in record:
+                        record[param] = value
+
+                mail.create(cr, uid, {
+                    'to': record['To'],
+                    'from': record['From'],
+                    'date': record['Date'],
+                    'received': record['Received'],
+                    'message_id': record['Message-ID'],
+                    'subject': record['Subject'],
+                    'message': message,
+                    'state': 'draft',
+                    'server_id': address.id,
+                    }, context=context)
+                    
+                # -------------------------------------------------------------
+                # Write on file:
+                # -------------------------------------------------------------
+                #eml_file = '%s.eml' % (os.path.join(
+                #    store_folder, 
+                #    str(doc_id),
+                #    ))                
+                #f_eml = open(eml_file, 'w')
+                #f_eml.write(eml_string)
+                # TODO remove file after confirm
+                #f_eml.close()
+
+                # TODO manage commit roll back also in email            
+                mail.store(msg_id, '+FLAGS', '\\Deleted')        
+                _logger.info('Read mail: To: %s - From: %s - Subject: %s' % (
+                    record['To'],
+                    record['From'],
+                    record['Subject'],
+                    ))
                 
-            # Parse message list downloaded:    
-            store_ids = category_pool.parse_imap_message(
-                cr, uid, new_mail, context=context)
+            _logger.info('End read IMAP %s [tot msg: %s]' % (
+                address.name,
+                tot,
+                ))           
+            # -----------------------------------------------------------------
+            # Close operations:    
+            # -----------------------------------------------------------------
+            #mail.expunge() # TODO clean trash bin
+            mail.close()
+            mail.logout()
+            _logger.info('End read IMAP server')
             
-            # Mask as deleted all imported:    
-            for msg_id in store_ids: # Mark as deleted:    
-                mail.store(msg_id, '+FLAGS', '\\Deleted')    
-
-        # -----------------------------------------------------------------
-        # Close operations:    
-        # -----------------------------------------------------------------
-        #mail.expunge() # TODO clean trash bin
-        mail.close()
-        mail.logout()
-        _logger.info('End read IMAP server')
+            category_pool.import_read_email(self, cr, iud, context=context)
         return True
     
     # -------------------------------------------------------------------------
@@ -251,8 +289,37 @@ class ImapServer(orm.Model):
         }
     
     _defaults = {
+        'is_active': lambda *a: True,
         'port': lambda *a: 993,
         'SSL': lambda *a: True,
         'folder': lambda *a: 'INBOX',
         }
+
+class ImapServerMail(orm.Model):
+    """ Model name: Mail imported
+    """
+    _name = 'imap.server.mail'
+    _description = 'IMAP Server mail'
+    _rec_name = 'message_id'
+    _order = 'date'
+        
+    _columns = {
+        'message_id': fields.char('ID', size=64, required=True),
+        'to': fields.char('To', size=100),
+        'form': fields.char('From', size=100),
+        'received': fields.char('Received', size=100),
+        'subject': fields.char('Subject', size=100),
+        'form': fields.char('From', size=100),
+        'date': fields.char('Date', size=30),
+        'message': fields.text('Message'),  
+        'server_id': fields.many2one('imap.server', 'Server'),
+        'state': fields.selection([
+            ('draft', 'Draft'),
+            ('completed', 'Completed'), # Elaborated
+            ], 'State'),
+        }        
+
+    _defaults = {
+        'state': lambda *x: 'draft',
+        }        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:1111111
