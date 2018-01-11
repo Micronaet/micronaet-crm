@@ -83,6 +83,8 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             
         if wiz_browse.country_id:
             domain.append(('country_id', '=', wiz_browse.country_id.id))
+        if wiz_browse.no_country_id:
+            domain.append(('country_id', '!=', wiz_browse.no_country_id.id))
 
         if wiz_browse.state_id:
             domain.append(('state_id', '=', wiz_browse.state_id.id))
@@ -97,16 +99,20 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         # Create Excel WB
         ws_ml = _('Mailing list')
         header_line = ['Nome', 'Email', 'Categoria']
+        column_w = [55, 45, 35]
         xls_pool.create_worksheet(ws_ml)
         xls_pool.write_xls_line(ws_ml, 0, header_line)
+        xls_pool.column_width(ws_ml, column_w)
         
         ws_out = _('Opt out partner')
         xls_pool.create_worksheet(ws_out)
         xls_pool.write_xls_line(ws_out, 0, header_line)
+        xls_pool.column_width(ws_out, column_w)
 
         ws_err = _('Errori mail')
         xls_pool.create_worksheet(ws_err)
         xls_pool.write_xls_line(ws_err, 0, header_line)
+        xls_pool.column_width(ws_err, column_w)
         
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
         
@@ -171,6 +177,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             ], 'Accounting', required=True),
         'country_id': fields.many2one(
             'res.country', 'Country', 
+            ),
+        'no_country_id': fields.many2one(
+            'res.country', 'No Country', 
             ),
         'state_id': fields.many2one(
             'res.country.state', 'State', 

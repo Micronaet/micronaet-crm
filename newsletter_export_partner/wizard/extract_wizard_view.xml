@@ -12,10 +12,13 @@
                        <button name="action_done" string="Done" type="object" icon="gtk-jump-to" class="oe_highlight" />
                    </header>                   
                    <group colspan="4" col="4">
-                       <field name="newsletter_category_ids" widget="many2many_tags"/>
+                       <field name="newsletter_category_ids" widget="many2many_tags" colspan="4"/>
+
                        <field name="accounting" />
-                       <field name="country_id" />
                        <field name="state_id" />                       
+
+                       <field name="country_id" />
+                       <field name="no_country_id" />
                    </group>
                 </form>
             </field>
