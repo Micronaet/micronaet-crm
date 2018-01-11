@@ -31,6 +31,7 @@
         'base',
         'crm_newsletter_category', # category for filter
         'partner_extra_mail', # extra mail address used
+        'newsletter_feedback', # for opt out field
         ],
     'init_xml': [],
     'demo': [],

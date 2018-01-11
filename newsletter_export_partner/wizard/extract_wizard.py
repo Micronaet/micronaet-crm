@@ -52,6 +52,16 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
     def action_done(self, cr, uid, ids, context=None):
         ''' Event for button done
         '''
+        def get_mail(email):
+            ''' Check mail and clean            
+            '''
+            if not email:
+                return False
+            email = email.strip()
+            if '@' not in email:
+                return False                
+            return email
+            
         # Pool used
         partner_pool = self.pool.get('res.partner')
         xls_pool = self.pool.get('excel.writer')            
@@ -85,37 +95,66 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             ])
             
         # Create Excel WB
-        ws_name = _('Mailing list')
-        xls_pool.create_worksheet(ws_name)
-        xls_pool.write_xls_line(ws_name, 0, [
-            'Nome', 'Email', 
-            #'Categoria',
-            ])        
+        ws_ml = _('Mailing list')
+        header_line = ['Nome', 'Email', 'Categoria']
+        xls_pool.create_worksheet(ws_ml)
+        xls_pool.write_xls_line(ws_ml, 0, header_line)
+        
+        ws_out = _('Opt out partner')
+        xls_pool.create_worksheet(ws_out)
+        xls_pool.write_xls_line(ws_out, 0, header_line)
+
+        ws_err = _('Errori mail')
+        xls_pool.create_worksheet(ws_err)
+        xls_pool.write_xls_line(ws_err, 0, header_line)
         
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
-        row = 0
+        
+        row = row_err = row_out = 0
         _logger.warning('Total partner selected: %s' % len(partner_ids))
         for partner in sorted(partner_pool.browse(
                 cr, uid, partner_ids, context=context),
                 key=lambda x: x.name):
-            row += 1
-            if row % 100 == 0:
-                _logger.info('... exporting : %s' % row)
-            if partner.email:
-                xls_pool.write_xls_line(ws_name, row, [
-                    partner.name or '', 
-                    partner.email or '',
-                    #partner.newsletter_category_id.name \
-                    #    if partner.newsletter_category_id else '',
-                    ])        
+                
+            # Data:    
+            name = partner.name            
+            email = get_mail(partner.email)
+            category = partner.newsletter_category_id.name \
+                if partner.newsletter_category_id else '',
+
+            if partner.news_opt_out:
+                row_out += 1
+                xls_pool.write_xls_line(
+                    ws_out, row_out, [name, email, category])
+                continue # No more write on file     
+
+            if email:
+                row += 1
+                xls_pool.write_xls_line(
+                    ws_ml, row, [name, email, category])        
+            else:        
+                row_err += 1
+                xls_pool.write_xls_line(
+                    ws_err, row_err, [name, email, category])
 
             if partner.email_promotional_id:
-                xls_pool.write_xls_line(ws_name, row, [
-                    partner.name or '', 
-                    partner.email_promotional_id.email or '',
-                    #partner.newsletter_category_id.name \
-                    #    if partner.newsletter_category_id else '',
-                    ])        
+                email = get_mail(partner.email_promotional_id.email)
+                if email:
+                    row += 1
+                    xls_pool.write_xls_line(ws_ml, row, [
+                        partner.name, 
+                        email,
+                        partner.newsletter_category_id.name \
+                            if partner.newsletter_category_id else '',
+                        ])        
+                else:        
+                    row_err += 1
+                    xls_pool.write_xls_line(
+                        ws_err, row_err, [name, email, category])
+
+            if not(row % 100):
+                _logger.info('... Exporting: %s' % row)
+                
         return xls_pool.return_attachment(
             cr, uid,
             'Newsletter', 'newsletter.xlsx', context=context)
