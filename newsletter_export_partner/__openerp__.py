@@ -29,7 +29,8 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
-        'crm_newsletter_category',
+        'crm_newsletter_category', # category for filter
+        'partner_extra_mail', # extra mail address used
         ],
     'init_xml': [],
     'demo': [],

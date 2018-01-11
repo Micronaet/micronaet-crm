@@ -52,14 +52,73 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
     def action_done(self, cr, uid, ids, context=None):
         ''' Event for button done
         '''
-        if context is None: 
-            context = {}        
+        # Pool used
+        partner_pool = self.pool.get('res.partner')
+        xls_pool = self.pool.get('excel.writer')            
+
+        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
+
+        # ---------------------------------------------------------------------        
+        # Create domain depend on parameter passed:
+        # ---------------------------------------------------------------------        
+        domain = []        
+        if wiz_browse.newsletter_category_ids:
+            nl_ids = [item.id for item in wiz_browse.newsletter_category_ids]
+            domain.append(('newsletter_category_id', 'in', nl_ids))
+            
+        if wiz_browse.accounting == 'customer':                    
+            domain.append(('sql_customer_code', '!=', False))
+        elif wiz_browse.accounting == 'supplier':                    
+            domain.append(('sql_supplier_code', '!=', False))
+            
+        if wiz_browse.country_id:
+            domain.append(('country_id', '=', wiz_browse.country_id.id))
+
+        if wiz_browse.state_id:
+            domain.append(('state_id', '=', wiz_browse.state_id.id))
+
+        # Last filter:
+        domain.extend([
+            '|', 
+            ('email', '!=', False),
+            ('email_promotional_id', '!=', False),
+            ])
+            
+        # Create Excel WB
+        ws_name = _('Mailing list')
+        xls_pool.create_worksheet(ws_name)
+        xls_pool.write_xls_line(ws_name, 0, [
+            'Nome', 'Email', 
+            #'Categoria',
+            ])        
         
-        wizard_browse = self.browse(cr, uid, ids, context=context)[0]
-        
-        return {
-            'type': 'ir.actions.act_window_close'
-            }
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
+        row = 0
+        _logger.warning('Total partner selected: %s' % len(partner_ids))
+        for partner in sorted(partner_pool.browse(
+                cr, uid, partner_ids, context=context),
+                key=lambda x: x.name):
+            row += 1
+            if row % 100 == 0:
+                _logger.info('... exporting : %s' % row)
+            if partner.email:
+                xls_pool.write_xls_line(ws_name, row, [
+                    partner.name or '', 
+                    partner.email or '',
+                    #partner.newsletter_category_id.name \
+                    #    if partner.newsletter_category_id else '',
+                    ])        
+
+            if partner.email_promotional_id:
+                xls_pool.write_xls_line(ws_name, row, [
+                    partner.name or '', 
+                    partner.email_promotional_id.email or '',
+                    #partner.newsletter_category_id.name \
+                    #    if partner.newsletter_category_id else '',
+                    ])        
+        return xls_pool.return_attachment(
+            cr, uid,
+            'Newsletter', 'newsletter.xlsx', context=context)
 
     _columns = {
         'newsletter_category_ids': fields.many2many(
@@ -67,15 +126,19 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             'partner_id', 'category_id', 
             'Newsletter category'),
         'accounting': fields.selection([
-            ('no', 'No account partner'),
-            ('only', 'Only accounting'),
+            ('customer', 'Customer'),
+            ('supplier', 'Supplier'),
             ('all', 'All'),
             ], 'Accounting', required=True),
+        'country_id': fields.many2one(
+            'res.country', 'Country', 
+            ),
+        'state_id': fields.many2one(
+            'res.country.state', 'State', 
+            ),
         }
 
     _defaults = {
-        'accounting': lambda *x: 'all',
-        }    
+        'accounting': lambda *x: 'customer',
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-
-
