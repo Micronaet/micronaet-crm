@@ -80,6 +80,8 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             domain.append(('sql_customer_code', '!=', False))
         elif wiz_browse.accounting == 'supplier':                    
             domain.append(('sql_supplier_code', '!=', False))
+        elif wiz_browse.accounting == 'destination':
+            domain.append(('sql_destination_code', '!=', False))
             
         if wiz_browse.country_id:
             domain.append(('country_id', '=', wiz_browse.country_id.id))
@@ -171,6 +173,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         'accounting': fields.selection([
             ('customer', 'Customer'),
             ('supplier', 'Supplier'),
+            ('destination', 'Destination'),
             ('all', 'All'),
             ], 'Accounting', required=True),
         'country_id': fields.many2one(
