@@ -19,6 +19,9 @@
 
                        <field name="country_id" />
                        <field name="no_country_id" />
+
+                       <field name="fiscal_id" />
+                       <field name="no_fiscal_id" />
                    </group>
                 </form>
             </field>
