@@ -122,43 +122,39 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 cr, uid, partner_ids, context=context),
                 key=lambda x: x.name):
                 
-            # Data:    
-            email = get_mail(partner.email)
-            name = partner.name            
-            city = partner.city
-            country = partner.country_id.name \
-                if partner.country_id else ''            
-            category = partner.newsletter_category_id.name \
-                if partner.newsletter_category_id else '',
-
+            # Data to export:
+            record = [
+                get_mail(partner.email), 
+                partner.name, 
+                partner.city, 
+                partner.country_id.name if partner.country_id else '', 
+                partner.newsletter_category_id.name \
+                    if partner.newsletter_category_id else '',
+                ]
+            
             if partner.news_opt_out:
                 row_out += 1
                 xls_pool.write_xls_line(
-                    ws_out, row_out, [email, name, city, country, category])
+                    ws_out, row_out, record)
                 continue # No more write on file     
 
-            if email:
+            if record[0]: # email present
                 row += 1
-                xls_pool.write_xls_line(
-                    ws_ml, row, [email, name, city, country, category])
+                xls_pool.write_xls_line(ws_ml, row, record)
             else:        
                 row_err += 1
                 xls_pool.write_xls_line(
-                    ws_err, row_err, [email, name, city, country, category])
+                    ws_err, row_err, record)
 
             if partner.email_promotional_id:
-                email = get_mail(partner.email_promotional_id.email)
-                if email:
+                record[0] = get_mail(partner.email_promotional_id.email)
+                if record[0]: # email
                     row += 1
-                    xls_pool.write_xls_line(ws_ml, row, 
-                        [email, name, city, country, category],
-                        )
+                    xls_pool.write_xls_line(ws_ml, row, record)
                 else:        
                     row_err += 1
                     xls_pool.write_xls_line(
-                        ws_err, row_err, 
-                        [email, name, city, country, category],
-                        )
+                        ws_err, row_err, record)
 
             if not(row % 100):
                 _logger.info('... Exporting: %s' % row)
