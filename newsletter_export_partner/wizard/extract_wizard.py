@@ -88,6 +88,11 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         if wiz_browse.no_country_id:
             domain.append(('country_id', '!=', wiz_browse.no_country_id.id))
 
+        if wiz_browse.fiscal_id:
+            domain.append(('property_account_position', '=', wiz_browse.fiscal_id.id))
+        if wiz_browse.no_fiscal_id:
+            domain.append(('property_account_position', '!=', wiz_browse.no_fiscal_id.id))
+
         if wiz_browse.state_id:
             domain.append(('state_id', '=', wiz_browse.state_id.id))
 
@@ -176,12 +181,23 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             ('destination', 'Destination'),
             ('all', 'All'),
             ], 'Accounting', required=True),
+
+        # Country:
         'country_id': fields.many2one(
             'res.country', 'Country', 
             ),
         'no_country_id': fields.many2one(
             'res.country', 'No Country', 
             ),
+
+        # Fiscal position:
+        'fiscal_id': fields.many2one(
+            'account.fiscal.position', 'Fiscal position', 
+            ),
+        'no_fiscal_id': fields.many2one(
+            'account.fiscal.position', 'No Fiscal position', 
+            ),
+
         'state_id': fields.many2one(
             'res.country.state', 'State', 
             ),
