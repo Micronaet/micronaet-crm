@@ -89,9 +89,11 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             domain.append(('country_id', '!=', wiz_browse.no_country_id.id))
 
         if wiz_browse.fiscal_id:
-            domain.append(('property_account_position', '=', wiz_browse.fiscal_id.id))
+            domain.append(('property_account_position', '=', 
+                wiz_browse.fiscal_id.id))
         if wiz_browse.no_fiscal_id:
-            domain.append(('property_account_position', '!=', wiz_browse.no_fiscal_id.id))
+            domain.append(('property_account_position', '!=', 
+                wiz_browse.no_fiscal_id.id))
 
         if wiz_browse.state_id:
             domain.append(('state_id', '=', wiz_browse.state_id.id))
