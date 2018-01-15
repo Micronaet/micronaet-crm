@@ -84,9 +84,15 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             domain.append(('sql_destination_code', '!=', False))
             
         if wiz_browse.country_id:
-            domain.append(('country_id', '=', wiz_browse.country_id.id))
+            #domain.append(('country_id', '=', wiz_browse.country_id.id))
+            country_id = wiz_browse.country_id.id
+        else:
+            country_id = False    
         if wiz_browse.no_country_id:
-            domain.append(('country_id', '!=', wiz_browse.no_country_id.id))
+            #domain.append(('country_id', '!=', wiz_browse.no_country_id.id))
+            no_country_id = wiz_browse.no_country_id.id
+        else:
+            no_country_id = False    
 
         if wiz_browse.fiscal_id:
             domain.append(('property_account_position', '=', 
@@ -98,12 +104,13 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         if wiz_browse.state_id:
             domain.append(('state_id', '=', wiz_browse.state_id.id))
 
+        _logger.warning('Domain: %s' % (domain, ))
         # Last filter:
-        domain.extend([
-            '|', 
-            ('email', '!=', False),
-            ('email_promotional_id', '!=', False),
-            ])
+        #domain.extend([
+        #    '|', 
+        #    ('email', '!=', False),
+        #    ('email_promotional_id', '!=', False),
+        #    ])
             
         # Create Excel WB
         ws_ml = _('Mailing list')
@@ -130,6 +137,11 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         for partner in sorted(partner_pool.browse(
                 cr, uid, partner_ids, context=context),
                 key=lambda x: x.name):
+            if country_id and partner.country_id.id != country_id:
+                continue    
+
+            if no_country_id and partner.country_id.id == no_country_id:
+                continue
                 
             # Data to export:
             record = [
@@ -167,7 +179,13 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
             if not(row % 100):
                 _logger.info('... Exporting: %s' % row)
-                
+
+        _logger.info('Total %s, Mail: %s, Optout: %s, No mail: %s' % (
+            row + row_err + row_out,
+            row,
+            row_out,            
+            row_err,
+            ))
         return xls_pool.return_attachment(
             cr, uid,
             'Newsletter', 'newsletter.xlsx', context=context)
