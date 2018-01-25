@@ -114,8 +114,17 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             
         # Create Excel WB
         ws_ml = _('Mailing list')
-        header_line = ['Email', 'Nome', 'Paese', 'Nazione', 'Categoria']
-        column_w = [55, 45, 35]
+        header_line = [
+            'Email', 'Nome', 'Paese', 'Nazione', 'Categoria'
+            ]
+        if wiz_browse.extra_data:
+            header_line.extend([
+                'Codice cliente', 
+                'Codice fornitore', 
+                'Codice destinazione',
+                ])    
+            
+        column_w = [55, 45, 35, 30, 20, 20, 20, 20]
         xls_pool.create_worksheet(ws_ml)
         xls_pool.write_xls_line(ws_ml, 0, header_line)
         xls_pool.column_width(ws_ml, column_w)
@@ -152,7 +161,13 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 partner.newsletter_category_id.name \
                     if partner.newsletter_category_id else '',
                 ]
-            
+                
+            if wiz_browse.extra_data:
+                record.extend([
+                    partner.sql_customer_code,
+                    partner.sql_supplier_code,
+                    partner.sql_destination_code,
+                    ])
             if partner.news_opt_out:
                 row_out += 1
                 xls_pool.write_xls_line(
@@ -210,6 +225,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             'res.country', 'No Country', 
             ),
 
+        'extra_data': fields.boolean('Extra dati', 
+            help='Aggiunge colonne non presenti di solito per la importazione',
+            ),
         # Fiscal position:
         'fiscal_id': fields.many2one(
             'account.fiscal.position', 'Fiscal position', 
