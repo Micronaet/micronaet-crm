@@ -71,7 +71,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         # Create domain depend on parameter passed:
         # ---------------------------------------------------------------------        
-        domain = []        
+        domain = []
+        if wiz_browse.no_opt_out:
+            domain.append(('news_opt_out', '=', False))
         if wiz_browse.newsletter_category_ids:
             nl_ids = [item.id for item in wiz_browse.newsletter_category_ids]
             domain.append(('newsletter_category_id', 'in', nl_ids))
@@ -228,6 +230,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         'extra_data': fields.boolean('Extra dati', 
             help='Aggiunge colonne non presenti di solito per la importazione',
             ),
+        'no_opt_out': fields.boolean('No opt-out', 
+            help='Esporta solo quelli che non si sono chiamati fuori',
+            ),
         # Fiscal position:
         'fiscal_id': fields.many2one(
             'account.fiscal.position', 'Fiscal position', 
@@ -243,5 +248,6 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
     _defaults = {
         'accounting': lambda *x: 'customer',
+        'no_opt_out': lambda *x: True,
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
