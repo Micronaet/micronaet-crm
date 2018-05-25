@@ -21,7 +21,7 @@
                         <field name="zip" />
                         <field name="city" />
                         
-                        <field name="agent_id" />
+                        <field name="agent_id" domain="[('is_agent', '=', True)]"/>
                         <field name="country_id" />
                    </group>
                 </form>

@@ -143,15 +143,16 @@ class ModuleWizard(orm.TransientModel):
         f_text = excel_pool.get_format('text')
         
         # Layout:
-        column_width(ws_name, [
+        excel_pool.column_width(ws_name, [
              40,             
              # Address: 
              40, 30, 10, 25,             
              # Email:
-             15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,                       
-             20, 20,
+             35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,                   
+             20, 20, 20, 20, 20,
+             
              # Accounting:                          
-             2, 2, 2,              
+             5, 5, 6,              
              ])
         
         # Title:
@@ -185,19 +186,24 @@ class ModuleWizard(orm.TransientModel):
             _('Email Pagamenti'),
             _('Email PEC'),
             
+            # Contact:
             _('Web'),            
             _('Telefono'),
+            _('Fax'),
+            _('Cellulare'),
+            _('Agente'),
             
             # Accounting:
-            _('Cliente'),
-            _('Fornitore'),
-            _('Destinazione'),
+            _('Cli.'),
+            _('Forn.'),
+            _('Dest.'),
             ], default_format=f_header)
         # XXX no row += 1    
         
         # Loop for every partner:
-        for partner in partner_pool.browse(
-                cr, uid, partner_ids, context=context):
+        for partner in sorted(partner_pool.browse(
+                cr, uid, partner_ids, context=context), 
+                key=lambda p: p.name):
             row += 1            
             excel_pool.write_xls_line(ws_name, row, [
                 partner.name,
@@ -206,7 +212,7 @@ class ModuleWizard(orm.TransientModel):
                 partner.street or '',
                 partner.city or '',
                 partner.zip or '',
-                partner.country_id or '', 
+                partner.country_id.name or '', 
                 
                 # Email:
                 partner.email or '',
@@ -221,8 +227,12 @@ class ModuleWizard(orm.TransientModel):
                 partner.email_payment_address or '',
                 partner.email_pec_address or '',
                 
+                # Contact:
                 partner.website or '',
                 partner.phone or '',
+                partner.fax or '',
+                partner.mobile or '',
+                partner.agent_id.name or '', 
                 
                 # Accounting:
                 'X' if partner.sql_customer_code else '',
@@ -252,7 +262,7 @@ class ModuleWizard(orm.TransientModel):
             ('customer', 'Customer'),
             ('supplier', 'Supplier'),
             ('destination', 'Destination'),            
-            ], 'Mode'),
+            ], 'Mode', required=True),
         }
      
     _defaults = {
