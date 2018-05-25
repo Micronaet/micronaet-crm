@@ -66,10 +66,13 @@ class ModuleWizard(orm.TransientModel):
         domain = []
         
         # Agent:
-        
+        if wiz_browse.agent_id:
+            domain.append(('agent_id', '=', wiz_browse.agent_id.id))
+            
         # Filter name:
         
         # From name:
+        
         # To name
         
         # Country:
@@ -106,7 +109,28 @@ class ModuleWizard(orm.TransientModel):
              name_of_file='partner_wizard.xlsx', context=context)
 
     _columns = {
-        
-        }
+        # Char filter:
+        'name': fields.char('Name', size=64),
+        'from_name': fields.char('From Name', size=64),
+        'to_name': fields.char('To Name', size=64),
 
+        'zip': fields.char('ZIP code', size=5),
+        'city': fields.char('City', size=64),
+
+        # M2O filter:
+        'agent_id': fields.many2one('res.partner', 'Agent'),
+        'country_id': fields.many2one('res.country', 'Country'),
+
+        # Account filter:
+        'mode': fields.selection([
+            ('all', 'All'),
+            ('customer', 'Customer'),
+            ('supplier', 'Supplier'),
+            ('destination', 'Destination'),            
+            ], 'Mode'),
+        }
+     
+    _defaults = {
+        'mode': lambda *x: 'customer',
+        }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
