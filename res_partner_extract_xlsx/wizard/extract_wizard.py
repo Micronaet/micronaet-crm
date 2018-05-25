@@ -66,6 +66,48 @@ class ModuleWizard(orm.TransientModel):
         domain = []
         domain_text = ''
 
+        # -----------------
+        # Filter selection: 
+        # -----------------
+        if wiz_browse.mode == 'all':
+            domain_text += _('Tutti i partner; ')
+        elif wiz_browse.mode == 'customer':
+            domain.append(('sql_customer_code', '!=', False))
+            domain_text += _('Solo clienti; ')
+        elif wiz_browse.mode == 'supplier':
+            domain.append(('sql_supplier_code', '!=', False))
+            domain_text += _('Solo fornitori; ')
+        elif wiz_browse.mode == 'destination':
+            domain.append(('sql_destination_code', '!=', False))
+            domain_text += _('Solo destinazioni; ')
+
+        # ------------
+        # Filter char:        
+        # ------------
+        # Filter name:        
+        if wiz_browse.name:
+            domain.append(('name', '=', wiz_browse.name))
+            domain_text += _('Nome: %s; ') % wiz_browse.name
+
+        # From name:
+        if wiz_browse.from_name:
+            domain.append(('name', '>=', wiz_browse.from_name))
+            domain_text += _('Dal nome: %s; ') % wiz_browse.from_name                                   
+        # To name:
+        if wiz_browse.to_name:
+            domain.append(('name', '<=', wiz_browse.to_name))
+            domain_text += _('Al nome: %s; ') % wiz_browse.to_name
+
+        # Zip:
+        if wiz_browse.zip:
+            domain.append(('zip', '=', wiz_browse.zip))
+            domain_text += _('CAP: %s; ') % wiz_browse.zip           
+            
+        # City:
+        if wiz_browse.city:
+            domain.append(('city', '=', wiz_browse.city))
+            domain_text += _('Citta\': %s; ') % wiz_browse.city             
+
         # ----------------
         # Filter MO field:        
         # ----------------
@@ -77,29 +119,8 @@ class ModuleWizard(orm.TransientModel):
         # Country:
         if wiz_browse.country_id:
             domain.append(('country_id', '=', wiz_browse.country_id.id))
-            # TODO 
-
-            
-        # ------------
-        # Filter char:        
-        # ------------
-        # Filter name:        
-        if wiz_browse.name:
-            domain.append(('name', '=', wiz_browse.name))
-            domain_text += _('Nome: %s; ') % wiz_browse.name
-
-        # From name:
-        if wiz_browse.from_name:
-            domain.append(('name', '>=', wiz_browse.from_name))           
-            # TODO
-            
-        # To name
-        if wiz_browse.to_name:
-            domain.append(('name', '<=', wiz_browse.to_name))
-            # TODO 
-            
-        # TODO ZIP
-        # TODO city    
+            domain_text += _('Nazione: %s; ') % wiz_browse.country_id.name
+        
             
         # TODO Region
         
@@ -123,33 +144,26 @@ class ModuleWizard(orm.TransientModel):
         
         # Layout:
         column_width(ws_name, [
-             40,
-             
+             40,             
              # Address: 
-             40,
-             30,
-             10,
-             25,
-             
+             40, 30, 10, 25,             
              # Email:
-             # TODO 
+             15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,                       
+             20, 20,
+             # Accounting:                          
+             2, 2, 2,              
              ])
         
         # Title:
         excel_pool.write_xls_line(ws_name, row, [
-            'Estrazione partner, filtro utilizzato:',
-            
+            'Estrazione partner, filtro utilizzato:',            
+            domain_text,
             ], default_format=f_title)
+        row += 2    
         
         
         # Header:
         excel_pool.write_xls_line(ws_name, row, [
-            partner.name,
-            partner.street or '',
-            
-            
-            ], default_format=f_header)
-        header = [
             _('Nome'),            
             
             # Address:
@@ -157,30 +171,63 @@ class ModuleWizard(orm.TransientModel):
             _('Città'),
             _('Cap'),
             _('Paese'),
-                        
-            # E-mail:
+            
+            # Email:
             _('Email'),
             _('Email Listini'),
-            # TODO 
-            _('Web'),
+            _('Email Preventivi'),
+            _('Email Conferme'),
+            _('Email DDT'),
+            _('Email Fatture'),
+            _('Email Promozionali'),
+            _('Email Ordini'),
+            _('Email Magazzino'),
+            _('Email Pagamenti'),
+            _('Email PEC'),
             
+            _('Web'),            
             _('Telefono'),
             
             # Accounting:
             _('Cliente'),
             _('Fornitore'),
             _('Destinazione'),
-            ]
+            ], default_format=f_header)
+        # XXX no row += 1    
         
         # Loop for every partner:
         for partner in partner_pool.browse(
                 cr, uid, partner_ids, context=context):
+            row += 1            
             excel_pool.write_xls_line(ws_name, row, [
                 partner.name,
+                
+                # Address:
                 partner.street or '',
+                partner.city or '',
+                partner.zip or '',
+                partner.country_id or '', 
                 
-                # TODO 
+                # Email:
+                partner.email or '',
+                partner.email_pricelist_address or '',
+                partner.email_quotation_address or '',
+                partner.email_confirmation_address or '',
+                partner.email_ddt_address or '',
+                partner.email_invoice_address or '',
+                partner.email_promotional_address or '',
+                partner.email_order_address or '',
+                partner.email_picking_address or '',
+                partner.email_payment_address or '',
+                partner.email_pec_address or '',
                 
+                partner.website or '',
+                partner.phone or '',
+                
+                # Accounting:
+                'X' if partner.sql_customer_code else '',
+                'X' if partner.sql_supplier_code else '',
+                'X' if partner.sql_destination_code else '',                
                 ], default_format=f_text)
         
         return excel_pool.return_attachment(cr, uid, ws_name, 
