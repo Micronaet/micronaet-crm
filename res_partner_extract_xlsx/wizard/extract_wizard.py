@@ -44,37 +44,69 @@ _logger = logging.getLogger(__name__)
 class ModuleWizard(orm.TransientModel):
     ''' Wizard for
     '''
-    _name = 'module.wizard'
+    _name = 'res.partner.extract.report.xlsx.wizard'
 
     # --------------------
     # Wizard button event:
     # --------------------
-    def action_done(self, cr, uid, ids, context=None):
+    def action_print(self, cr, uid, ids, context=None):
         ''' Event for button done
         '''
         if context is None: 
             context = {}        
         
-        wizard_browse = self.browse(cr, uid, ids, context=context)[0]
+        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         
-        return {
-            'type': 'ir.actions.act_window_close'
-            }
+        partner_pool = self.pool.get('res.partner')
+        excel_pool = self.pool.get('excel.writer')
+        
+        # ---------------------------------------------------------------------
+        # Domain creation:
+        # ---------------------------------------------------------------------
+        domain = []
+        
+        # Agent:
+        
+        # Filter name:
+        
+        # From name:
+        # To name
+        
+        # Country:
+        
+        # TODO Region, CAP, City
+        
+        # Search 
+        
+        # ---------------------------------------------------------------------
+        # Excel export:
+        # ---------------------------------------------------------------------
+        # Create:
+        ws_name = 'Partner'
+        excel_pool.create_worksheet(ws_name)
+        row = 0
+        
+        # Title:
+        
+        
+        # Header:
+        header = [
+            _('Nome'),
+            _('Indirizzo'),
+            
+            ]
+        
+        # Loop for every partner:
+        #line = [
+        #    partner.name
+        #    ]
+        # excel_pool.write_xls_line(ws_name, row, line, default_format=False)
+        
+        return excel_pool.return_attachment(cr, uid, ws_name, 
+             name_of_file='partner_wizard.xlsx', context=context)
 
     _columns = {
-        'product_id': fields.many2one(
-            'product.product', 'Product', 
-            help='Product selected in sale order line'),
-        'note': fields.text(
-            'Annotation',
-            help='Annotation about production opened with selected product'),
-        }
         
-    _defaults = {
-        'product_id': lambda s, cr, uid, c: s.default_product_id(cr, uid, context=c),
-        'note': lambda s, cr, uid, c: s.default_note(cr, uid, context=c),
-        }    
+        }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-
-

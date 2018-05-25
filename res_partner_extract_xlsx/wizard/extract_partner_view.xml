@@ -1,7 +1,39 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+       <!-- res.partner.extract.report.xlsx.wizard -->
+       <record id="res_partner_extract_report_xlsx_wizard_view" model="ir.ui.view">
+            <field name="name">Extract partner XSLX</field>
+            <field name="model">res.partner.extract.report.xlsx.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Wizard" version="7.0">
+                   <header>
+                       <button string="Cancel" special="cancel" />
+                       <button name="action_print" string="Print" type="object" icon="gtk-print" class="oe_highlight" />
+                   </header>                   
+                   <group colspan="4" col="4">
+                       
+                       
+                   </group>
+                </form>
+            </field>
+      </record>
 
+      <record model="ir.actions.act_window" id="action_res_partner_extract_report_xlsx_wizard">
+          <field name="name">Extract partner XSLX</field>
+          <field name="res_model">res.partner.extract.report.xlsx.wizard</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+          <field name="view_id" ref="res_partner_extract_report_xlsx_wizard_view"/>
+      </record>      
+      
+      <menuitem 
+          parent="base.menu_partner_form" 
+          id="menu_res_partner_extract_report_xlsx_wizard" 
+          action="action_res_partner_extract_report_xlsx_wizard"
+          sequence="40"
+          />
+      
     </data>
 </openerp>
-
