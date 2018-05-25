@@ -32,6 +32,7 @@
         'excel_export', # Export in Excel file
         'sql_partner_agent', # Field: agent_id
         'sql_partner', # Field for sql_customer_code
+        'partner_extra_mail', # Extra mail
         ],
     'init_xml': [],
     'demo': [],

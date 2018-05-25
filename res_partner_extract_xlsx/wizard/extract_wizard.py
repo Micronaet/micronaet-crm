@@ -64,46 +64,124 @@ class ModuleWizard(orm.TransientModel):
         # Domain creation:
         # ---------------------------------------------------------------------
         domain = []
-        
+        domain_text = ''
+
+        # ----------------
+        # Filter MO field:        
+        # ----------------
         # Agent:
         if wiz_browse.agent_id:
             domain.append(('agent_id', '=', wiz_browse.agent_id.id))
-            
-        # Filter name:
-        
-        # From name:
-        
-        # To name
-        
+            domain_text += _('Agente: %s; ') % wiz_browse.agent_id.name
+
         # Country:
-        
-        # TODO Region, CAP, City
+        if wiz_browse.country_id:
+            domain.append(('country_id', '=', wiz_browse.country_id.id))
+            # TODO 
+
+            
+        # ------------
+        # Filter char:        
+        # ------------
+        # Filter name:        
+        if wiz_browse.name:
+            domain.append(('name', '=', wiz_browse.name))
+            domain_text += _('Nome: %s; ') % wiz_browse.name
+
+        # From name:
+        if wiz_browse.from_name:
+            domain.append(('name', '>=', wiz_browse.from_name))           
+            # TODO
+            
+        # To name
+        if wiz_browse.to_name:
+            domain.append(('name', '<=', wiz_browse.to_name))
+            # TODO 
+            
+        # TODO ZIP
+        # TODO city    
+            
+        # TODO Region
         
         # Search 
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
         
         # ---------------------------------------------------------------------
         # Excel export:
         # ---------------------------------------------------------------------
         # Create:
-        ws_name = 'Partner'
+        ws_name = _('Partner')
         excel_pool.create_worksheet(ws_name)
         row = 0
         
+        # Format:
+        excel_pool.set_format()
+        
+        f_title = excel_pool.get_format('title')
+        f_header = excel_pool.get_format('header')
+        f_text = excel_pool.get_format('text')
+        
+        # Layout:
+        column_width(ws_name, [
+             40,
+             
+             # Address: 
+             40,
+             30,
+             10,
+             25,
+             
+             # Email:
+             # TODO 
+             ])
+        
         # Title:
+        excel_pool.write_xls_line(ws_name, row, [
+            'Estrazione partner, filtro utilizzato:',
+            
+            ], default_format=f_title)
         
         
         # Header:
-        header = [
-            _('Nome'),
-            _('Indirizzo'),
+        excel_pool.write_xls_line(ws_name, row, [
+            partner.name,
+            partner.street or '',
             
+            
+            ], default_format=f_header)
+        header = [
+            _('Nome'),            
+            
+            # Address:
+            _('Indirizzo'),
+            _('Città'),
+            _('Cap'),
+            _('Paese'),
+                        
+            # E-mail:
+            _('Email'),
+            _('Email Listini'),
+            # TODO 
+            _('Web'),
+            
+            _('Telefono'),
+            
+            # Accounting:
+            _('Cliente'),
+            _('Fornitore'),
+            _('Destinazione'),
             ]
         
         # Loop for every partner:
-        #line = [
-        #    partner.name
-        #    ]
-        # excel_pool.write_xls_line(ws_name, row, line, default_format=False)
+        for partner in partner_pool.browse(
+                cr, uid, partner_ids, context=context):
+            excel_pool.write_xls_line(ws_name, row, [
+                partner.name,
+                partner.street or '',
+                
+                # TODO 
+                
+                ], default_format=f_text)
         
         return excel_pool.return_attachment(cr, uid, ws_name, 
              name_of_file='partner_wizard.xlsx', context=context)
