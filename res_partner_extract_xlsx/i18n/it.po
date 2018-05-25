@@ -1,0 +1,124 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* res_partner_extract_xlsx
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 8.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-05-25 15:27+0000\n"
+"PO-Revision-Date: 2018-05-25 17:29+0100\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 1.6.10\n"
+"Language: it\n"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,agent_id:0
+msgid "Agent"
+msgstr "Agente"
+
+#. module: res_partner_extract_xlsx
+#: selection:res.partner.extract.report.xlsx.wizard,mode:0
+msgid "All"
+msgstr "Tutti"
+
+#. module: res_partner_extract_xlsx
+#: view:res.partner.extract.report.xlsx.wizard:res_partner_extract_xlsx.res_partner_extract_report_xlsx_wizard_view
+msgid "Cancel"
+msgstr "Annulla"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,city:0
+msgid "City"
+msgstr "Città"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,country_id:0
+msgid "Country"
+msgstr "Nazione"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,create_uid:0
+msgid "Created by"
+msgstr "Creato da"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,create_date:0
+msgid "Created on"
+msgstr "Creato il"
+
+#. module: res_partner_extract_xlsx
+#: selection:res.partner.extract.report.xlsx.wizard,mode:0
+msgid "Customer"
+msgstr "Clienti"
+
+#. module: res_partner_extract_xlsx
+#: selection:res.partner.extract.report.xlsx.wizard,mode:0
+msgid "Destination"
+msgstr "Destinazioni"
+
+#. module: res_partner_extract_xlsx
+#: model:ir.actions.act_window,name:res_partner_extract_xlsx.action_res_partner_extract_report_xlsx_wizard
+#: model:ir.ui.menu,name:res_partner_extract_xlsx.menu_res_partner_extract_report_xlsx_wizard
+msgid "Extract partner XSLX"
+msgstr "Estrai partner XLSX"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,from_name:0
+msgid "From Name"
+msgstr "Dal nome"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,id:0
+msgid "ID"
+msgstr "ID"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,write_uid:0
+msgid "Last Updated by"
+msgstr "Aggiornato da"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,write_date:0
+msgid "Last Updated on"
+msgstr "Aggiornato il"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,mode:0
+msgid "Mode"
+msgstr "Modalità"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,name:0
+msgid "Name"
+msgstr "Nome"
+
+#. module: res_partner_extract_xlsx
+#: view:res.partner.extract.report.xlsx.wizard:res_partner_extract_xlsx.res_partner_extract_report_xlsx_wizard_view
+msgid "Print"
+msgstr "Stampa"
+
+#. module: res_partner_extract_xlsx
+#: selection:res.partner.extract.report.xlsx.wizard,mode:0
+msgid "Supplier"
+msgstr "Fornitori"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,to_name:0
+msgid "To Name"
+msgstr "Al nome"
+
+#. module: res_partner_extract_xlsx
+#: view:res.partner.extract.report.xlsx.wizard:res_partner_extract_xlsx.res_partner_extract_report_xlsx_wizard_view
+msgid "Wizard"
+msgstr "Wizard"
+
+#. module: res_partner_extract_xlsx
+#: field:res.partner.extract.report.xlsx.wizard,zip:0
+msgid "ZIP code"
+msgstr "CAP"
