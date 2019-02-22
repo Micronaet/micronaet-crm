@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+       <!-- crm.excel.extract.report.wizard -->
+       <record id="crm_excel_extract_report_wizard_view" model="ir.ui.view">
+            <field name="name">CRM Extract wizard</field>
+            <field name="model">crm.excel.extract.report.wizard</field>
+            <field name="arch" type="xml">
+                <form string="CRM Extract Wizard" version="7.0">
+                   <header>
+                       <button string="Cancel" special="cancel" />
+                       <button name="action_sale_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
+                       <button name="action_ddt_report" string="DDT report" type="object" icon="gtk-print" class="oe_highlight" />
+                       <button name="action_invoice_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
+                   </header>                   
+                   <group colspan="4" col="4">
+                        <field name="from_date" />                   
+                        <field name="to_date" />
+                        
+                        <field name="partner_id" domain="[('is_company', '=', True)]"/>                   
+                        <field name="agent_id" domain="[('is_agent', '=', True)]" />                   
+                        
+                        <field name="family_id" domain="[('is_family', '=', True)]"/>
+                        <field name="product_id" domain="[('is_family', '!=', True)]" />
+                        
+                        <field name="country_id" />
+                        <field name="state_id" />
+                        <field name="region_id" />
+                   </group>
+                </form>
+            </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="action_crm_excel_extract_report_wizard">
+          <field name="name">CRM Extract wizard</field>
+          <field name="res_model">crm.excel.extract.report.wizard</field>
+          <field name="view_type">form</field>
+          <field name="view_mode">form</field>
+          <field name="target">new</field>
+          <field name="view_id" ref="crm_excel_extract_report_wizard_view"/>
+      </record>      
+      
+      <!--TODO Menu position-->
+      <menuitem 
+          parent="base.menu_reporting" 
+          id="menu_crm_root" 
+          name="CRM"
+          sequence="10"
+          />
+          <menuitem 
+              parent="menu_crm_root" 
+              id="menu_crm_excel_extract_report" 
+              action="action_crm_excel_extract_report_wizard"
+              sequence="10"/>
+          
+    </data>
+</openerp>
