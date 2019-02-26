@@ -316,23 +316,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         # OLAP Page:
         # ---------------------------------------------------------------------        
-        olap_data = {
-            'x': x_axis,
-            'y': y_axis,
-            
-            # Report data:
-            'data': {},
-            'x_header': [],
-            'y_header': [],            
-            }
-                    
         if olap_data['active']:
             ws_name = 'OLAP'
+            excel_pool.create_worksheet(ws_name)
 
             # Header:    
             row = 0        
             excel_pool.write_xls_line(ws_name, row, [
-                'Dettaglio', 
+                u'Dettaglio', 
                 ], default_format=f_header)
 
             row += 1
@@ -352,7 +343,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Detail Page:
         # ---------------------------------------------------------------------        
         # TODO 
-                    
 
         return excel_pool.return_attachment(cr, uid, 'CRM Report')
 
