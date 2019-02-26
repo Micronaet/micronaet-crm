@@ -97,8 +97,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Update data:
         qty = line.product_uom_qty
         olap_data['data'][key][0] += qty # q. 
-        olap_data['data'][key][2] += qty * line.price_unit # real.
-        olap_data['data'][key][1] += line.price_subtotal # discount.
+        olap_data['data'][key][1] += qty * line.price_unit # real.
+        olap_data['data'][key][2] += line.price_subtotal # discount.
 
     # -------------------------------------------------------------------------
     # Wizard button event:
@@ -276,7 +276,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Prodotto', 'Famiglia', 'Descrizione', 
             'Documento', 'Partner', 'Agente', 
             'Via', 'Paese', 'Regione', 
-            'Q.', 'Prezzo', 'Sconto', 'Netto', 'Subtotale',
+            'Q.', 'Listino', 'Sconto', 'Prezzo Netto', 'Subtotale',
             ], default_format=f_header)
             
         # Line:
@@ -292,7 +292,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             
             qty = line.product_uom_qty
             subtotal = line.price_subtotal
-            net = (line.price_subtotal / qty) if qty else 0.0
+            net = (subtotal / qty) if qty else 0.0
 
             excel_pool.write_xls_line(ws_name, row, [
                 product.default_code or '', 
@@ -311,7 +311,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 (line.price_unit, f_number), 
                 (line.discount, f_number),
                 (net, f_number),
-                (line.price_subtotal, f_number),
+                (subtotal, f_number),
                 ], default_format=f_text)
         
         # ---------------------------------------------------------------------        
