@@ -9,7 +9,7 @@
                 <form string="CRM Extract Wizard" version="7.0">
                    <header>
                        <button string="Cancel" special="cancel" />
-                       <button name="action_sale_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
+                       <button name="action_sale_report" string="Sale report" type="object" icon="gtk-print" class="oe_highlight" />
                        <button name="action_ddt_report" string="DDT report" type="object" icon="gtk-print" class="oe_highlight" />
                        <button name="action_invoice_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
                    </header>                   
@@ -26,6 +26,13 @@
                         <field name="country_id" />
                         <field name="state_id" />
                         <field name="region_id" />
+                        
+                        <newline/>
+                        <field name="sorted" />
+                        <newline/>
+                        
+                        <field name="x_axis" />
+                        <field name="y_axis" />
                    </group>
                 </form>
             </field>

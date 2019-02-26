@@ -62,7 +62,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         if context is None: 
             context = {}
 
-        line_ids = self.pool.get('sale.order.line')
+        line_pool = self.pool.get('sale.order.line')
+        excel_pool = self.pool.get('excel.writer')
+
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         
         # ---------------------------------------------------------------------
@@ -70,54 +72,168 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------
         from_date = wiz_browse.from_date
         to_date = wiz_browse.to_date
-        partner_id = wiz_browse.partner_id.id
-        agent_id = wiz_browse.agent_id.id
-        product_id = wiz_browse.product_id.id
-        family_id = wiz_browse.family_id.id
-        country_id = wiz.browse.country_id.id
-        state_id = wiz.browse.state_id.id
-        region_id = wiz.browse.region_id.id
-                
+
+        # Browseable:
+        partner = wiz_browse.partner_id
+        agent = wiz_browse.agent_id
+        product = wiz_browse.product_id
+        family = wiz_browse.family_id
+        country = wiz_browse.country_id
+        state = wiz_browse.state_id
+        region = wiz_browse.region_id
+
+        sort = wiz_browse.sorted
+
         # ---------------------------------------------------------------------
         # Setup domain filter:
         # ---------------------------------------------------------------------
         domain = []
+        filter_text = 'Ordini cliente: '
         
         #Period:
         if from_date:
             domain.append(
                 ('order_id.date_order', '>=', from_date))    
+            filter_text += u'Dalla data %s, ' % from_date    
         if to_date:
             domain.append(
                 ('order_id.date_order', '<=', to_date))
+            filter_text += u'Alla data %s, ' % to_date    
             
         # Many2one 
-        if partner_id:
+        if partner:
             domain.append(
-                ('order_id.partner_id', '=', partner_id))
-        if agent_id:
+                ('order_id.partner_id', '=', partner.id))
+            filter_text += u'Cliente %s, ' % partner.name
+        if agent:
             domain.append(
-                ('order_id.partner_id.agent_id', '=', agent_id))
-        if product_id:
+                ('order_id.partner_id.agent_id', '=', agent.id))
+            filter_text += u'Agente %s, ' % agent.name
+        if product:
             domain.append(
-                ('product_id', '=', product_id))
-        if family_id:
+                ('product_id', '=', product.id))
+            filter_text += u'Prodotto %s, ' % product.default_code
+        if family:
             domain.append(
-                ('product_id.family_id', '=', family_id))
+                ('product_id.family_id', '=', family.id))
+            filter_text += u'Cliente %s, ' % family.name
                                 
+        if country:
+            domain.append(
+                ('order_id.partner_id.country_id', '=', country.id))
+            filter_text += u'Cliente %s, ' % country.name
+        if state:
+            domain.append(
+                ('order_id.partner_id.state_id', '=', state.id))
+            filter_text += u'Cliente %s, ' % state.name
+        if region:
+            domain.append(
+                ('order_id.partner_id.state_id.region_id', '=', region.id))
+            filter_text += u'Cliente %s, ' % region.name
+
         # TODO    
         # Char
-        if country_id:
-            domain.append(
-                ('order_id.partner_id.country_id', '=', country_id))
-        if state_id:
-            domain.append(
-                ('order_id.partner_id.state_id', '=', state_id))
-        if region_id:
-            domain.append(
-                ('order_id.partner_id.state_id.region_id', '=', region_id))
-           
-        return True
+        
+        # Search and open line:
+        line_ids = line_pool.search(cr, uid, domain, context=context)
+        line_proxy = line_pool.browse(cr, uid, line_ids, context=context)
+
+        # ---------------------------------------------------------------------        
+        # Sorted mode:
+        # ---------------------------------------------------------------------        
+        if sort == 'partner':
+            key = lambda x: x.partner_id.name
+        elif sort == 'product':
+            key = lambda x: x.product_id.default_code
+        elif sort == 'agent':
+            key = lambda x: (
+                x.order_id.partner_id.agent_id.name,
+                x.order_id.partner_id.name,
+                )
+        elif sort == 'family':
+            key = lambda x: (
+                x.product_id.family_id.name, 
+                x.product_id.default_code,
+                )
+        elif sort == 'region':
+            key = lambda x: (
+                x.order_id.partner_id.state_id.region_id,
+                x.order_id.partner_id.name,
+                )
+        elif sort == 'country':
+            key = lambda x: (
+                x.order_id.partner_id.country_id.name,
+                x.partner_id.name,
+                )
+
+        # ---------------------------------------------------------------------        
+        # Excel:
+        # ---------------------------------------------------------------------        
+        ws_name = 'Ordini'
+        excel_pool.create_worksheet(ws_name)
+        
+        # Format list:
+        excel_pool.set_format()
+        f_title = excel_pool.get_format('title')
+        f_header = excel_pool.get_format('header')
+        f_text = excel_pool.get_format('text')
+        f_number = excel_pool.get_format('number')
+        
+        excel_pool.column_width(ws_name, [
+            20, 20, 35, 
+            20, 35, 35, 
+            30, 30, 30,
+            10, 10, 10, 10, 15,
+            ])
+
+        # Title:
+        row = 0
+        excel_pool.write_xls_line(ws_name, row, [
+            filter_text,
+            ], default_format=f_title)
+            
+        # Header:    
+        row += 1        
+        excel_pool.write_xls_line(ws_name, row, [
+            'Prodotto', 'Famiglia', 'Descrizione', 
+            'Documento', 'Partner', 'Agente', 
+            'Via', 'Paese', 'Regione', 
+            'Q.', 'Prezzo', 'Sconto', 'Netto', 'Subtotale',
+            ], default_format=f_header)
+            
+        # Line:
+        for line in sorted(line_proxy, key=key):
+            row += 1
+            product = line.product_id
+            order = line.order_id
+            partner = order.partner_id
+            #agent = partner.agent_id
+            
+            qty = line.product_uom_qty
+            subtotal = line.price_subtotal
+            net = (line.price_subtotal / qty) if qty else 0.0
+
+            excel_pool.write_xls_line(ws_name, row, [
+                product.default_code or '', 
+                product.family_id.name or '', 
+                product.name,
+                
+                order.name, 
+                partner.name, 
+                partner.agent_id.name,
+                
+                partner.street, 
+                partner.city,
+                partner.state_id.region_id.name, 
+
+                (qty, f_number),
+                (line.price_unit, f_number), 
+                (line.discount, f_number),
+                (net, f_number),
+                (line.price_subtotal, f_number),
+                ], default_format=f_text)
+        
+        return excel_pool.return_attachment(cr, uid, 'Ordini')
 
     # TODO Also DDT
     def action_ddt_report(self, cr, uid, ids, context=None):
@@ -153,7 +269,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         'region_id':fields.many2one('res.country.region', 'Region'),
         # city
         # cap
-        
+
         # Numeric output data:
         'with_qty': fields.boolean('With quantity', 
             help='All data will be indicated total of quantity'),
@@ -167,9 +283,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Group by:    
         'x_axis': fields.selection(axis_group, 'Asse X'),
         'y_axis': fields.selection(axis_group, 'Asse Y'),            
+        
+        'sorted': fields.selection([
+            ('partner', 'Partner'),
+            ('product', 'Product'),
+            ('agent', 'Agent'),
+            ('family', 'Family'),
+            ('region', 'Region'),
+            ('country', 'Country'),
+            ], 'Sorted', required=True),
         }
         
     _defaults = {
         'with_qty': lambda *x: True,
+        'sorted': lambda *x: 'partner',
         }        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
