@@ -54,20 +54,35 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
     _name = 'crm.excel.extract.report.wizard'
     _description = 'CRM Excel export'
 
-    def coordinate_data(self, group, line):
+    def coordinate_data(self, olap_data, mode, line):
         ''' Extract coordinate data from line
         '''
+        group = olap_data[mode]
         if group == 'year':
-            return line.order_id.date_order[:4]
+            value = line.order_id.date_order[:4]
+            get_name = mode
         elif group == 'period':
-            return line.order_id.date_order # TODO
+            value = line.order_id.date_order # TODO
+            get_name = mode
         elif group == 'agent':
-            return line.order_id.partner_id.agent_id
+            value = line.order_id.partner_id.agent_id
+            get_name = '%s.name' % mode
         elif group == 'family':
-            return line.product_id.family_id
+            value = line.product_id.family_id
+            get_name = '%s.name' % mode
         else:
             _logger.error('No group value: %s' % x)
-            return False
+            value = ''
+            get_name = 'item'
+        
+        # Add header value if not present:    
+        if value not in olap_data['%s_header' % mode]:
+            olap_data['%s_header' % mode].append(value)
+        
+        # Add function get_name    
+        if not olap_data['get_%s' % mode]:
+            olap_data['get_%s' % mode] = get_name
+        return value
         
     def collect_data_olap(self, olap_data, line):
         ''' Collect data for OLAP Page
@@ -76,13 +91,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             return
         
         # Get X data:
-        x_value = self.coordinate_data(olap_data['x'], line)
-        if x_value not in olap_data['x_header']:
-            olap_data['x_header'].append(x_value)
-            
-        y_value = self.coordinate_data(olap_data['y'], line)
-        if y_value not in olap_data['y_header']:
-            olap_data['y_header'].append(y_value)
+        x_value = self.coordinate_data(olap_data, 'x', line)            
+        y_value = self.coordinate_data(olap_data, 'y', line)
 
         # Insert data in table:
         key = (x_value, y_value)
@@ -232,7 +242,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # Configuration:
             'x': x_axis,
             'y': y_axis,
-            
+
+            # Get name function:
+            'get_x': False,            
+            'get_y': False,           
+
+            # Sort function:
+            'sort_x': False,
+            'sort_y': False,
+             
             # Report data:
             'data': {},
             'x_header': [],
@@ -320,24 +338,49 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ws_name = 'OLAP'
             excel_pool.create_worksheet(ws_name)
 
-            # Header:    
+            # -----------------------------------------------------------------
+            # Header:
+            # -----------------------------------------------------------------
             row = 0        
-            excel_pool.write_xls_line(ws_name, row, [
-                u'Dettaglio', 
-                ], default_format=f_header)
+            header_col_title = ['']
+            header_col = ['Dettaglio']
+            
+            empty_header = olap_data['empty_header']
+            empty_header_title = ['' for item in range(1, len(empty_header))]
 
+            for y in olap_data['y_header']:
+                # Master title (y axis):
+                header_col_title.extend(
+                    eval(olap_data['get_y']) or 'NON PRESENTE')
+                header_col_title.extend(empty_header_title)
+                
+                # Header title (number total)
+                header_col.extend(empty_header)
+                
+            excel_pool.column_width(ws_name, [
+                40, ]) # TODO add other
+            excel_pool.write_xls_line(
+                ws_name, row, header_col_title, default_format=f_header)
             row += 1
-            for x in olap_data['x']:
-                col = 1
-                for y in olap_data['y']:
+            excel_pool.write_xls_line(
+                ws_name, row, header_col, default_format=f_header)
+
+            for x in olap_data['x_header']: # XXX Sort!
+                # Get name with eval item:
+                name = eval(olap_data['get_x']) or 'NON PRESENTE'
+                
+                row += 1
+                excel_pool.write_xls_line(
+                    ws_name, row, [name], default_format=f_text)
+
+                col = 1 # Reset colume every loop
+                for y in olap_data['y_header']: # XXX Sort!
                     key = (x, y)
                     record = olap_data['data'].get(
-                        key, olap_data['data']['empty'])
+                        key, olap_data['empty'])
                     excel_pool.write_xls_line(
-                        ws_name, row, record, 
-                        default_format=f_header, 
-                        col=col)
-                    col += len(record)    
+                        ws_name, row, record, default_format=f_number, col=col)
+                    col += len(record)
 
         # ---------------------------------------------------------------------        
         # Detail Page:
