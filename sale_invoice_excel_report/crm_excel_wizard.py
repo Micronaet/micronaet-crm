@@ -226,6 +226,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         olap_data = {
             'active': x_axis and y_axis,
+            'empty': ['', '', ''], # empty line
 
             # Configuration:
             'x': x_axis,
@@ -234,7 +235,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # Report data:
             'data': {},
             'x_header': [],
-            'y_header': [],
+            'y_header': [],            
             }
 
         group_data = {
@@ -314,65 +315,37 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         # OLAP Page:
         # ---------------------------------------------------------------------        
-        if x_axis and y_axis:
+        olap_data = {
+            'x': x_axis,
+            'y': y_axis,
+            
+            # Report data:
+            'data': {},
+            'x_header': [],
+            'y_header': [],            
+            }
+                    
+        if olap_data['active']:
             ws_name = 'OLAP'
 
-            # Mapping of data:
-            
-            excel_pool.column_width(ws_name, [
-                20, 20, 35, 
-                20, 35, 35, 
-                30, 30, 30,
-                10, 10, 10, 10, 15,
-                ])
-
-            # Title:
-            row = 0
-            excel_pool.write_xls_line(ws_name, row, [
-                filter_text,
-                ], default_format=f_title)
-                
             # Header:    
-            row += 1        
+            row = 0        
             excel_pool.write_xls_line(ws_name, row, [
-                'Prodotto', 'Famiglia', 'Descrizione', 
-                'Documento', 'Partner', 'Agente', 
-                'Via', 'Paese', 'Regione', 
-                'Q.', 'Prezzo', 'Sconto', 'Netto', 'Subtotale',
+                'Dettaglio', 
                 ], default_format=f_header)
-                
-            # Line:
-            for line in sorted(line_proxy, key=key):
-                row += 1
-                product = line.product_id
-                order = line.order_id
-                partner = order.partner_id
-                #agent = partner.agent_id
-                
-                qty = line.product_uom_qty
-                subtotal = line.price_subtotal
-                net = (line.price_subtotal / qty) if qty else 0.0
 
-                excel_pool.write_xls_line(ws_name, row, [
-                    product.default_code or '', 
-                    product.family_id.name or '', 
-                    product.name,
-                    
-                    order.name, 
-                    partner.name, 
-                    partner.agent_id.name,
-                    
-                    partner.street, 
-                    partner.city,
-                    partner.state_id.region_id.name, 
-
-                    (qty, f_number),
-                    (line.price_unit, f_number), 
-                    (line.discount, f_number),
-                    (net, f_number),
-                    (line.price_subtotal, f_number),
-                    ], default_format=f_text)
-                    
+            row += 1
+            for x in olap_data['x']:
+                col = 1
+                for y in olap_data['y']:
+                    key = (x, y)
+                    record = olap_data['data'].get(
+                        key, olap_data['data']['empty'])
+                    excel_pool.write_xls_line(
+                        ws_name, row, record, 
+                        default_format=f_header, 
+                        col=col)
+                    col += len(record)    
 
         # ---------------------------------------------------------------------        
         # Detail Page:
