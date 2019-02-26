@@ -54,20 +54,20 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
     _name = 'crm.excel.extract.report.wizard'
     _description = 'CRM Excel export'
 
-    def coordinate_data(self, x, line):
+    def coordinate_data(self, group, line):
         ''' Extract coordinate data from line
         '''
-        if olap_data['x'] == 'year':
-            return = line.product_id.date_order[:4]
-        elif olap_data['x'] == 'period':
-            return = line.order_id.date_order # TODO
-        elif olap_data['x'] == 'agent':
-            return = line.order_id.partner_id.agent_id
-        elif olap_data['x'] == 'family':
-            return = line.product_id.family_id
+        if group == 'year':
+            return line.order_id.date_order[:4]
+        elif group == 'period':
+            return line.order_id.date_order # TODO
+        elif group == 'agent':
+            return line.order_id.partner_id.agent_id
+        elif group == 'family':
+            return line.product_id.family_id
         else:
-            _logger.error('No X value: %s' % x)
-            return = False
+            _logger.error('No group value: %s' % x)
+            return False
         
     def collect_data_olap(self, olap_data, line):
         ''' Collect data for OLAP Page
@@ -76,11 +76,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             return
         
         # Get X data:
-        x_value = self.coordinate_date(olap_data['x'], line)
+        x_value = self.coordinate_data(olap_data['x'], line)
         if x_value not in olap_data['x_header']:
             olap_data['x_header'].append(x_value)
             
-        y_value = self.coordinate_date(olap_data['y'], line)
+        y_value = self.coordinate_data(olap_data['y'], line)
         if y_value not in olap_data['y_header']:
             olap_data['y_header'].append(y_value)
 
@@ -95,9 +95,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         
         # Update data:
         qty = line.product_uom_qty
-        olap_data['data'][key][0] += qty
-        olap_data['data'][key][1] += line.price_subtotal
-        olap_data['data'][key][2] += qty * price_unit
+        olap_data['data'][key][0] += qty # q. 
+        olap_data['data'][key][2] += qty * line.price_unit # real.
+        olap_data['data'][key][1] += line.price_subtotal # discount.
 
     # -------------------------------------------------------------------------
     # Wizard button event:
@@ -227,6 +227,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         olap_data = {
             'active': x_axis and y_axis,
             'empty': ['', '', ''], # empty line
+            'empty_header': ['Q.', 'Calcolato', 'Scontato'], # empty line
 
             # Configuration:
             'x': x_axis,
