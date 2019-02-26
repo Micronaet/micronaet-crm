@@ -60,28 +60,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         group = olap_data[mode]
         if group == 'year':
             value = line.order_id.date_order[:4]
-            get_name = mode
         elif group == 'period':
             value = line.order_id.date_order # TODO
-            get_name = mode
         elif group == 'agent':
-            value = line.order_id.partner_id.agent_id
-            get_name = '%s.name' % mode
+            value = line.order_id.partner_id.agent_id.name or ''
         elif group == 'family':
-            value = line.product_id.family_id
-            get_name = '%s.name' % mode
+            value = line.product_id.family_id.name or ''
         else:
-            _logger.error('No group value: %s' % x)
+            _logger.error('No group value: %s' % mode)
             value = ''
-            get_name = 'item'
         
         # Add header value if not present:    
         if value not in olap_data['%s_header' % mode]:
             olap_data['%s_header' % mode].append(value)
-        
-        # Add function get_name    
-        if not olap_data['get_%s' % mode]:
-            olap_data['get_%s' % mode] = get_name
         return value
         
     def collect_data_olap(self, olap_data, line):
@@ -243,14 +234,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'x': x_axis,
             'y': y_axis,
 
-            # Get name function:
-            'get_x': False,            
-            'get_y': False,           
-
-            # Sort function:
-            'sort_x': False,
-            'sort_y': False,
-             
             # Report data:
             'data': {},
             'x_header': [],
@@ -347,11 +330,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             
             empty_header = olap_data['empty_header']
             empty_header_title = ['' for item in range(1, len(empty_header))]
-
-            for y in olap_data['y_header']:
+            for y in sorted(olap_data['y_header']):
                 # Master title (y axis):
-                header_col_title.extend(
-                    eval(olap_data['get_y']) or 'NON PRESENTE')
+                header_col_title.append(y or 'NON PRESENTE')
                 header_col_title.extend(empty_header_title)
                 
                 # Header title (number total)
@@ -365,13 +346,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             excel_pool.write_xls_line(
                 ws_name, row, header_col, default_format=f_header)
 
-            for x in olap_data['x_header']: # XXX Sort!
-                # Get name with eval item:
-                name = eval(olap_data['get_x']) or 'NON PRESENTE'
-                
+            for x in sorted(olap_data['x_header']): # XXX Sort!
                 row += 1
                 excel_pool.write_xls_line(
-                    ws_name, row, [name], default_format=f_text)
+                    ws_name, row, [
+                        x or 'NON PRESENTE',
+                        ], default_format=f_text)
 
                 col = 1 # Reset colume every loop
                 for y in olap_data['y_header']: # XXX Sort!
