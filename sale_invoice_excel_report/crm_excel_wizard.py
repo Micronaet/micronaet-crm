@@ -42,6 +42,7 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
 _logger = logging.getLogger(__name__)
 
 axis_group = [
+    ('year', 'Year'),
     ('period', 'Season'),
     ('agent', 'Agent'),
     ('family', 'Family'),
@@ -52,6 +53,51 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
     '''
     _name = 'crm.excel.extract.report.wizard'
     _description = 'CRM Excel export'
+
+    def coordinate_data(self, x, line):
+        ''' Extract coordinate data from line
+        '''
+        if olap_data['x'] == 'year':
+            return = line.product_id.date_order[:4]
+        elif olap_data['x'] == 'period':
+            return = line.order_id.date_order # TODO
+        elif olap_data['x'] == 'agent':
+            return = line.order_id.partner_id.agent_id
+        elif olap_data['x'] == 'family':
+            return = line.product_id.family_id
+        else:
+            _logger.error('No X value: %s' % x)
+            return = False
+        
+    def collect_data_olap(self, olap_data, line):
+        ''' Collect data for OLAP Page
+        '''
+        if not olap_data['active']:
+            return
+        
+        # Get X data:
+        x_value = self.coordinate_date(olap_data['x'], line)
+        if x_value not in olap_data['x_header']:
+            olap_data['x_header'].append(x_value)
+            
+        y_value = self.coordinate_date(olap_data['y'], line)
+        if y_value not in olap_data['y_header']:
+            olap_data['y_header'].append(y_value)
+
+        # Insert data in table:
+        key = (x_value, y_value)
+        if key not in olap_data['data']:
+            olap_data['data'][key] = [
+                0.0, # quantity
+                0.0, # subtotal
+                0.0, # not discunted
+                ] # TODO total block
+        
+        # Update data:
+        qty = line.product_uom_qty
+        olap_data['data'][key][0] += qty
+        olap_data['data'][key][1] += line.price_subtotal
+        olap_data['data'][key][2] += qty * price_unit
 
     # -------------------------------------------------------------------------
     # Wizard button event:
@@ -83,6 +129,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         region = wiz_browse.region_id
 
         sort = wiz_browse.sorted
+
+        # OLAP:
+        x_axis = wiz_browse.x_axis
+        y_axis = wiz_browse.y_axis
 
         # ---------------------------------------------------------------------
         # Setup domain filter:
@@ -167,11 +217,36 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 )
 
         # ---------------------------------------------------------------------        
-        # Excel:
+        #                               Excel:
+        # ---------------------------------------------------------------------        
+
+        
+        # ---------------------------------------------------------------------        
+        # Collect data (for other pages):
+        # ---------------------------------------------------------------------        
+        olap_data = {
+            'active': x_axis and y_axis,
+
+            # Configuration:
+            'x': x_axis,
+            'y': y_axis,
+            
+            # Report data:
+            'data': {},
+            'x_header': [],
+            'y_header': [],
+            }
+
+        group_data = {
+            # TODO 
+            }
+
+        # ---------------------------------------------------------------------        
+        # Detail Page:
         # ---------------------------------------------------------------------        
         ws_name = 'Ordini'
         excel_pool.create_worksheet(ws_name)
-        
+            
         # Format list:
         excel_pool.set_format()
         f_title = excel_pool.get_format('title')
@@ -203,6 +278,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             
         # Line:
         for line in sorted(line_proxy, key=key):
+            # Collect data:
+            self.collect_data_olap(olap_data, line)
+             
             row += 1
             product = line.product_id
             order = line.order_id
@@ -233,7 +311,76 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 (line.price_subtotal, f_number),
                 ], default_format=f_text)
         
-        return excel_pool.return_attachment(cr, uid, 'Ordini')
+        # ---------------------------------------------------------------------        
+        # OLAP Page:
+        # ---------------------------------------------------------------------        
+        if x_axis and y_axis:
+            ws_name = 'OLAP'
+
+            # Mapping of data:
+            
+            excel_pool.column_width(ws_name, [
+                20, 20, 35, 
+                20, 35, 35, 
+                30, 30, 30,
+                10, 10, 10, 10, 15,
+                ])
+
+            # Title:
+            row = 0
+            excel_pool.write_xls_line(ws_name, row, [
+                filter_text,
+                ], default_format=f_title)
+                
+            # Header:    
+            row += 1        
+            excel_pool.write_xls_line(ws_name, row, [
+                'Prodotto', 'Famiglia', 'Descrizione', 
+                'Documento', 'Partner', 'Agente', 
+                'Via', 'Paese', 'Regione', 
+                'Q.', 'Prezzo', 'Sconto', 'Netto', 'Subtotale',
+                ], default_format=f_header)
+                
+            # Line:
+            for line in sorted(line_proxy, key=key):
+                row += 1
+                product = line.product_id
+                order = line.order_id
+                partner = order.partner_id
+                #agent = partner.agent_id
+                
+                qty = line.product_uom_qty
+                subtotal = line.price_subtotal
+                net = (line.price_subtotal / qty) if qty else 0.0
+
+                excel_pool.write_xls_line(ws_name, row, [
+                    product.default_code or '', 
+                    product.family_id.name or '', 
+                    product.name,
+                    
+                    order.name, 
+                    partner.name, 
+                    partner.agent_id.name,
+                    
+                    partner.street, 
+                    partner.city,
+                    partner.state_id.region_id.name, 
+
+                    (qty, f_number),
+                    (line.price_unit, f_number), 
+                    (line.discount, f_number),
+                    (net, f_number),
+                    (line.price_subtotal, f_number),
+                    ], default_format=f_text)
+                    
+
+        # ---------------------------------------------------------------------        
+        # Detail Page:
+        # ---------------------------------------------------------------------        
+        # TODO 
+                    
+
+        return excel_pool.return_attachment(cr, uid, 'CRM Report')
 
     # TODO Also DDT
     def action_ddt_report(self, cr, uid, ids, context=None):
