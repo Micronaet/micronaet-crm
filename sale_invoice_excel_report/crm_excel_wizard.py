@@ -54,6 +54,22 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
     _name = 'crm.excel.extract.report.wizard'
     _description = 'CRM Excel export'
 
+    def get_season_period(self, date):
+        ''' Get season (period from 09 to 08
+        '''
+        year = date[:4]
+        month = date[5:7]
+        if month >= '07':
+            return '%s-%02d' % (
+                year[-2:],
+                int(year[-2:]) + 1,
+                )                    
+        else:
+            return '%02d-%s' % (
+                int(year[-2:]) - 1,
+                year[-2:],
+                )                    
+    
     def coordinate_data(self, olap_data, mode, line):
         ''' Extract coordinate data from line
         '''
@@ -61,19 +77,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         if group == 'year':
             value = line.order_id.date_order[:4]
         elif group == 'period': # Season
-            year = line.order_id.date_order[:4]
-            month = line.order_id.date_order[5:7]
-            if month >= '07':
-                value = '%s-%02d' % (
-                    year[-2:],
-                    int(year[-2:]) + 1,
-                    )                    
-            else:
-                value = '%02d-%s' % (
-                    int(year[-2:]) - 1,
-                    year[-2:],
-                    )                    
-            value = line.order_id.date_order # TODO
+            value = self.get_season_period(
+                line.order_id.date_order)
         elif group == 'agent':
             value = line.order_id.partner_id.agent_id.name or ''
         elif group == 'family':
@@ -271,7 +276,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         
         excel_pool.column_width(ws_name, [
             20, 20, 35, 
-            20, 35, 35, 
+            20, 15, 15, 35, 35, 
             30, 30, 30,
             10, 10, 10, 10, 15,
             ])
@@ -286,7 +291,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         row += 1        
         excel_pool.write_xls_line(ws_name, row, [
             'Prodotto', 'Famiglia', 'Descrizione', 
-            'Documento', 'Partner', 'Agente', 
+            'Documento', 'Data', 'Stagione', 'Partner', 'Agente', 
             'Via', 'Paese', 'Regione', 
             'Q.', 'Listino', 'Sconto %', 'Prezzo Netto', 'Subtotale',
             ], default_format=f_header)
@@ -338,6 +343,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 product.name,
                 
                 order.name, 
+                order.date_order,
+                self.get_season_period(order.date_order),
                 partner.name, 
                 partner.agent_id.name,
                 
@@ -392,7 +399,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         ], default_format=f_text)
 
                 col = 1 # Reset colume every loop
-                for y in olap_data['y_header']: # XXX Sort!
+                for y in sorted(olap_data['y_header']): # XXX Sort!
                     key = (x, y)
                     record = olap_data['data'].get(
                         key, olap_data['empty'])
