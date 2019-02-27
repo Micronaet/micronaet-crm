@@ -14,9 +14,11 @@
                        <button name="action_invoice_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
                    </header>                   
                    <group colspan="4" col="4">
+                        <separator string="Period:" colspan="4"/>
                         <field name="from_date" />                   
                         <field name="to_date" />
                         
+                        <separator string="Filter:" colspan="4"/>
                         <field name="partner_id" domain="[('is_company', '=', True)]"/>                   
                         <field name="agent_id" domain="[('is_agent', '=', True)]" />                   
                         
@@ -25,14 +27,19 @@
                         
                         <field name="country_id" />
                         <field name="state_id" />
+
                         <field name="region_id" />
                         
-                        <newline/>
+                        <separator string="Detail page:" colspan="4"/>
                         <field name="sorted" />
-                        <newline/>
                         
+                        <separator string="OLAP page:" colspan="4"/>
                         <field name="x_axis" />
                         <field name="y_axis" />
+                        
+                        <field name="field_number" />
+                        <field name="field_real" />
+                        <field name="field_total" />
                    </group>
                 </form>
             </field>

@@ -60,7 +60,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         group = olap_data[mode]
         if group == 'year':
             value = line.order_id.date_order[:4]
-        elif group == 'period':
+        elif group == 'period': # Season
+            year = line.order_id.date_order[:4]
+            month = line.order_id.date_order[5:7]
+            if month >= '07':
+                value = '%s-%02d' % (
+                    year[-2:],
+                    int(year[-2:]) + 1,
+                    )                    
+            else:
+                value = '%02d-%s' % (
+                    int(year[-2:]) - 1,
+                    year[-2:],
+                    )                    
             value = line.order_id.date_order # TODO
         elif group == 'agent':
             value = line.order_id.partner_id.agent_id.name or ''
@@ -87,18 +99,25 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         # Insert data in table:
         key = (x_value, y_value)
-        if key not in olap_data['data']:
-            olap_data['data'][key] = [
-                0.0, # quantity
-                0.0, # subtotal
-                0.0, # not discunted
-                ] # TODO total block
-        
-        # Update data:
         qty = line.product_uom_qty
-        olap_data['data'][key][0] += qty # q. 
-        olap_data['data'][key][1] += qty * line.price_unit # real.
-        olap_data['data'][key][2] += line.price_subtotal # discount.
+        if key in olap_data['data']:
+            i = 0
+            if olap_data['field_show']['number']:
+                olap_data['data'][key][i] += qty
+                i += 1
+            if olap_data['field_show']['real']:
+                olap_data['data'][key][i] += qty * line.price_unit
+                i += 1
+            if olap_data['field_show']['total']:
+                olap_data['data'][key][i] += line.price_subtotal
+        else:        
+            olap_data['data'][key] = []
+            if olap_data['field_show']['number']:
+                olap_data['data'][key].append(qty)
+            if olap_data['field_show']['real']:
+                olap_data['data'][key].append(qty * line.price_unit)
+            if olap_data['field_show']['total']:
+                olap_data['data'][key].append(line.price_subtotal)
 
     # -------------------------------------------------------------------------
     # Wizard button event:
@@ -134,6 +153,26 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # OLAP:
         x_axis = wiz_browse.x_axis
         y_axis = wiz_browse.y_axis
+        
+        # Field to total:
+        field_show = {
+            'number': wiz_browse.field_number,
+            'real': wiz_browse.field_real,
+            'total': wiz_browse.field_total,
+            }
+        
+        empty_header = []
+        empty = []
+        if field_show['number']:
+            empty_header.append('Q')
+            empty.append('')
+        if field_show['real']:
+            empty_header.append('Calcolato')
+            empty.append('')
+        if field_show['total']:
+            empty_header.append('Fatturato')
+            empty.append('')
+            
 
         # ---------------------------------------------------------------------
         # Setup domain filter:
@@ -185,41 +224,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # TODO    
         # Char
         
-        # Search and open line:
-        line_ids = line_pool.search(cr, uid, domain, context=context)
-        line_proxy = line_pool.browse(cr, uid, line_ids, context=context)
-
-        # ---------------------------------------------------------------------        
-        # Sorted mode:
-        # ---------------------------------------------------------------------        
-        if sort == 'partner':
-            key = lambda x: x.partner_id.name
-        elif sort == 'product':
-            key = lambda x: x.product_id.default_code
-        elif sort == 'agent':
-            key = lambda x: (
-                x.order_id.partner_id.agent_id.name,
-                x.order_id.partner_id.name,
-                )
-        elif sort == 'family':
-            key = lambda x: (
-                x.product_id.family_id.name, 
-                x.product_id.default_code,
-                )
-        elif sort == 'region':
-            key = lambda x: (
-                x.order_id.partner_id.state_id.region_id,
-                x.order_id.partner_id.name,
-                )
-        elif sort == 'country':
-            key = lambda x: (
-                x.order_id.partner_id.country_id.name,
-                x.partner_id.name,
-                )
 
         # ---------------------------------------------------------------------        
         #                               Excel:
         # ---------------------------------------------------------------------        
+        # Search and open line:
+        line_ids = line_pool.search(cr, uid, domain, context=context)
+        line_proxy = line_pool.browse(cr, uid, line_ids, context=context)
 
         
         # ---------------------------------------------------------------------        
@@ -227,12 +238,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         olap_data = {
             'active': x_axis and y_axis,
-            'empty': ['', '', ''], # empty line
-            'empty_header': ['Q.', 'Calcolato', 'Scontato'], # empty line
+            'empty': empty,
+            'empty_header': empty_header,
 
-            # Configuration:
+            # OLAP configuration:
             'x': x_axis,
             'y': y_axis,
+            'field_show': field_show,
 
             # Report data:
             'data': {},
@@ -249,7 +261,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         ws_name = 'Ordini'
         excel_pool.create_worksheet(ws_name)
-            
+
         # Format list:
         excel_pool.set_format()
         f_title = excel_pool.get_format('title')
@@ -276,9 +288,35 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Prodotto', 'Famiglia', 'Descrizione', 
             'Documento', 'Partner', 'Agente', 
             'Via', 'Paese', 'Regione', 
-            'Q.', 'Listino', 'Sconto', 'Prezzo Netto', 'Subtotale',
+            'Q.', 'Listino', 'Sconto %', 'Prezzo Netto', 'Subtotale',
             ], default_format=f_header)
             
+        # Sorted mode:
+        if sort == 'partner':
+            key = lambda x: x.partner_id.name
+        elif sort == 'product':
+            key = lambda x: x.product_id.default_code
+        elif sort == 'agent':
+            key = lambda x: (
+                x.order_id.partner_id.agent_id.name,
+                x.order_id.partner_id.name,
+                )
+        elif sort == 'family':
+            key = lambda x: (
+                x.product_id.family_id.name, 
+                x.product_id.default_code,
+                )
+        elif sort == 'region':
+            key = lambda x: (
+                x.order_id.partner_id.state_id.region_id,
+                x.order_id.partner_id.name,
+                )
+        elif sort == 'country':
+            key = lambda x: (
+                x.order_id.partner_id.country_id.name,
+                x.partner_id.name,
+                )
+
         # Line:
         for line in sorted(line_proxy, key=key):
             # Collect data:
@@ -418,6 +456,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         'x_axis': fields.selection(axis_group, 'Asse X'),
         'y_axis': fields.selection(axis_group, 'Asse Y'),            
         
+        'field_number':fields.boolean('Field q.'),
+        'field_real':fields.boolean(
+            'Field real', help='Total without discount'),
+        'field_total':fields.boolean(
+            'Field discount total', help='Real total discounted'),
+        
         'sorted': fields.selection([
             ('partner', 'Partner'),
             ('product', 'Product'),
@@ -431,5 +475,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
     _defaults = {
         'with_qty': lambda *x: True,
         'sorted': lambda *x: 'partner',
+        'field_number': lambda *x: True,
+        'field_real': lambda *x: True,
+        'field_total': lambda *x: True,
         }        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
