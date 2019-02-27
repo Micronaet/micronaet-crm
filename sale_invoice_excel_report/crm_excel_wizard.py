@@ -370,15 +370,20 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # Header:
             # -----------------------------------------------------------------
             row = 0        
-            header_col_title = ['']
+            header_col_title = ['Dettaglio']
             header_col = ['Dettaglio']
             
             empty_header = olap_data['empty_header']
             empty_header_title = ['' for item in range(1, len(empty_header))]
+            gap_col = len(empty_header)
+            col = 1
             for y in sorted(olap_data['y_header']):
                 # Master title (y axis):
                 header_col_title.append(y or 'NON PRESENTE')
                 header_col_title.extend(empty_header_title)
+                # Merge cell for header first line:
+                excel_pool.merge_cell(ws_name, [0, col, 0, col + gap_col - 1])
+                col += gap_col
                 
                 # Header title (number total)
                 header_col.extend(empty_header)
@@ -390,6 +395,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             row += 1
             excel_pool.write_xls_line(
                 ws_name, row, header_col, default_format=f_header)
+            excel_pool.merge_cell(ws_name, [row -1, 0, row, 0])
 
             for x in sorted(olap_data['x_header']): # XXX Sort!
                 row += 1
