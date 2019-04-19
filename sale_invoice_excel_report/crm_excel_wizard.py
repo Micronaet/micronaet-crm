@@ -725,7 +725,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # Total sale for family:
                 # -------------------------------------------------------------
                 if page_comparison_family:           
-                    key = (family, document)         
+                    key = (family, document) 
                     if key not in total_family:
                         total_family[key] = {}
                     if season not in total_family[key]:
@@ -737,16 +737,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
                 # Total with reference date:    
                 if page_comparison_family and reference_date:
+                    key = (family, document) 
                     if is_reference:
-                        if document not in total_family_reference:
-                            total_family_reference[document] = {}
-                        if season not in total_family_reference[document]:
+                        if key not in total_family_reference:
+                            total_family_reference[key] = {}
+                        if season not in total_family_reference[key]:
                             # Q, total
-                            total_family_reference[document][season] = [
-                                0.0, 0.0]
-                        total_family_reference[document][season][0] += qty
-                        total_family_reference[document][season][1] += subtotal
-
+                            total_family_reference[key][season] = [0.0, 0.0]
+                        total_family_reference[key][season][0] += qty
+                        total_family_reference[key][season][1] += subtotal
                     
                 # -------------------------------------------------------------
                 # Write detail line:    
@@ -779,7 +778,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ws_name = 'Venduto totale'
                 excel_pool.create_worksheet(ws_name)
 
-                multi_report = [(ws_name, total_all, 'Documento')]
+                multi_report = [(ws_name, total_all, 'Documento', '%s')]
             
                 if reference_date:                
                     ws_name = 'Venduto al %s' % reference_date[5:]
@@ -788,13 +787,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         (ws_name, 
                         total_all_reference, 
                         'Documento al %s' % reference_date[5:],
+                        '%s',
                         ))
 
             if page_comparison_family:
                 ws_name = 'Venduto famiglia'
                 excel_pool.create_worksheet(ws_name)
 
-                multi_report = [(ws_name, total_family, 'Famiglia')]
+                multi_report = [
+                    (ws_name, total_family, 'Famiglia', '%s [%s]')]
             
                 if reference_date:
                     ws_name = 'Venduto famglia al %s' % reference_date[5:]
@@ -803,9 +804,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         (ws_name,
                         total_family_reference, 
                         'Documento al %s' % reference_date[5:],
+                        '%s [%s]',
                         ))
-                
-            for ws_name, total_db, title in multi_report:
+            import pdb; pdb.set_trace()    
+            for ws_name, total_db, title, mask in multi_report:
                 season_col = {} # XXX every time?
                 row = 0
                 col = -1 # 1 extra fixed data!
@@ -848,7 +850,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 for document in sorted(total_db):
                     row += 1
                     excel_pool.write_xls_line(
-                        ws_name, row, [document], 
+                        ws_name, row, [mask % document], 
                         default_format=f_text)
                     for season in total_db[document]:
                         start_col = season_col[season]
