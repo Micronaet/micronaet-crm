@@ -774,11 +774,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Invoiced compared Page:
         # ---------------------------------------------------------------------        
         if page_comparison or page_comparison_family:
+            multi_report = []
             if page_comparison:
                 ws_name = 'Venduto totale'
                 excel_pool.create_worksheet(ws_name)
 
-                multi_report = [(ws_name, total_all, 'Documento', '%s')]
+                multi_report.append((ws_name, total_all, 'Documento', '%s'))
             
                 if reference_date:                
                     ws_name = 'Venduto al %s' % reference_date[5:]
@@ -794,8 +795,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ws_name = 'Venduto famiglia'
                 excel_pool.create_worksheet(ws_name)
 
-                multi_report = [
-                    (ws_name, total_family, 'Famiglia', '%s [%s]')]
+                multi_report.append(
+                    (ws_name, total_family, 'Famiglia', '%s [%s]'))
             
                 if reference_date:
                     ws_name = 'Venduto famglia al %s' % reference_date[5:]
@@ -806,7 +807,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         'Documento al %s' % reference_date[5:],
                         '%s [%s]',
                         ))
-            import pdb; pdb.set_trace()    
+
             for ws_name, total_db, title, mask in multi_report:
                 season_col = {} # XXX every time?
                 row = 0
