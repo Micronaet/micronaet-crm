@@ -211,20 +211,20 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         if family:
             domain.append(
                 ('product_id.family_id', '=', family.id))
-            filter_text += u'Cliente %s, ' % family.name
+            filter_text += u'Famiglia %s, ' % family.name
                                 
         if country:
             domain.append(
                 ('order_id.partner_id.country_id', '=', country.id))
-            filter_text += u'Cliente %s, ' % country.name
+            filter_text += u'Nazione %s, ' % country.name
         if state:
             domain.append(
                 ('order_id.partner_id.state_id', '=', state.id))
-            filter_text += u'Cliente %s, ' % state.name
+            filter_text += u'Stato %s, ' % state.name
         if region:
             domain.append(
                 ('order_id.partner_id.state_id.region_id', '=', region.id))
-            filter_text += u'Cliente %s, ' % region.name
+            filter_text += u'Regione %s, ' % region.name
 
         # TODO    
         # Char
@@ -439,16 +439,261 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         return True
 
+    def action_extract_all(self, cr, uid, ids, context=None):
+        ''' All in one report:
+        '''
+        if context is None: 
+            context = {}
+
+        order_pool = self.pool.get('sale.order.line')
+        ddt_pool = self.pool.get('stock.ddt')
+        invoice_pool = self.pool.get('account.invoice.line')        
+        excel_pool = self.pool.get('excel.writer')
+
+        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
+        
+        # ---------------------------------------------------------------------
+        # Parameters:
+        # ---------------------------------------------------------------------
+        from_date = wiz_browse.from_date
+        to_date = wiz_browse.to_date
+        reference_date = wiz_browse.reference_date
+        with_previsional = wiz_browse.with_previsional
+
+        # Browseable:
+        partner = wiz_browse.partner_id
+        product = wiz_browse.product_id
+        family = wiz_browse.family_id
+
+        data_order = wiz_browse.data_order
+        data_ddt = wiz_browse.data_ddt
+        data_invoice = wiz_browse.data_invoice
+        
+        page_detail = True # TODO  wiz_browse.page_detail
+        page_price = wiz_browse.page_price
+        page_comparison = wiz_browse.page_comparison
+        page_comparison_family = wiz_browse.page_comparison_family
+
+        # ---------------------------------------------------------------------
+        #                           COLLECT DATA:
+        # ---------------------------------------------------------------------
+        master_data = []        
+        filter_text = 'Documenti: %s%s%s' % (
+            '[OC] ' if data_order else '',
+            '[DDT] ' if data_ddt else '',
+            '[FT] ' if data_invoice else '',
+            )
+        filter_assigned = False    
+        
+        # ---------------------------------------------------------------------
+        # Load order:
+        # ---------------------------------------------------------------------
+        if data_order:
+            domain = []
+            filter_assigned = True            
+
+            # With previsional order:            
+            if not with_previsional:
+                filter_text += u'Con ordini previsionali, '
+            else:    
+                domain.append(
+                    ('order_id.previsional', '=', False))    
+                filter_text += u'Senza ordini previsionali, '
+
+            # Period:
+            if from_date:
+                domain.append(
+                    ('order_id.date_order', '>=', from_date))    
+                filter_text += u'Dalla data %s, ' % from_date   
+            if to_date:
+                domain.append(
+                    ('order_id.date_order', '<=', to_date))
+                filter_text += u'Alla data %s, ' % to_date    
+                
+            # Many2one 
+            if partner:
+                domain.append(
+                    ('order_id.partner_id', '=', partner.id))
+                filter_text += u'Cliente %s, ' % partner.name
+            if family:
+                domain.append(
+                    ('product_id.family_id', '=', family.id))
+                filter_text += u'Famiglia %s, ' % family.name
+            if product:
+                domain.append(
+                    ('product_id', '=', product.id))
+                filter_text += u'Prodotto %s, ' % product.default_code
+
+            # Search and open line:
+            order_ids = order_pool.search(cr, uid, domain, context=context)
+            for line in order_pool.browse(cr, uid, order_ids, context=context):
+                # Readability:
+                product = line.product_id
+                order = line.order_id
+                qty = line.product_uom_qty
+                subtotal = line.price_subtotal                
+                
+                master_data.append((
+                    _('OC'),
+                    self.get_season_period(order.date_order),
+                    order.date_order[:10],
+                    order.name,
+                    order.partner_id.name,
+                    
+                    product.family_id.name or '',
+                    product.default_code or '',
+                                        
+                    line.multi_discount_rates,
+                    line.discount,
+                    qty,
+                    line.price_unit,
+                    (subtotal / qty) if qty else 0.0,
+                    subtotal,
+                    ))
+
+        # ---------------------------------------------------------------------
+        # Load invoice:
+        # ---------------------------------------------------------------------
+        if data_invoice:
+            domain = []
+            filter_assigned = True            
+            
+            # Period:
+            if from_date:
+                domain.append(
+                    ('invoice_id.date_invoice', '>=', from_date))   
+                if not filter_assigned:     
+                    filter_text += u'Dalla data %s, ' % from_date   
+            if to_date:
+                domain.append(
+                    ('invoice_id.date_invoice', '<=', to_date))
+                if not filter_assigned:     
+                    filter_text += u'Alla data %s, ' % to_date    
+                
+            # Many2one 
+            if partner:
+                domain.append(
+                    ('invoice_id.partner_id', '=', partner.id))
+                if not filter_assigned:     
+                    filter_text += u'Cliente %s, ' % partner.name
+            if family:
+                domain.append(
+                    ('product_id.family_id', '=', family.id))
+                if not filter_assigned:     
+                    filter_text += u'Famiglia %s, ' % family.name
+            if product:
+                domain.append(
+                    ('product_id', '=', product.id))
+                if not filter_assigned:     
+                    filter_text += u'Prodotto %s, ' % product.default_code
+
+            # Search and open line:
+            invoice_ids = invoice_pool.search(cr, uid, domain, context=context)
+            for line in invoice_pool.browse(
+                    cr, uid, invoice_ids, context=context):
+                # Readability:
+                product = line.product_id
+                invoice = line.invoice_id
+                qty = line.quantity
+                subtotal = line.price_subtotal
+                
+                master_data.append((
+                    _('FT'),
+                    self.get_season_period(invoice.date_invoice),
+                    invoice.date_invoice[:10],
+                    invoice.name,
+                    invoice.partner_id.name,
+                    
+                    product.family_id.name or '',
+                    product.default_code or '',
+                                        
+                    line.multi_discount_rates,
+                    line.discount,
+                    qty,
+                    line.price_unit,
+                    (subtotal / qty) if qty else 0.0,
+                    subtotal,
+                    ))
+
+        # ---------------------------------------------------------------------        
+        #                               Excel:
+        # ---------------------------------------------------------------------        
+
+        # ---------------------------------------------------------------------        
+        # Detail Page:
+        # ---------------------------------------------------------------------        
+        if page_detail:
+            ws_name = 'Dettaglio'
+            excel_pool.create_worksheet(ws_name)
+
+            # TODO Format list:
+            excel_pool.set_format()
+            f_title = excel_pool.get_format('title')
+            f_header = excel_pool.get_format('header')
+            f_text = excel_pool.get_format('text')
+            f_number = excel_pool.get_format('number')
+            
+            excel_pool.column_width(ws_name, [
+                8, 10, 8, 15, 
+                35, 15, 10, 
+                10, 10, 
+                10, 10, 10, 15,
+                ])
+
+            # Title:
+            row = 0
+            #excel_pool.write_xls_line(ws_name, row, [
+            #    filter_text,
+            #    ], default_format=f_title)
+                
+            # Header:    
+            #row += 1        
+            excel_pool.write_xls_line(ws_name, row, [
+                'Documento', 'Stagione', 'Data', 'Riferimento', 'Partner', 
+                'Famiglia', 'Prodotto', 
+                'Scala', 'Sconto', 
+                'Q.', 'Prezzo', 'Netto', 'Totale',
+                ], default_format=f_header)
+
+            # Write record data as is:    
+            for record in sorted(master_data):
+                row += 1                
+                excel_pool.write_xls_line(
+                    ws_name, row, [
+                        record[0],
+                        record[1],
+                        record[2],
+                        record[3],
+                        record[4],
+                        record[5],
+                        record[6],
+                        record[7],
+                        record[8],
+                        (record[9], f_number),
+                        (record[10], f_number),
+                        (record[11], f_number),
+                        (record[12], f_number),
+                        ], default_format=f_text)
+        
+        return excel_pool.return_attachment(cr, uid, 'CRM Report all')
+        
     _columns = {
+        # ---------------------------------------------------------------------    
+        # Report common parameters:
+        # ---------------------------------------------------------------------    
         # Period:
         'from_date': fields.date('From date >='),
         'to_date': fields.date('To date <='),
         
         # Foreign keys:
         'partner_id': fields.many2one('res.partner', 'Partner'),
-        'agent_id': fields.many2one('res.partner', 'Agent'), # TODO filter
+        'family_id': fields.many2one('product.product', 'Family'),# TODO filter
         'product_id': fields.many2one('product.product', 'Product'),
-        'family_id': fields.many2one('product.product', 'Family'), # TODO filter        
+
+        # ---------------------------------------------------------------------    
+        # Report managed parameters:
+        # ---------------------------------------------------------------------    
+        'agent_id': fields.many2one('res.partner', 'Agent'), # TODO filter
         'country_id': fields.many2one('res.country', 'Country'),
         'state_id': fields.many2one('res.country.state', 'State'),
         'region_id':fields.many2one('res.country.region', 'Region'),
@@ -483,13 +728,47 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ('region', 'Region'),
             ('country', 'Country'),
             ], 'Sorted', required=True),
+
+        # ---------------------------------------------------------------------    
+        # Report all:    
+        # ---------------------------------------------------------------------    
+        'reference_date': fields.date('Reference date (compare)'),
+        'with_previsional': fields.boolean('With previsional order'), 
+
+        # Data manage
+        'data_order': fields.boolean('With order'),
+        'data_ddt': fields.boolean('With DDT pending'),
+        'data_invoice': fields.boolean('With invoice'),
+        
+        # Page enable:
+        'page_detail': fields.boolean('Page detail'),
+        'page_price': fields.boolean('Page price'),
+        'page_comparison': fields.boolean('Page comparison'),
+        'page_comparison_family': fields.boolean('Page comparison family'),
         }
         
     _defaults = {
+        # ---------------------------------------------------------------------
+        # Report managed:
+        # ---------------------------------------------------------------------
         'with_qty': lambda *x: True,
         'sorted': lambda *x: 'partner',
         'field_number': lambda *x: True,
         'field_real': lambda *x: True,
         'field_total': lambda *x: True,
+        
+        # ---------------------------------------------------------------------
+        # Report all:
+        # ---------------------------------------------------------------------
+        # Data manage:
+        'data_order': lambda *x: True,
+        'data_ddt': lambda *x: True,
+        'data_invoice': lambda *x: True,
+        
+        # Page show:
+        'page_detail': lambda *x: True,
+        'page_price': lambda *x: True,
+        'page_comparison': lambda *x: True,
+        'page_comparison_family': lambda *x: True,
         }        
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
