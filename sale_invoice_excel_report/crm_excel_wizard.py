@@ -630,9 +630,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         #                               Excel:
         # ---------------------------------------------------------------------        
         # Collect database:
-        total_family = {}
         total_all = {}
         total_all_reference = {}
+        total_family = {}
+        total_family_reference = {}
         
         season_list = []
         reference_list = {}
@@ -711,13 +712,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     
                 # Total with reference date:    
                 if page_comparison and reference_date:
-                    if document not in total_all_reference:
-                        total_all_reference[document] = {}
-                    if season not in total_all_reference[document]:
-                        # Q, total
-                        total_all_reference[document][season] = [0.0, 0.0]
-                    total_all_reference[document][season][0] += qty # Pz.
-                    total_all_reference[document][season][1] += subtotal # Pz.
+                    if is_reference:
+                        if document not in total_all_reference:
+                            total_all_reference[document] = {}
+                        if season not in total_all_reference[document]:
+                            # Q, total
+                            total_all_reference[document][season] = [0.0, 0.0]
+                        total_all_reference[document][season][0] += qty
+                        total_all_reference[document][season][1] += subtotal
 
                 # -------------------------------------------------------------
                 # Total sale for family:
@@ -732,6 +734,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         
                     total_family[key][season][0] += qty # Pz.
                     total_family[key][season][1] += subtotal # Pz.                    
+
+                # Total with reference date:    
+                if page_comparison_family and reference_date:
+                    if is_reference:
+                        if document not in total_family_reference:
+                            total_family_reference[document] = {}
+                        if season not in total_family_reference[document]:
+                            # Q, total
+                            total_family_reference[document][season] = [
+                                0.0, 0.0]
+                        total_family_reference[document][season][0] += qty
+                        total_family_reference[document][season][1] += subtotal
+
                     
                 # -------------------------------------------------------------
                 # Write detail line:    
@@ -759,24 +774,44 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         # Invoiced compared Page:
         # ---------------------------------------------------------------------        
-        if page_comparison:
-            ws_name = 'Venduto totale'
-            excel_pool.create_worksheet(ws_name)
-            header = ['Documento']
-
-            multi_report = [(ws_name, total_all)]
-            
-            if reference_date:
-                ws_name = 'Venduto riferimento'
+        if page_comparison or page_comparison_family:
+            if page_comparison:
+                ws_name = 'Venduto totale'
                 excel_pool.create_worksheet(ws_name)
-                multi_report.append((ws_name, total_all_reference))
+
+                multi_report = [(ws_name, total_all, 'Documento')]
+            
+                if reference_date:                
+                    ws_name = 'Venduto al %s' % reference_date[5:]
+                    excel_pool.create_worksheet(ws_name)
+                    multi_report.append(
+                        (ws_name, 
+                        total_all_reference, 
+                        'Documento al %s' % reference_date[5:],
+                        ))
+
+            if page_comparison_family:
+                ws_name = 'Venduto famiglia'
+                excel_pool.create_worksheet(ws_name)
+
+                multi_report = [(ws_name, total_family, 'Famiglia')]
+            
+                if reference_date:
+                    ws_name = 'Venduto famglia al %s' % reference_date[5:]
+                    excel_pool.create_worksheet(ws_name)
+                    multi_report.append(
+                        (ws_name,
+                        total_family_reference, 
+                        'Documento al %s' % reference_date[5:],
+                        ))
                 
-            for ws_name, total_db in multi_report:
+            for ws_name, total_db, title in multi_report:
                 season_col = {} # XXX every time?
                 row = 0
                 col = -1 # 1 extra fixed data!
                 
                 # First block of header:
+                header = [title]
                 excel_pool.column_width(ws_name, [20])
                 excel_pool.write_xls_line(
                     ws_name, row, header, default_format=f_header)
