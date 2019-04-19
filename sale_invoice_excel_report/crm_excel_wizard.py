@@ -839,6 +839,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         ws_name, row + 1, col_header, 
                         default_format=f_header, col=col)
 
+                import pdb; pdb.set_trace()
+                columns_witdh = [20 for item in range(0, col)]
+                excel_pool.column_width(
+                    ws_name, columns_width, default_format=f_number)
+                
                 #excel_pool.column_width(ws_name, [
                 #    40, ]) # TODO add other
                 #excel_pool.write_xls_line(
