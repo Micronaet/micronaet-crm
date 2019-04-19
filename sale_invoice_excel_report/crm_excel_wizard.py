@@ -461,9 +461,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         with_previsional = wiz_browse.with_previsional
 
         # Browseable:
-        partner = wiz_browse.partner_id
-        product = wiz_browse.product_id
-        family = wiz_browse.family_id
+        search_partner = wiz_browse.partner_id
+        search_product = wiz_browse.product_id
+        search_family = wiz_browse.family_id
 
         data_order = wiz_browse.data_order
         data_ddt = wiz_browse.data_ddt
@@ -492,6 +492,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             domain = []
             filter_assigned = True            
 
+            # Open order
+            domain.append(
+                ('order_id.state', 'not in', ('draft', 'sent', 'cancel')))    
+            domain.append(('order_id.mx_closed', '=', False))    
+            filter_text += u'Ordini aperti, '
+
             # With previsional order:            
             if not with_previsional:
                 filter_text += u'Con ordini previsionali, '
@@ -511,31 +517,33 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 filter_text += u'Alla data %s, ' % to_date    
                 
             # Many2one 
-            if partner:
+            if search_partner:
                 domain.append(
-                    ('order_id.partner_id', '=', partner.id))
-                filter_text += u'Cliente %s, ' % partner.name
-            if family:
+                    ('order_id.partner_id', '=', search_partner.id))
+                filter_text += u'Cliente %s, ' % search_partner.name
+            if search_family:
                 domain.append(
-                    ('product_id.family_id', '=', family.id))
-                filter_text += u'Famiglia %s, ' % family.name
-            if product:
+                    ('product_id.family_id', '=', search_family.id))
+                filter_text += u'Famiglia %s, ' % search_family.name
+            if search_product:
                 domain.append(
-                    ('product_id', '=', product.id))
-                filter_text += u'Prodotto %s, ' % product.default_code
+                    ('product_id', '=', search_product.id))
+                filter_text += u'Prodotto %s, ' % search_product.default_code
 
             # Search and open line:
             order_ids = order_pool.search(cr, uid, domain, context=context)
+            _logger.warning('OC total lines: %s' % len(order_ids))
             for line in order_pool.browse(cr, uid, order_ids, context=context):
                 # Readability:
                 product = line.product_id
                 order = line.order_id
                 qty = line.product_uom_qty
                 subtotal = line.price_subtotal                
+                season = self.get_season_period(order.date_order)
                 
                 master_data.append((
                     _('OC'),
-                    self.get_season_period(order.date_order),
+                    season,
                     order.date_order[:10],
                     order.name,
                     order.partner_id.name,
@@ -571,24 +579,26 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     filter_text += u'Alla data %s, ' % to_date    
                 
             # Many2one 
-            if partner:
+            if search_partner:
                 domain.append(
-                    ('invoice_id.partner_id', '=', partner.id))
+                    ('invoice_id.partner_id', '=', search_partner.id))
                 if not filter_assigned:     
-                    filter_text += u'Cliente %s, ' % partner.name
-            if family:
+                    filter_text += u'Cliente %s, ' % search_partner.name
+            if search_family:
                 domain.append(
-                    ('product_id.family_id', '=', family.id))
+                    ('product_id.family_id', '=', search_family.id))
                 if not filter_assigned:     
-                    filter_text += u'Famiglia %s, ' % family.name
-            if product:
+                    filter_text += u'Famiglia %s, ' % search_family.name
+            if search_product:
                 domain.append(
-                    ('product_id', '=', product.id))
+                    ('product_id', '=', search_product.id))
                 if not filter_assigned:     
-                    filter_text += u'Prodotto %s, ' % product.default_code
+                    filter_text += \
+                        u'Prodotto %s, ' % search_product.default_code
 
             # Search and open line:
             invoice_ids = invoice_pool.search(cr, uid, domain, context=context)
+            _logger.warning('FT total lines: %s' % len(invoice_ids))
             for line in invoice_pool.browse(
                     cr, uid, invoice_ids, context=context):
                 # Readability:
@@ -596,10 +606,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 invoice = line.invoice_id
                 qty = line.quantity
                 subtotal = line.price_subtotal
+                season = self.get_season_period(invoice.date_invoice)
                 
                 master_data.append((
                     _('FT'),
-                    self.get_season_period(invoice.date_invoice),
+                    season,
                     invoice.date_invoice[:10],
                     invoice.name,
                     invoice.partner_id.name,
@@ -618,7 +629,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         #                               Excel:
         # ---------------------------------------------------------------------        
-
+        # Collect database:
+        total_family = {}
+        total_all = {}
+        total_all_reference = {}
+        
+        season_list = []
+        reference_list = {}
+        col_header = ['Q.', 'Totale',] # XXX change?
+        col_total = len(col_header)
+        
         # ---------------------------------------------------------------------        
         # Detail Page:
         # ---------------------------------------------------------------------        
@@ -637,44 +657,172 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 8, 10, 8, 15, 
                 35, 15, 10, 
                 10, 10, 
-                10, 10, 10, 15,
+                10, 10, 10, 15, 3
                 ])
 
-            # Title:
-            row = 0
-            #excel_pool.write_xls_line(ws_name, row, [
-            #    filter_text,
-            #    ], default_format=f_title)
-                
             # Header:    
-            #row += 1        
+            row = 0
             excel_pool.write_xls_line(ws_name, row, [
-                'Documento', 'Stagione', 'Data', 'Riferimento', 'Partner', 
+                'Documento', 'Stagione', 'Data', 'Origine', 'Partner', 
                 'Famiglia', 'Prodotto', 
                 'Scala', 'Sconto', 
-                'Q.', 'Prezzo', 'Netto', 'Totale',
+                'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
                 ], default_format=f_header)
 
             # Write record data as is:    
             for record in sorted(master_data):
-                row += 1                
+                row += 1
+                document = record[0]
+                season = record[1]
+                qty = record[9]
+                subtotal = record[12]
+                family = record[5]
+                date = record[2]
+                # discounted?
+
+                # -------------------------------------------------------------
+                #             Collect data for other report:
+                # -------------------------------------------------------------
+                if season not in season_list:
+                    season_list.append(season)
+                is_reference = 'X' # always
+                if reference_date:
+                    if season not in reference_list:
+                        month = reference_date[5:7]                    
+                        reference_list[season] = '20%s%s' % (
+                            season[:2] if month >= '07' else season[-2:],
+                            reference_date[4:],
+                            )                                            
+                    if date > reference_list[season]:
+                        is_reference = ''
+                
+                # -------------------------------------------------------------
+                # Total sale:
+                # -------------------------------------------------------------
+                # Total:
+                if page_comparison:
+                    if document not in total_all:
+                        total_all[document] = {}
+                    if season not in total_all[document]:
+                        # Q, total
+                        total_all[document][season] = [0.0, 0.0]
+                    total_all[document][season][0] += qty # Pz.
+                    total_all[document][season][1] += subtotal # Pz.
+                    
+                # Total with reference date:    
+                if page_comparison and reference_date:
+                    if document not in total_all_reference:
+                        total_all_reference[document] = {}
+                    if season not in total_all_reference[document]:
+                        # Q, total
+                        total_all_reference[document][season] = [0.0, 0.0]
+                    total_all_reference[document][season][0] += qty # Pz.
+                    total_all_reference[document][season][1] += subtotal # Pz.
+
+                # -------------------------------------------------------------
+                # Total sale for family:
+                # -------------------------------------------------------------
+                if page_comparison_family:           
+                    key = (family, document)         
+                    if key not in total_family:
+                        total_family[key] = {}
+                    if season not in total_family[key]:
+                        # Q, total
+                        total_family[key][season] = [0.0, 0.0]
+                        
+                    total_family[key][season][0] += qty # Pz.
+                    total_family[key][season][1] += subtotal # Pz.                    
+                    
+                # -------------------------------------------------------------
+                # Write detail line:    
                 excel_pool.write_xls_line(
                     ws_name, row, [
-                        record[0],
-                        record[1],
-                        record[2],
+                        document,
+                        season,
+                        date,
                         record[3],
                         record[4],
-                        record[5],
+                        family,
                         record[6],
                         record[7],
                         record[8],
-                        (record[9], f_number),
+                        (qty, f_number),
                         (record[10], f_number),
                         (record[11], f_number),
-                        (record[12], f_number),
+                        (subtotal, f_number),
+                        is_reference,
                         ], default_format=f_text)
+
+        _logger.warning('Season: %s' % season_list)
+        _logger.warning('Reference: %s' % reference_list)
         
+        # ---------------------------------------------------------------------        
+        # Invoiced compared Page:
+        # ---------------------------------------------------------------------        
+        if page_comparison:
+            ws_name = 'Venduto totale'
+            excel_pool.create_worksheet(ws_name)
+            header = ['Documento']
+
+            multi_report = [(ws_name, total_all)]
+            
+            if reference_date:
+                ws_name = 'Venduto riferimento'
+                excel_pool.create_worksheet(ws_name)
+                multi_report.append((ws_name, total_all_reference))
+                
+            for ws_name, total_db in multi_report:
+                season_col = {} # XXX every time?
+                row = 0
+                col = -1 # 1 extra fixed data!
+                
+                # First block of header:
+                excel_pool.column_width(ws_name, [20])
+                excel_pool.write_xls_line(
+                    ws_name, row, header, default_format=f_header)
+                excel_pool.merge_cell(
+                    ws_name, [row, 0, row+1, 0])
+
+                # Dynamic header:
+                for season in sorted(season_list):
+                    col += col_total
+                    header = ['' for item in range(0, col_total)]
+                    season_col[season] = col
+                    excel_pool.merge_cell(
+                        ws_name, [row, col, row, col + col_total - 1])
+
+                    # Season:
+                    excel_pool.write_xls_line(
+                        ws_name, row, [season], default_format=f_header, 
+                        col=col)
+                        
+                    # Subtitle:
+                    excel_pool.write_xls_line(
+                        ws_name, row + 1, col_header, 
+                        default_format=f_header, col=col)
+
+                #excel_pool.column_width(ws_name, [
+                #    40, ]) # TODO add other
+                #excel_pool.write_xls_line(
+                #    ws_name, row, header_col_title, default_format=f_header)
+                #row += 1
+                #excel_pool.write_xls_line(
+                #    ws_name, row, header_col, default_format=f_header)
+                #excel_pool.merge_cell(ws_name, [row -1, 0, row, 0])
+                row += 1
+                for document in sorted(total_db):
+                    row += 1
+                    excel_pool.write_xls_line(
+                        ws_name, row, [document], 
+                        default_format=f_text)
+                    for season in total_db[document]:
+                        start_col = season_col[season]
+                        record = total_db[document][season]
+                        
+                        excel_pool.write_xls_line(
+                            ws_name, row, record, 
+                            default_format=f_number, col=start_col)
+            
         return excel_pool.return_attachment(cr, uid, 'CRM Report all')
         
     _columns = {
