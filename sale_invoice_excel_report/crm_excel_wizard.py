@@ -446,7 +446,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             context = {}
 
         order_pool = self.pool.get('sale.order.line')
-        ddt_pool = self.pool.get('stock.ddt')
+        ddt_pool = self.pool.get('stock.move') # use stock move
         invoice_pool = self.pool.get('account.invoice.line')        
         excel_pool = self.pool.get('excel.writer')
 
@@ -557,6 +557,84 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     line.price_unit,
                     (subtotal / qty) if qty else 0.0,
                     subtotal,
+                    ))
+
+        # ---------------------------------------------------------------------
+        # Load DDT:
+        # ---------------------------------------------------------------------
+        if data_ddt:
+            domain = [('picking_id.invoice_id', '=', False)] # Not yet invoiced
+            filter_assigned = True            
+            
+            # Period:
+            if from_date:
+                domain.append(
+                    ('picking_id.ddt_id.date', '>=', from_date))   
+                if not filter_assigned:     
+                    filter_text += u'Dalla data %s, ' % from_date   
+            if to_date:
+                domain.append(
+                    ('picking_id.ddt_id.date', '<=', to_date))
+                if not filter_assigned:     
+                    filter_text += u'Alla data %s, ' % to_date    
+                
+            # Many2one 
+            if search_partner:
+                domain.append(
+                    ('picking_id.partner_id', '=', search_partner.id))
+                if not filter_assigned:     
+                    filter_text += u'Cliente %s, ' % search_partner.name
+            if search_family:
+                domain.append(
+                    ('product_id.family_id', '=', search_family.id))
+                if not filter_assigned:     
+                    filter_text += u'Famiglia %s, ' % search_family.name
+            if search_product:
+                domain.append(
+                    ('product_id', '=', search_product.id))
+                if not filter_assigned:     
+                    filter_text += \
+                        u'Prodotto %s, ' % search_product.default_code
+
+            # Search and open line:
+            ddt_ids = ddt_pool.search(cr, uid, domain, context=context)
+            _logger.warning('DDT total lines: %s' % len(ddt_ids))
+            for line in ddt_pool.browse(
+                    cr, uid, ddt_ids, context=context):
+                # Readability:
+                product = line.product_id                
+                ddt = line.picking_id.ddt_id
+                sale_line = line.sale_line_id
+                if sale_line:
+                    qty = line.product_uom_qty
+                    price_unit = sale_line.price_unit
+                    price_unit_discount = \
+                        (sale_line.price_subtotal / sale_line.product_uom_qty
+                            ) if sale_line.product_uom_qty else 0.0
+                    subtotal = price_unit * qty
+                    subtotal_discount = price_unit * qty
+                else:    
+                    qty = price_unit = price_unit_discount = subtotal = \
+                        subtotal_discount = 0.0
+                season = self.get_season_period(ddt.date)
+                
+                master_data.append((
+                    _('DDT'),
+                    season,
+                    ddt.date[:10],
+                    ddt.name,
+                    ddt.partner_id.name,
+                    
+                    product.family_id.name or '',
+                    product.default_code or '',
+                                        
+                    sale_line.multi_discount_rates,
+                    sale_line.discount,
+                    
+                    qty,
+                    price_unit,
+                    price_unit_discount,
+                    subtotal_discount,
                     ))
 
         # ---------------------------------------------------------------------
@@ -815,7 +893,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 
                 # First block of header:
                 header = [title]
-                excel_pool.column_width(ws_name, [20])
+                excel_pool.column_width(ws_name, [25], default_format=f_text)
                 excel_pool.write_xls_line(
                     ws_name, row, header, default_format=f_header)
                 excel_pool.merge_cell(
@@ -839,10 +917,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         ws_name, row + 1, col_header, 
                         default_format=f_header, col=col)
 
-                import pdb; pdb.set_trace()
-                columns_witdh = [20 for item in range(0, col)]
+                # Width setup:
+                columns_width = [10 for item in range(0, col + 1)]
                 excel_pool.column_width(
-                    ws_name, columns_width, default_format=f_number)
+                    ws_name, columns_width, col=1, default_format=f_number)
                 
                 #excel_pool.column_width(ws_name, [
                 #    40, ]) # TODO add other
