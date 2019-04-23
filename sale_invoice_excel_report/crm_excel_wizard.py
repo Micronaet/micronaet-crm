@@ -712,7 +712,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         total_all_reference = {}
         total_family = {}
         total_family_reference = {}
-        total_price = []
+        total_price = {}
         
         season_list = []
         reference_list = {}
@@ -795,9 +795,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # Total price:
                 # -------------------------------------------------------------
                 if page_price and default_code:
-                    total_price.append((
-                        family,
-                        default_code,
+                    key = (family, default_code)
+                    if key not in total_price:
+                        total_price[key] = []
+                    total_price[key].append((
                         date,
                         price,
                         price_net, 
@@ -889,7 +890,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             excel_pool.create_worksheet(ws_name)
 
             # Width setup:
-            columns_width = [30, 20]
+            columns_width = [16, 10, 10, 10]
+            fixed_column = len(columns_width)
+
             excel_pool.column_width(
                 ws_name, columns_width, default_format=f_text)
 
@@ -898,54 +901,68 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ws_name, row, [
                     'Famiglia',
                     'Codice',
-                    'Cambio prezzo (Nettl, Lordo, Sconto, Data)',
+                    'Ultimo prezzo', 
+                    'Ultimo sconto',
+                    'Cambio prezzo (Netto, Lordo, Sconto, Data)',
                     ], default_format=f_header)
             
             row = 0
             old_code = {}
-            for (family, default_code, date, price, price_net, discount_scale,
-                    ) in sorted(total_price):                
-                # first time or change code:
-                if not old_code or default_code != old_code['default_code']: 
-                    row += 1
-                    old_code.update({
-                        'default_code': default_code,
-                        'price_net': price_net,
-                        #'date': date,
-                        #'price': price,
-                        #'discount_scale': discount_scale,
-                        #'family': family,
-                        })
-                    excel_pool.write_xls_line(
-                        ws_name, row, [
-                            family, default_code,
-                            detail_mask % (
-                                price_net, price, discount_scale, date,
-                                ),
-                            ], default_format=f_text)
-                    start_col = 2
-                else:
-                    if abs(price_net - old_code['price_net']) <= gap:
-                        continue
+            for key in sorted(total_price):
+                (family, default_code) = key
+                old_price = False
+                row += 1
+                for date, price, price_net, discount_scale in sorted(
+                        total_price[key]):
 
-                    start_col += 1
-                    extra_column_tot += 1
-                    excel_pool.write_xls_line(
-                        ws_name, row, [
-                            detail_mask % (
-                                price_net, price, discount_scale, date,
-                                ),
-                            ], default_format=f_text, col= start_col)
-                    old_code['price_net'] = price_net
+                    # ---------------------------------------------------------
+                    # First time or change code:
+                    # ---------------------------------------------------------
+                    if old_price == False:
+                        excel_pool.write_xls_line(
+                            ws_name, row, [
+                                family, default_code,
+                                '', '', # TODO compiled after
+                                detail_mask % (
+                                    price_net, price, discount_scale, date,
+                                    ),
+                                ], default_format=f_text)
+                        old_price = price_net        
+                        start_col = fixed_column
+                        
+                    # ---------------------------------------------------------
+                    # Extra change:
+                    # ---------------------------------------------------------
+                    else:
+                        if abs(price_net - old_price) <= gap:
+                            continue
+
+                        start_col += 1
+                        if start_col - (fixed_column) + 1 > extra_column_tot:
+                            extra_column_tot = start_col - fixed_column + 1
+
+                        excel_pool.write_xls_line(
+                            ws_name, row, [
+                                detail_mask % (
+                                    price_net, price, discount_scale, date,
+                                    ),
+                                ], default_format=f_text, col= start_col)
+                        old_price = price_net
+
+                excel_pool.write_xls_line(
+                    ws_name, row, [
+                        price_net, discount_scale,
+                        ], default_format=f_number, col=2)
 
             # -----------------------------------------------------------------
             # Width setup extra columns:
             # -----------------------------------------------------------------
             columns_width = [45 for item in range(0, extra_column_tot)]
             excel_pool.column_width(
-                ws_name, columns_width, col=2, default_format=f_text)
+                ws_name, columns_width, col=fixed_column, default_format=f_text)
             excel_pool.merge_cell(
-                ws_name, [0, 2, 0, 1 + extra_column_tot])
+                ws_name, [
+                    0, fixed_column, 0, fixed_column -1 + extra_column_tot])
 
 
         if page_comparison or page_comparison_family:
