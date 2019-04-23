@@ -472,7 +472,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         page_detail = True # TODO  wiz_browse.page_detail
         page_price = wiz_browse.page_price
         page_comparison = wiz_browse.page_comparison
-        page_comparison_family = wiz_browse.page_comparison_family
+        page_comparison_family = wiz_browse.page_comparison_family        
 
         # ---------------------------------------------------------------------
         #                           COLLECT DATA:
@@ -712,6 +712,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         total_all_reference = {}
         total_family = {}
         total_family_reference = {}
+        total_price = []
         
         season_list = []
         reference_list = {}
@@ -751,12 +752,27 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # Write record data as is:    
             for record in sorted(master_data):
                 row += 1
-                document = record[0]
-                season = record[1]
-                qty = record[9]
-                subtotal = record[12]
-                family = record[5]
-                date = record[2]
+                
+                (# Record to variable:
+                    document,
+                    season,
+                    date,
+                    origin,
+                    partner,
+                    
+                    family,
+                    default_code,
+                    
+                    discount,
+                    discount_scale,
+                    qty,
+                    price,
+                    price_net,
+                    subtotal,
+                    #total,
+                    #rif,
+                    ) = record
+                
                 # discounted?
 
                 # -------------------------------------------------------------
@@ -775,6 +791,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     if date > reference_list[season]:
                         is_reference = ''
                 
+                # -------------------------------------------------------------
+                # Total price:
+                # -------------------------------------------------------------
+                if page_price and default_code:
+                    total_price.append((
+                        family,
+                        default_code,
+                        date,
+                        price,
+                        price_net, 
+                        discount_scale,
+                        ))
+
                 # -------------------------------------------------------------
                 # Total sale:
                 # -------------------------------------------------------------
@@ -832,15 +861,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         document,
                         season,
                         date,
-                        record[3],
-                        record[4],
+                        origin,
+                        partner,
                         family,
-                        record[6],
-                        record[7],
-                        record[8],
+                        default_code,
+                        discount,
+                        discount_scale,
                         (qty, f_number),
-                        (record[10], f_number),
-                        (record[11], f_number),
+                        (price, f_number),
+                        (price_net, f_number),
                         (subtotal, f_number),
                         is_reference,
                         ], default_format=f_text)
@@ -851,6 +880,74 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # ---------------------------------------------------------------------        
         # Invoiced compared Page:
         # ---------------------------------------------------------------------        
+        if page_price:
+            detail_mask = 'N.: %s, L.: %s (Sconto: %s) [Data: %s]'
+            gap = 0.001
+            extra_column_tot = 1
+
+            ws_name = 'Prezzi'
+            excel_pool.create_worksheet(ws_name)
+
+            # Width setup:
+            columns_width = [30, 20]
+            excel_pool.column_width(
+                ws_name, columns_width, default_format=f_text)
+
+            row = 0
+            excel_pool.write_xls_line(
+                ws_name, row, [
+                    'Famiglia',
+                    'Codice',
+                    'Cambio prezzo (Nettl, Lordo, Sconto, Data)',
+                    ], default_format=f_header)
+            
+            row = 0
+            old_code = {}
+            for (family, default_code, date, price, price_net, discount_scale,
+                    ) in sorted(total_price):                
+                # first time or change code:
+                if not old_code or default_code != old_code['default_code']: 
+                    row += 1
+                    old_code.update({
+                        'default_code': default_code,
+                        'price_net': price_net,
+                        #'date': date,
+                        #'price': price,
+                        #'discount_scale': discount_scale,
+                        #'family': family,
+                        })
+                    excel_pool.write_xls_line(
+                        ws_name, row, [
+                            family, default_code,
+                            detail_mask % (
+                                price_net, price, discount_scale, date,
+                                ),
+                            ], default_format=f_text)
+                    start_col = 2
+                else:
+                    if abs(price_net - old_code['price_net']) <= gap:
+                        continue
+
+                    start_col += 1
+                    extra_column_tot += 1
+                    excel_pool.write_xls_line(
+                        ws_name, row, [
+                            detail_mask % (
+                                price_net, price, discount_scale, date,
+                                ),
+                            ], default_format=f_text, col= start_col)
+                    old_code['price_net'] = price_net
+
+            # -----------------------------------------------------------------
+            # Width setup extra columns:
+            # -----------------------------------------------------------------
+            columns_width = [45 for item in range(0, extra_column_tot)]
+            excel_pool.column_width(
+                ws_name, columns_width, col=2, default_format=f_text)
+            excel_pool.merge_cell(
+                ws_name, [0, 2, 0, 1 + extra_column_tot])
+
+
         if page_comparison or page_comparison_family:
             multi_report = []
             if page_comparison:
@@ -938,10 +1035,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         default_format=f_text)
                     for season in total_db[document]:
                         start_col = season_col[season]
-                        record = total_db[document][season]
+                        item = total_db[document][season]
                         
                         excel_pool.write_xls_line(
-                            ws_name, row, record, 
+                            ws_name, row, item, 
                             default_format=f_number, col=start_col)
             
         return excel_pool.return_attachment(cr, uid, 'CRM Report all')
