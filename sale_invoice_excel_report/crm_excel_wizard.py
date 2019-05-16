@@ -59,7 +59,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         '''
         year = date[:4]
         month = date[5:7]
-        if month >= '07':
+        if month >= '09':
             return '%s-%02d' % (
                 year[-2:],
                 int(year[-2:]) + 1,
@@ -785,7 +785,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     if season not in reference_list:
                         month = reference_date[5:7]                    
                         reference_list[season] = '20%s%s' % (
-                            season[:2] if month >= '07' else season[-2:],
+                            season[:2] if month >= '09' else season[-2:],
                             reference_date[4:],
                             )                                            
                     if date > reference_list[season]:
