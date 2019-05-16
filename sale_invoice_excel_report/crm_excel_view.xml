@@ -69,6 +69,8 @@
 
                        <separator string="Document data:" colspan="4"/>
                        <field name="data_order" />
+                       <field name="order_full" attrs="{'invisible': [('data_order','=',False)]}" />
+                       
                        <field name="data_ddt" />
                        <field name="data_invoice" />
                        

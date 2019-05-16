@@ -236,7 +236,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Search and open line:
         line_ids = line_pool.search(cr, uid, domain, context=context)
         line_proxy = line_pool.browse(cr, uid, line_ids, context=context)
-
         
         # ---------------------------------------------------------------------        
         # Collect data (for other pages):
@@ -466,13 +465,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         search_family = wiz_browse.family_id
 
         data_order = wiz_browse.data_order
+        order_full = wiz_browse.order_full
         data_ddt = wiz_browse.data_ddt
         data_invoice = wiz_browse.data_invoice
         
         page_detail = True # TODO  wiz_browse.page_detail
         page_price = wiz_browse.page_price
         page_comparison = wiz_browse.page_comparison
-        page_comparison_family = wiz_browse.page_comparison_family        
+        page_comparison_family = wiz_browse.page_comparison_family
 
         # ---------------------------------------------------------------------
         #                           COLLECT DATA:
@@ -493,10 +493,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             filter_assigned = True            
 
             # Open order
-            domain.append(
-                ('order_id.state', 'not in', ('draft', 'sent', 'cancel')))    
-            domain.append(('order_id.mx_closed', '=', False))    
-            filter_text += u'Ordini aperti, '
+            if order_full:
+                filter_text += u'Ordini tutti, '
+            else:
+                domain.append(
+                    ('order_id.state', 'not in', ('draft', 'sent', 'cancel')))    
+                domain.append(('order_id.mx_closed', '=', False))    
+                filter_text += u'Ordini aperti, '
 
             # With previsional order:            
             if not with_previsional:
@@ -1123,6 +1126,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         'data_ddt': fields.boolean('With DDT pending'),
         'data_invoice': fields.boolean('With invoice'),
         
+        'order_full': fields.boolean(
+            'With full order', 
+            help='If check extract all order, instead remain order.'),
+
         # Page enable:
         'page_detail': fields.boolean('Page detail'),
         'page_price': fields.boolean('Page price'),
