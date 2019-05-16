@@ -502,7 +502,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 filter_text += u'Ordini aperti, '
 
             # With previsional order:            
-            if not with_previsional:
+            if with_previsional:
                 filter_text += u'Con ordini previsionali, '
             else:    
                 domain.append(
