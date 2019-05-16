@@ -69,7 +69,7 @@ msgstr "CRM exporta Excel "
 #: model:ir.actions.act_window,name:sale_invoice_excel_report.action_crm_excel_extract_report_all_wizard
 #: model:ir.ui.menu,name:sale_invoice_excel_report.menu_crm_excel_extract_all_report
 msgid "CRM Extract All wizard"
-msgstr "CRM Estrai tutto"
+msgstr "CRM Estrai scheda cliente"
 
 #. module: sale_invoice_excel_report
 #: view:crm.excel.extract.report.wizard:sale_invoice_excel_report.crm_excel_extract_report_wizard_all_view
