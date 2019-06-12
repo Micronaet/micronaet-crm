@@ -1007,7 +1007,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         lst_price, 
                         lst_50_30, delta_50_30,
                         lst_50_40, delta_50_40,
-                        ], default_format=f_number, col=2)
+                        ], default_format=f_number_color, col=2)
 
             # -----------------------------------------------------------------
             # Width setup extra columns:
