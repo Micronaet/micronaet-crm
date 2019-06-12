@@ -553,10 +553,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     qty = qty_full - line.delivered_qty # remain
                     if qty <= 0.0:
                         continue # Jump line
-                    if qty_full:
+
+                    if qty_full: # division by zero
                         subtotal = qty * line.price_subtotal / qty_full
                     else:
-                        subtotal = 0.0    
+                        subtotal = 0.0
                 
                 master_data.append((
                     _('OC'),
@@ -574,6 +575,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     line.price_unit,
                     (subtotal / qty) if qty else 0.0,
                     subtotal,
+                    product,
                     ))
 
         # ---------------------------------------------------------------------
@@ -652,6 +654,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     price_unit,
                     price_unit_discount,
                     subtotal_discount,
+                    product,
                     ))
 
         # ---------------------------------------------------------------------
@@ -719,6 +722,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     line.price_unit,
                     (subtotal / qty) if qty else 0.0,
                     subtotal,
+                    product,
                     ))
 
         # ---------------------------------------------------------------------        
@@ -788,6 +792,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     subtotal,
                     #total,
                     #rif,
+                    product,
                     ) = record
                 
                 # discounted?
@@ -812,7 +817,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # Total price:
                 # -------------------------------------------------------------
                 if page_price and default_code:
-                    key = (family, default_code)
+                    key = (family, default_code, product)
                     if key not in total_price:
                         total_price[key] = []
                     total_price[key].append((
@@ -920,15 +925,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     'Codice',
                     'Ultimo prezzo', 
                     'Ultimo sconto',
+                    'Listino', 
+                    '50 + 30', 'Delta', 
+                    '50 + 40', 'Delta',
                     'Cambio prezzo (Netto, Lordo, Sconto, Data)',
                     ], default_format=f_header)
             
             row = 0
             old_code = {}
             for key in sorted(total_price):
-                (family, default_code) = key
+                (family, default_code, product) = key
                 old_price = False
                 row += 1
+
                 for date, price, price_net, discount_scale in sorted(
                         total_price[key]):
 
@@ -939,7 +948,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         excel_pool.write_xls_line(
                             ws_name, row, [
                                 family, default_code,
-                                '', '', # TODO compiled after
+                                # TODO compiled after:
+                                '', '', 
+                                '', # Listino
+                                '', '', # 50 - 30 
+                                '', '', # 50 - 40
                                 detail_mask % (
                                     price_net, price, discount_scale, date,
                                     ),
@@ -966,9 +979,18 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                                 ], default_format=f_text, col= start_col)
                         old_price = price_net
 
+
+                # Extra price:
+                lst_price = product.lst_price
+                lst_50_30 = lst_price * 0.5 * 0.7
+                lst_50_40 = lst_price * 0.5 * 0.6
+
                 excel_pool.write_xls_line(
                     ws_name, row, [
                         price_net, discount_scale,
+                        lst_price, 
+                        lst_50_30, lst_50_30 - lst_price,
+                        lst_50_40, lst_50_40 - lst_price,
                         ], default_format=f_number, col=2)
 
             # -----------------------------------------------------------------
