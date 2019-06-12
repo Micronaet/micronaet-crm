@@ -540,9 +540,21 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # Readability:
                 product = line.product_id
                 order = line.order_id
-                qty = line.product_uom_qty
-                subtotal = line.price_subtotal                
                 season = self.get_season_period(order.date_order)
+                
+                # -------------------------------------------------------------
+                # Data for partial / full order:
+                # -------------------------------------------------------------
+                if order_full:
+                    qty = line.product_uom_qty
+                    subtotal = line.price_subtotal                
+                else: # partial order
+                    qty_full = line.product_uom_qty
+                    qty = qty_full - line.delivered_qty # remain
+                    if qty_full:
+                        subtotal = qty * line.price_subtotal / qty_full
+                    else:
+                        subtotal = 0.0    
                 
                 master_data.append((
                     _('OC'),
