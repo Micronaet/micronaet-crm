@@ -551,6 +551,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 else: # partial order
                     qty_full = line.product_uom_qty
                     qty = qty_full - line.delivered_qty # remain
+                    if qty <= 0.0:
+                        continue # Jump line
                     if qty_full:
                         subtotal = qty * line.price_subtotal / qty_full
                     else:
