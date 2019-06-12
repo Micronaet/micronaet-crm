@@ -752,7 +752,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             f_title = excel_pool.get_format('title')
             f_header = excel_pool.get_format('header')
             f_text = excel_pool.get_format('text')
+            f_text_red = excel_pool.get_format('text_red')
             f_number = excel_pool.get_format('number')
+            f_number_red = excel_pool.get_format('number_red')
             
             excel_pool.column_width(ws_name, [
                 8, 10, 8, 15, 
@@ -989,16 +991,23 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # Extra price:
                 lst_price = product.lst_price
                 lst_50_30 = lst_price * 0.5 * 0.7
+                delta_50_30 = ((price_net - lst_50_30) / lst_50_30 * 100.0
+                    ) if lst_50_30 else '/'
                 lst_50_40 = lst_price * 0.5 * 0.6
+                delta_50_40 = ((price_net - lst_50_40) / lst_50_40 * 100.0
+                    ) if lst_50_40 else '/'
 
+                if price_net < lst_50_30:
+                    f_number_color = f_number_red
+                else:
+                    f_number_color = f_number
+                
                 excel_pool.write_xls_line(
                     ws_name, row, [
                         price_net, discount_scale,
                         lst_price, 
-                        lst_50_30, ((price_net - lst_50_30) / lst_50_30 * 100.0
-                            ) if lst_50_30 else '/',
-                        lst_50_40, ((price_net - lst_50_40) / lst_50_40 * 100.0
-                            ) if lst_50_40 else '/',
+                        lst_50_30, delta_50_30,
+                        lst_50_40, delta_50_40,
                         ], default_format=f_number, col=2)
 
             # -----------------------------------------------------------------
