@@ -752,9 +752,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             f_title = excel_pool.get_format('title')
             f_header = excel_pool.get_format('header')
             f_text = excel_pool.get_format('text')
-            f_text_red = excel_pool.get_format('text_red')
             f_number = excel_pool.get_format('number')
-            f_number_red = excel_pool.get_format('number_red')
+            f_number_red = excel_pool.get_format('bg_red_number')
             
             excel_pool.column_width(ws_name, [
                 8, 10, 8, 15, 
