@@ -987,19 +987,28 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         old_price = price_net
 
 
+                # -------------------------------------------------------------
                 # Extra price:
+                # -------------------------------------------------------------
+                f_number_color = f_number
                 lst_price = product.lst_price
-                lst_50_30 = lst_price * 0.5 * 0.7
-                delta_50_30 = ((price_net - lst_50_30) / lst_50_30 * 100.0
-                    ) if lst_50_30 else '/'
-                lst_50_40 = lst_price * 0.5 * 0.6
-                delta_50_40 = ((price_net - lst_50_40) / lst_50_40 * 100.0
-                    ) if lst_50_40 else '/'
 
-                if price_net < lst_50_30:
-                    f_number_color = f_number_red
+                lst_50_30 = lst_price * 0.5 * 0.7
+                if lst_50_30:
+                    delta_50_30 = '%10.2f %%' % (
+                        ((price_net - lst_50_30) / lst_50_30 * 100.0), )
+                    if price_net < lst_50_30:
+                        f_number_color = f_number_red
                 else:
-                    f_number_color = f_number
+                    delta_50_30 = ''
+                    
+                if lst_50_40:    
+                    lst_50_40 = lst_price * 0.5 * 0.6
+                    delta_50_40 = '%10.2f %%' % (
+                        ((price_net - lst_50_40) / lst_50_40 * 100.0), )
+                else:
+                    delta_50_40 = ''        
+
                 
                 excel_pool.write_xls_line(
                     ws_name, row, [
