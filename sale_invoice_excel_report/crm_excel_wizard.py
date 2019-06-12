@@ -995,10 +995,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ws_name, row, [
                         price_net, discount_scale,
                         lst_price, 
-                        lst_50_30, ((price_net - lst_50_30) / price_net * 100.0
-                            ) if price_net else '/',
-                        lst_50_40, ((price_net - lst_50_40) / price_net * 100.0
-                            ) if price_net else '/',
+                        lst_50_30, ((price_net - lst_50_30) / lst_50_30 * 100.0
+                            ) if lst_50_30 else '/',
+                        lst_50_40, ((price_net - lst_50_40) / lst_50_40 * 100.0
+                            ) if lst_50_40 else '/',
                         ], default_format=f_number, col=2)
 
             # -----------------------------------------------------------------
