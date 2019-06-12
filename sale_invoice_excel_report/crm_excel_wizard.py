@@ -1002,8 +1002,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 else:
                     delta_50_30 = ''
                     
+                lst_50_40 = lst_price * 0.5 * 0.6
                 if lst_50_40:    
-                    lst_50_40 = lst_price * 0.5 * 0.6
                     delta_50_40 = '%10.2f %%' % (
                         ((price_net - lst_50_40) / lst_50_40 * 100.0), )
                 else:
