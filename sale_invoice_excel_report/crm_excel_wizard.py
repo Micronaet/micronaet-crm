@@ -987,7 +987,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
 
                 # Extra price:
-                product_price = product.lst_price
+                lst_price = product.lst_price
                 lst_50_30 = lst_price * 0.5 * 0.7
                 lst_50_40 = lst_price * 0.5 * 0.6
 
@@ -995,8 +995,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ws_name, row, [
                         price_net, discount_scale,
                         lst_price, 
-                        lst_50_30, lst_50_30 - product_price,
-                        lst_50_40, lst_50_40 - product_price,
+                        lst_50_30, lst_50_30 - price_net,
+                        lst_50_40, lst_50_40 - price_net,
                         ], default_format=f_number, col=2)
 
             # -----------------------------------------------------------------
