@@ -932,8 +932,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     'Ultimo prezzo', 
                     'Ultimo sconto',
                     'Listino', 
-                    '50 + 30', 'Delta', 
-                    '50 + 40', 'Delta',
+                    '50 + 30', '% Delta', 
+                    '50 + 40', '% Delta',
                     'Cambio prezzo (Netto, Lordo, Sconto, Data)',
                     ], default_format=f_header)
             
