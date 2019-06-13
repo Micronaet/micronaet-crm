@@ -485,8 +485,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         domain_sale = [
             ('state', 'not in', ('draft', 'sent', 'cancel')),
             ]
-        domain_ddt = []
-        domain_invoice = []
+        domain_ddt = [
+            ('state', '=', 'confirmed'),
+            ]
+        domain_invoice = [
+            ('state', '=', 'open'),
+            ]
         
         if from_date:
             domain_sale.append(
