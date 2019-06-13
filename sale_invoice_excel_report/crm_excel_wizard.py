@@ -810,7 +810,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             # Title:    
             # -----------------------------------------------------------------
-            row = 0           
+            row = 0         
 
             excel_pool.write_xls_line(ws_name, row, [
                 filter_text,
@@ -1046,7 +1046,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                                     ),
                                 ], default_format=f_text, col= start_col)
                         old_price = price_net
-
 
                 # -------------------------------------------------------------
                 # Extra price:
