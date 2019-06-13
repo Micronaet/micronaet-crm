@@ -448,7 +448,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         ddt_pool = self.pool.get('stock.move') # use stock move
         invoice_pool = self.pool.get('account.invoice.line')        
         excel_pool = self.pool.get('excel.writer')
-
+        
+        # Document:
+        sale_order_pool = self.pool.get('sale.order')
+        stock_ddt_pool = self.pool.get('stock.ddt')
+        account_invoice_pool = self.pool.get('account.invoice') 
+        
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         
         # ---------------------------------------------------------------------
@@ -475,6 +480,39 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         page_comparison_family = wiz_browse.page_comparison_family
 
         # ---------------------------------------------------------------------
+        # Total document of period
+        # ---------------------------------------------------------------------
+        domain_sale = [
+            ('state', 'not in', ('draft', 'sent', 'cancel')),
+            ]
+        domain_ddt = []
+        domain_invoice = []
+        
+        if from_date:
+            domain_sale.append(
+                ('date_order', '>=', from_date))    
+            domain_ddt.append(
+                ('date', '>=', from_date))    
+            domain_invoice.append(
+                ('date_invoice', '>=', from_date))    
+
+        if to_date:
+            domain_sale.append(
+                ('date_order', '<=', to_date))
+            domain_ddt.append(
+                ('date', '<=', to_date))
+            domain_invoice.append(
+                ('date_invoice', '<=', to_date))
+        
+        # Total:        
+        sale_order_ids = sale_order_pool.search(
+            cr, uid, domain_sale, context=context)
+        stock_ddt_ids = stock_ddt_pool.search(
+            cr, uid, domain_ddt, context=context)
+        account_invoice_ids = account_invoice_pool.search(
+            cr, uid, domain_invoice, context=context)
+        
+        # ---------------------------------------------------------------------
         #                           COLLECT DATA:
         # ---------------------------------------------------------------------
         master_data = []        
@@ -483,8 +521,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             '[DDT] ' if data_ddt else '',
             '[FT] ' if data_invoice else '',
             )
+
+        filter_text_total = \
+            'Totali documenti del periodo: OC %s, DDT %s, Fatture: %s' % (
+                sale_order_ids,
+                stock_ddt_ids,
+                account_invoice_ids,
+                )
         filter_assigned = False    
-        
+
         # ---------------------------------------------------------------------
         # Load order:
         # ---------------------------------------------------------------------
@@ -762,8 +807,24 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 10, 10, 10, 15, 3
                 ])
 
+            # -----------------------------------------------------------------
+            # Title:    
+            # -----------------------------------------------------------------
+            row = 0           
+
+            excel_pool.write_xls_line(ws_name, row, [
+                filter_text,
+                ], default_format=f_title)
+            row += 1
+
+            excel_pool.write_xls_line(ws_name, row, [
+                filter_text_total,
+                ], default_format=f_title)
+            row += 1
+
+            # -----------------------------------------------------------------
             # Header:    
-            row = 0
+            # -----------------------------------------------------------------
             excel_pool.write_xls_line(ws_name, row, [
                 'Documento', 'Stagione', 'Data', 'Origine', 'Partner', 
                 'Famiglia', 'Prodotto', 
