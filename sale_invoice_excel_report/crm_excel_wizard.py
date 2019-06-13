@@ -503,8 +503,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('date', '<=', to_date))
             domain_invoice.append(
                 ('date_invoice', '<=', to_date))
-        
-        # Total:        
+
+        if search_partner:
+            domain_sale.append(
+                ('partner_id', '=', search_partner.id))
+            domain_ddt.append(
+                ('partner_id', '=', search_partner.id))
+            domain_invoice.append(
+                ('partner_id', '=', search_partner.id))
+    
+        # Total:     
         sale_order_ids = sale_order_pool.search(
             cr, uid, domain_sale, context=context)
         stock_ddt_ids = stock_ddt_pool.search(
@@ -524,9 +532,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         filter_text_total = \
             'Totali documenti del periodo: OC %s, DDT %s, Fatture: %s' % (
-                sale_order_ids,
-                stock_ddt_ids,
-                account_invoice_ids,
+                len(sale_order_ids),
+                len(stock_ddt_ids),
+                len(account_invoice_ids),
                 )
         filter_assigned = False    
 
