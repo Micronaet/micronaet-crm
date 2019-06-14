@@ -1206,7 +1206,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         
         # Foreign keys:
         'partner_id': fields.many2one('res.partner', 'Partner'),
-        'family_id': fields.many2one('product.product', 'Family'),# TODO filter
+        'family_id': fields.many2one('product.template', 'Family'),#TODO filter
         'product_id': fields.many2one('product.product', 'Product'),
 
         # ---------------------------------------------------------------------    
