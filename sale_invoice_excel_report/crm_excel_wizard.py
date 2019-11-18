@@ -468,6 +468,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         search_partner = wiz_browse.partner_id
         search_product = wiz_browse.product_id
         search_family = wiz_browse.family_id
+        search_agent = wiz_browse.agent_id
 
         data_order = wiz_browse.data_order
         order_full = wiz_browse.order_full
@@ -515,6 +516,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('partner_id', '=', search_partner.id))
             domain_invoice.append(
                 ('partner_id', '=', search_partner.id))
+
+        # Note: Used for filter agent linked with partner (not saved)
+        if search_agent:
+            domain_sale.append(
+                ('partner_id.agent_id', '=', search_agent.id))
+            domain_ddt.append(
+                ('partner_id.agent_id', '=', search_agent.id))
+            domain_invoice.append(
+                ('partner_id.agent_id', '=', search_agent.id))
     
         # Total:     
         sale_order_ids = sale_order_pool.search(
@@ -523,7 +533,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             cr, uid, domain_ddt, context=context)
         account_invoice_ids = account_invoice_pool.search(
             cr, uid, domain_invoice, context=context)
-        
+            
         # ---------------------------------------------------------------------
         #                           COLLECT DATA:
         # ---------------------------------------------------------------------
@@ -540,8 +550,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 len(stock_ddt_ids),
                 len(account_invoice_ids),
                 )
-        filter_assigned = False    
-
+        filter_assigned = False
+        
         # ---------------------------------------------------------------------
         # Load order:
         # ---------------------------------------------------------------------
@@ -794,7 +804,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         
         season_list = []
         reference_list = {}
-        col_header = ['Q.', 'Totale',] # XXX change?
+        col_header = ['Q.', 'Totale'] #, '# doc.'] # XXX change?
         col_total = len(col_header)
         
         # ---------------------------------------------------------------------        
@@ -1100,9 +1110,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ws_name, [
                     0, fixed_column, 0, fixed_column -1 + extra_column_tot])
 
-
         if page_comparison or page_comparison_family:
             multi_report = []
+            
+            # -----------------------------------------------------------------
+            # A. Collect data total sold:
+            # -----------------------------------------------------------------            
             if page_comparison:
                 ws_name = 'Venduto totale'
                 excel_pool.create_worksheet(ws_name)
@@ -1112,13 +1125,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 if reference_date:                
                     ws_name = 'Venduto al %s' % reference_date[5:]
                     excel_pool.create_worksheet(ws_name)
-                    multi_report.append(
-                        (ws_name, 
+                    multi_report.append((
+                        ws_name, 
                         total_all_reference, 
                         'Documento al %s' % reference_date[5:],
                         '%s',
                         ))
 
+            # -----------------------------------------------------------------
+            # B. Collect data family sold:
+            # -----------------------------------------------------------------            
             if page_comparison_family:
                 ws_name = 'Venduto famiglia'
                 excel_pool.create_worksheet(ws_name)
@@ -1129,27 +1145,99 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 if reference_date:
                     ws_name = 'Venduto famglia al %s' % reference_date[5:]
                     excel_pool.create_worksheet(ws_name)
-                    multi_report.append(
-                        (ws_name,
+                    multi_report.append((
+                        ws_name,
                         total_family_reference, 
                         'Documento al %s' % reference_date[5:],
                         '%s [%s]',
                         ))
 
+            # -----------------------------------------------------------------
+            #               Collect total document for season:
+            # -----------------------------------------------------------------
+            total_number_document = {'OC': {}, 'FT': {}, 'DDT': {}}
+            
+            # -----------------------------------------------------------------
+            # 1. OC (sale order):
+            # -----------------------------------------------------------------
+            for order in sale_order_pool.browse(
+                    cr, uid, sale_order_ids, context=context):
+                date = order.date_order[:10]
+                season = self.get_season_period(date)
+
+                # Check reference:
+                if reference_date and date > reference_list[season]:
+                    continue
+                    
+                if season in total_number_document['OC']:
+                    total_number_document['OC'][season] += 1
+                else:    
+                    total_number_document['OC'][season] = 1
+
+            # -----------------------------------------------------------------
+            # 2. DDT (transport document):
+            # -----------------------------------------------------------------
+            for ddt in stock_ddt_pool.browse(
+                    cr, uid, stock_ddt_ids, context=context):
+                date = ddt.date[:10]
+                season = self.get_season_period(date)
+
+                # Check reference:
+                if reference_date and date > reference_list[season]:
+                    continue
+                    
+                if season in total_number_document['DDT']:
+                    total_number_document['DDT'][season] += 1
+                else:    
+                    total_number_document['DDT'][season] = 1
+
+            # -----------------------------------------------------------------
+            # 3. FT (invoice):
+            # -----------------------------------------------------------------
+            f_out = open('/home/thebrush/invoice.log', 'w')
+            
+            for invoice in account_invoice_pool.browse(
+                    cr, uid, account_invoice_ids, context=context):
+                date = invoice.date_invoice[:10]
+                season = self.get_season_period(date)
+                f_out.write('%s|%s|%s\n' % (
+                    invoice.number,
+                    date,
+                    season,
+                    ))
+
+                # Check reference:
+                if reference_date and date > reference_list[season]:
+                    continue
+                    
+                if season in total_number_document['FT']:
+                    total_number_document['FT'][season] += 1
+                else:    
+                    total_number_document['FT'][season] = 1
+
+            print total_number_document # XXX remove
+
+            # -----------------------------------------------------------------
+            # Add 2 pages for document and family invoiced:
+            # -----------------------------------------------------------------
             for ws_name, total_db, title, mask in multi_report:
                 season_col = {} # XXX every time?
                 row = 0
                 col = -1 # 1 extra fixed data!
                 
+                # -------------------------------------------------------------
                 # First block of header:
+                # -------------------------------------------------------------
                 header = [title]
                 excel_pool.column_width(ws_name, [25], default_format=f_text)
                 excel_pool.write_xls_line(
                     ws_name, row, header, default_format=f_header)
                 excel_pool.merge_cell(
-                    ws_name, [row, 0, row+1, 0])
+                    ws_name, [row, 0, row + 1, 0])
 
+                # -------------------------------------------------------------
                 # Dynamic header:
+                # -------------------------------------------------------------
                 for season in sorted(season_list):
                     col += col_total
                     header = ['' for item in range(0, col_total)]
@@ -1167,33 +1255,63 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         ws_name, row + 1, col_header, 
                         default_format=f_header, col=col)
 
+                # -------------------------------------------------------------
                 # Width setup:
+                # -------------------------------------------------------------
                 columns_width = [10 for item in range(0, col + 1)]
                 excel_pool.column_width(
                     ws_name, columns_width, col=1, default_format=f_number)
                 
-                #excel_pool.column_width(ws_name, [
-                #    40, ]) # TODO add other
-                #excel_pool.write_xls_line(
-                #    ws_name, row, header_col_title, default_format=f_header)
-                #row += 1
-                #excel_pool.write_xls_line(
-                #    ws_name, row, header_col, default_format=f_header)
-                #excel_pool.merge_cell(ws_name, [row -1, 0, row, 0])
+                # -------------------------------------------------------------
+                # Data:
+                # -------------------------------------------------------------
                 row += 1
                 for document in sorted(total_db):
                     row += 1
                     excel_pool.write_xls_line(
                         ws_name, row, [mask % document], 
                         default_format=f_text)
+
                     for season in total_db[document]:
                         start_col = season_col[season]
                         item = total_db[document][season]
+                        
+                        # Add extra data (total document):
+                        number_doc = total_number_document.get(
+                            document, {}).get(season, 0)
+                        # TODO item.append(number_doc)
                         
                         excel_pool.write_xls_line(
                             ws_name, row, item, 
                             default_format=f_number, col=start_col)
             
+            # -----------------------------------------------------------------
+            # Add Delivery data:
+            # -----------------------------------------------------------------
+            row = 8
+            ws_name = 'Venduto totale'
+            excel_pool.write_xls_line(
+                ws_name, row, [
+                    'Totale documenti',
+                    ], default_format=f_header)
+            row += 1          
+            for document in total_number_document:
+                excel_pool.write_xls_line(
+                    ws_name, row, [
+                        document,
+                        ], default_format=f_text)
+                col = 1
+                for season in sorted(total_number_document[document]):
+                    excel_pool.write_xls_line(
+                        ws_name, row, [
+                            '# %s [%s]' % (
+                                total_number_document[document][season],
+                                season,
+                                ), 
+                            ], default_format=f_text, col=col)
+                    col += 2
+                row += 1 
+                    
         return excel_pool.return_attachment(cr, uid, 'CRM Report all')
         
     _columns = {
