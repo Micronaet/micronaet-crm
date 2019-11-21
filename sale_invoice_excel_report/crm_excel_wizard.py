@@ -1194,7 +1194,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             # 3. FT (invoice):
             # -----------------------------------------------------------------
-            f_out = open('/home/thebrush/invoice.log', 'w')
+            f_out = open(os.path.expanduser('~/invoice.log'), 'w')
             
             for invoice in account_invoice_pool.browse(
                     cr, uid, account_invoice_ids, context=context):
