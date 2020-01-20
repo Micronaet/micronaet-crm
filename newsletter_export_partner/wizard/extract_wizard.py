@@ -52,7 +52,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
     def action_done(self, cr, uid, ids, context=None):
         ''' Event for button done
         '''
-        def get_mail(email):
+        def clean_mail(email):
             ''' Check mail and clean            
             '''
             if not email:
@@ -116,8 +116,14 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             
         # Create Excel WB
         ws_ml = _('Mailing list')
+        
         header_line = [
-            'Email', 'Nome', 'Paese', 'Nazione', 'Categoria'
+            'Mail generica', 'Mail promozionale', 'Mail listini', 
+            'Mail offerte', 'Mail conferme ordine', 'Mail ordini',
+            'Mail magazzino', 'Mail DDT', 'Mail fatture', 'Mail pagamenti',
+            'Mail PEC', 
+            
+            'Nome', 'Paese', 'Nazione', 'Categoria'
             ]
         if wiz_browse.extra_data:
             header_line.extend([
@@ -126,7 +132,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 'Codice destinazione',
                 ])    
             
-        column_w = [55, 45, 35, 30, 20, 20, 20, 20]
+        column_w = [
+            55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,  
+            45, 35, 30, 20, 20, 20, 20]
         xls_pool.create_worksheet(ws_ml)
         xls_pool.write_xls_line(ws_ml, 0, header_line)
         xls_pool.column_width(ws_ml, column_w)
@@ -156,7 +164,18 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 
             # Data to export:
             record = [
-                get_mail(partner.email), 
+                clean_mail(partner.email), 
+                clean_mail(partner.email_promotional_address), 
+                clean_mail(partner.email_pricelist_address), 
+                clean_mail(partner.email_quotation_address), 
+                clean_mail(partner.email_confirmation_address), 
+                clean_mail(partner.email_order_address), 
+                clean_mail(partner.email_picking_address), 
+                clean_mail(partner.email_ddt_address), 
+                clean_mail(partner.email_invoice_address), 
+                clean_mail(partner.email_payment_address), 
+                clean_mail(partner.email_pec_address), 
+                
                 partner.name, 
                 partner.city, 
                 partner.country_id.name if partner.country_id else '', 
@@ -185,7 +204,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     ws_err, row_err, record)
 
             if partner.email_promotional_id:
-                record[0] = get_mail(partner.email_promotional_id.email)
+                record[0] = clean_mail(partner.email_promotional_id.email)
                 if record[0]: # email
                     row += 1
                     xls_pool.write_xls_line(ws_ml, row, record)
