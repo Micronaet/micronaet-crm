@@ -277,7 +277,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             # Not account:
             ('not_customer', 'Non cliente'),
             ('not_supplier', 'Non fornitore'),
-            ('not_destination', 'Non destination'),
+            ('not_destination', 'Non destinazione'),
             
             ('all', 'All'),
             ], 'Accounting', required=True),
