@@ -68,6 +68,31 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
 
+        # ---------------------------------------------------------------------
+        # Invoice part:
+        # ---------------------------------------------------------------------
+        with_invoice = wiz_browse.with_invoice
+        invoice_date = wiz_browse.invoice_date
+        
+        partner_invoiced = {}
+        if with_invoice:
+            invoice_pool = self.pool.get('account.invoice')
+            if invoice_date:
+                _logger.warning(
+                    'Extract also invoice data from %s' % invoice_date)
+                invoice_domain = [('date_invoice', '>=', invoice_date)]
+            else:        
+                invoice_domain = []
+                    
+            invoice_ids = invoice_pool.search(cr, uid, invoice_domain,
+                context=context)                
+            for invoice in invoice_pool.browse(
+                    cr, uid, invoice_ids, context=context):
+                partner_id = invoice.partner_id.id
+                if partner_id not in partner_invoiced:
+                    partner_invoiced[partner_id] = 0.0
+                partner_invoiced[partner_id] += invoice.amount_untaxed
+        
         # ---------------------------------------------------------------------        
         # Create domain depend on parameter passed:
         # ---------------------------------------------------------------------        
@@ -118,12 +143,13 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         ws_ml = _('Mailing list')
         
         header_line = [
-            'Mail generica', 'Mail promozionale', 'Mail listini', 
+            'ID', 'Mail generica', 'Mail promozionale', 'Mail listini', 
             'Mail offerte', 'Mail conferme ordine', 'Mail ordini',
             'Mail magazzino', 'Mail DDT', 'Mail fatture', 'Mail pagamenti',
             'Mail PEC', 
             
-            'Nome', 'Paese', 'Nazione', 'Categoria'
+            'Nome', 'Paese', 'Nazione', 'Categoria', 'Gruppo', 
+            'Fatturato (%s)' % (invoice_date or 'Tutti'),
             ]
         if wiz_browse.extra_data:
             header_line.extend([
@@ -133,8 +159,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 ])    
             
         column_w = [
+            1,
             55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,  
-            45, 35, 30, 20, 20, 20, 20]
+            45, 35, 30, 20, 20, 20, 20, 20, 15]
         xls_pool.create_worksheet(ws_ml)
         xls_pool.write_xls_line(ws_ml, 0, header_line)
         xls_pool.column_width(ws_ml, column_w)
@@ -164,6 +191,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 
             # Data to export:
             record = [
+                partner.id,
                 clean_mail(partner.email), 
                 clean_mail(partner.email_promotional_address), 
                 clean_mail(partner.email_pricelist_address), 
@@ -181,6 +209,8 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 partner.country_id.name if partner.country_id else '', 
                 partner.newsletter_category_id.name \
                     if partner.newsletter_category_id else '',
+                partner.newsletter_group or '',
+                partner_invoiced.get(partner.id, 0.0),
                 ]
                 
             if wiz_browse.extra_data:
@@ -238,6 +268,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             ('all', 'All'),
             ], 'Accounting', required=True),
 
+        'with_invoice':fields.boolean('Con fatturato'),
+        'invoice_date': fields.date('Dalla data (fatturazione)'),
+        
         # Country:
         'country_id': fields.many2one(
             'res.country', 'Country', 

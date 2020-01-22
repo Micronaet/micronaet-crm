@@ -57,5 +57,9 @@ class ResPartner(orm.Model):
     _columns = {
         'newsletter_category_id': fields.many2one(
             'crm.newsletter.category', 'Newsletter category'), 
+        'newsletter_group': fields.selection([
+            ('contract', 'Contract'),
+            ('home', 'Domestico'),
+            ], 'Settore newsletter'),
         }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

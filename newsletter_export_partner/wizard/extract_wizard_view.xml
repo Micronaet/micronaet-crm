@@ -25,6 +25,10 @@
 
                        <field name="fiscal_id" />
                        <field name="no_fiscal_id" />
+                       
+                       <field name="with_invoice" />  
+                       <field name="invoice_date" attrs="{'invisible': [('with_invoice','=',False)]}"/>
+
                    </group>
                 </form>
             </field>

@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="title" position="after">
                     <field name="newsletter_category_id" />
+                    <field name="newsletter_group" />
                 </field>
             </field>
         </record>       
@@ -29,6 +30,7 @@
                     <field name="email" />
                     <field name="type_id" />
                     <field name="newsletter_category_id" />
+                    <field name="newsletter_group" />
                     
                     <filter name="has_newsletter_category" string="Newsletter category" domain="[('newsletter_category_id','!=',False)]"/>
                     <filter name="is_company_true" string="Company" domain="[('is_company','=',True)]"/>
@@ -37,6 +39,7 @@
                         <filter name="group_create" string="Create date" context="{'group_by': 'create_date'}"/>
                         <filter name="group_type" string="Campaign" context="{'group_by': 'type_id'}"/>
                         <filter name="group_newsletter" string="Newsletter" context="{'group_by': 'newsletter_category_id'}"/>
+                        <filter name="group_newsletter_group" string="Newsletter gruppo" context="{'group_by': 'newsletter_group'}"/>
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
                         <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
                         <filter name="group_state" string="State" context="{'group_by': 'state_id'}"/>
@@ -62,6 +65,7 @@
                     <field name="email" />
                     <field name="type_id" />
                     <field name="newsletter_category_id" />
+                    <field name="newsletter_group" />
                 </tree>
             </field>
         </record>
