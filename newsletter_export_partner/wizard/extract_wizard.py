@@ -155,6 +155,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             'Mail magazzino', 'Mail DDT', 'Mail fatture', 'Mail pagamenti',
             'Mail PEC', 
             
+            'Azienda', 'Cli,', 'For.', 
             'Nome', 'Paese', 'Nazione', 'Categoria', 'Gruppo', 
             'Fatturato (%s)' % (invoice_date or 'Tutti'),
             ]
@@ -168,6 +169,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         column_w = [
             1,
             55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,  
+            5, 5, 5,
             45, 35, 30, 20, 20, 20, 20, 20, 15]
         xls_pool.create_worksheet(ws_ml)
         xls_pool.write_xls_line(ws_ml, 0, header_line)
@@ -211,6 +213,10 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 clean_mail(partner.email_payment_address), 
                 clean_mail(partner.email_pec_address), 
                 
+                'X' if partner.is_company else '',
+                'X' if partner.customer else '',
+                'X' if partner.supplier else '',
+
                 partner.name, 
                 partner.city, 
                 partner.country_id.name if partner.country_id else '', 
