@@ -73,6 +73,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         # ---------------------------------------------------------------------
         with_invoice = wiz_browse.with_invoice
         invoice_date = wiz_browse.invoice_date
+        mode = wiz_browse.mode
         
         partner_invoiced = {}
         if with_invoice:
@@ -97,6 +98,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         # Create domain depend on parameter passed:
         # ---------------------------------------------------------------------        
         domain = []
+        
         if wiz_browse.no_opt_out:
             domain.append(('news_opt_out', '=', False))
         if wiz_browse.newsletter_category_ids:
@@ -146,109 +148,147 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         #    ('email_promotional_id', '!=', False),
         #    ])
             
-        # Create Excel WB
-        ws_ml = _('Mailing list')
         
-        header_line = [
-            'ID', 'Mail generica', 'Mail promozionale', 'Mail listini', 
-            'Mail offerte', 'Mail conferme ordine', 'Mail ordini',
-            'Mail magazzino', 'Mail DDT', 'Mail fatture', 'Mail pagamenti',
-            'Mail PEC', 
             
-            'Azienda', 'Cli,', 'For.', 
-            'Nome', 'Paese', 'Nazione', 'Categoria', 'Gruppo', 
-            'Fatturato (%s)' % (invoice_date or 'Tutti'),
-            ]
-        if wiz_browse.extra_data:
-            header_line.extend([
-                'Codice cliente', 
-                'Codice fornitore', 
-                'Codice destinazione',
-                ])    
-            
-        column_w = [
-            1,
-            55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,  
-            5, 5, 5,
-            45, 35, 30, 20, 20, 20, 20, 20, 15]
-        xls_pool.create_worksheet(ws_ml)
-        xls_pool.write_xls_line(ws_ml, 0, header_line)
-        xls_pool.column_width(ws_ml, column_w)
-        
-        ws_out = _('Opt out partner')
-        xls_pool.create_worksheet(ws_out)
-        xls_pool.write_xls_line(ws_out, 0, header_line)
-        xls_pool.column_width(ws_out, column_w)
-
-        ws_err = _('Errori mail')
-        xls_pool.create_worksheet(ws_err)
-        xls_pool.write_xls_line(ws_err, 0, header_line)
-        xls_pool.column_width(ws_err, column_w)
-        
+        # Prefetch data:
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
-        
-        row = row_err = row_out = 0
-        _logger.warning('Total partner selected: %s' % len(partner_ids))
-        for partner in sorted(partner_pool.browse(
-                cr, uid, partner_ids, context=context),
-                key=lambda x: x.name):
-            if country_id and partner.country_id.id != country_id:
-                continue    
+        partners = sorted(partner_pool.browse(
+                cr, uid, partner_ids, context=context), key=lambda x: x.name)
 
-            if no_country_id and partner.country_id.id == no_country_id:
-                continue
-                
-            # Data to export:
-            record = [
-                partner.id,
-                clean_mail(partner.email), 
-                clean_mail(partner.email_promotional_address), 
-                clean_mail(partner.email_pricelist_address), 
-                clean_mail(partner.email_quotation_address), 
-                clean_mail(partner.email_confirmation_address), 
-                clean_mail(partner.email_order_address), 
-                clean_mail(partner.email_picking_address), 
-                clean_mail(partner.email_ddt_address), 
-                clean_mail(partner.email_invoice_address), 
-                clean_mail(partner.email_payment_address), 
-                clean_mail(partner.email_pec_address), 
-                
-                'X' if partner.is_company else '',
-                'X' if partner.customer else '',
-                'X' if partner.supplier else '',
-
-                partner.name, 
-                partner.city, 
-                partner.country_id.name if partner.country_id else '', 
-                partner.newsletter_category_id.name \
-                    if partner.newsletter_category_id else '',
-                partner.newsletter_group or '',
-                partner_invoiced.get(partner.id, 0.0),
+        if mode == 'promotional':
+            header_line = [
+                'Ragione sociale', 'Email promozionale', 'Italiano', 
                 ]
+            column_w = [40, 35, 10]                  
+
+            # Create Excel WB
+            ws_ml = _('Mailing')
+
+            xls_pool.create_worksheet(ws_ml)
+            xls_pool.write_xls_line(ws_ml, 0, header_line)
+            xls_pool.column_width(ws_ml, column_w)
+
+            _logger.warning('Total partner selected: %s' % len(partner_ids))
+
+            records = {}
+            for partner in partners:
+                if country_id and partner.country_id.id != country_id:
+                    continue    
+
+                if no_country_id and partner.country_id.id == no_country_id:
+                    continue
                 
-            if wiz_browse.extra_data:
-                record.extend([
-                    partner.sql_customer_code,
-                    partner.sql_supplier_code,
-                    partner.sql_destination_code,
-                    ])
-            if partner.news_opt_out:
-                row_out += 1
-                xls_pool.write_xls_line(
-                    ws_out, row_out, record)
-                continue # No more write on file     
-
-            if record[0]: # email present
+                email = clean_mail(partner.email_promotional_address) or \
+                    clean_mail(partner.email)
+                if not email:
+                    continue
+                        
+                records[email] = partner.strip()
+                
+            row = 0
+            for email in records:
+                partner = records[email]
+                
+                italian = partner.company_id.country_id == partner.country_id
+                    
                 row += 1
-                xls_pool.write_xls_line(ws_ml, row, record)
-            else:        
-                row_err += 1
-                xls_pool.write_xls_line(
-                    ws_err, row_err, record)
+                xls_pool.write_xls_line(ws_ml, row, [
+                    partner.name,
+                    email,
+                    'X' if italian else '',
+                    ])
+            
+        else:
+            header_line = [
+                'ID', 'Mail generica', 'Mail promozionale', 'Mail listini', 
+                'Mail offerte', 'Mail conferme ordine', 'Mail ordini',
+                'Mail magazzino', 'Mail DDT', 'Mail fatture', 'Mail pagamenti',
+                'Mail PEC', 
+                
+                'Azienda', 'Cli,', 'For.', 
+                'Nome', 'Paese', 'Nazione', 'Categoria', 'Gruppo', 
+                'Fatturato (%s)' % (invoice_date or 'Tutti'),
+                ]
+            if wiz_browse.extra_data:
+                header_line.extend([
+                    'Codice cliente', 
+                    'Codice fornitore', 
+                    'Codice destinazione',
+                    ])    
+            column_w = [
+                1,
+                55, 55, 55, 55, 55, 55, 55, 55, 55, 55, 55,  
+                5, 5, 5,
+                45, 35, 30, 20, 20, 20, 20, 20, 15]
+        
+            # Create Excel WB
+            ws_ml = _('Mailing list')
 
-            if partner.email_promotional_id:
-                record[0] = clean_mail(partner.email_promotional_id.email)
-                if record[0]: # email
+            xls_pool.create_worksheet(ws_ml)
+            xls_pool.write_xls_line(ws_ml, 0, header_line)
+            xls_pool.column_width(ws_ml, column_w)
+            
+            ws_out = _('Opt out partner')
+            xls_pool.create_worksheet(ws_out)
+            xls_pool.write_xls_line(ws_out, 0, header_line)
+            xls_pool.column_width(ws_out, column_w)
+
+            ws_err = _('Errori mail')
+            xls_pool.create_worksheet(ws_err)
+            xls_pool.write_xls_line(ws_err, 0, header_line)
+            xls_pool.column_width(ws_err, column_w)
+            
+            row = row_err = row_out = 0
+            _logger.warning('Total partner selected: %s' % len(partner_ids))
+
+            for partner in partners:
+                if country_id and partner.country_id.id != country_id:
+                    continue    
+
+                if no_country_id and partner.country_id.id == no_country_id:
+                    continue
+                    
+                # Data to export:
+                record = [
+                    partner.id,
+                    clean_mail(partner.email), 
+                    clean_mail(partner.email_promotional_address), 
+                    clean_mail(partner.email_pricelist_address), 
+                    clean_mail(partner.email_quotation_address), 
+                    clean_mail(partner.email_confirmation_address), 
+                    clean_mail(partner.email_order_address), 
+                    clean_mail(partner.email_picking_address), 
+                    clean_mail(partner.email_ddt_address), 
+                    clean_mail(partner.email_invoice_address), 
+                    clean_mail(partner.email_payment_address), 
+                    clean_mail(partner.email_pec_address), 
+                    
+                    'X' if partner.is_company else '',
+                    'X' if partner.customer else '',
+                    'X' if partner.supplier else '',
+
+                    partner.name, 
+                    partner.city, 
+                    partner.country_id.name if partner.country_id else '', 
+                    partner.newsletter_category_id.name \
+                        if partner.newsletter_category_id else '',
+                    partner.newsletter_group or '',
+                    partner_invoiced.get(partner.id, 0.0),
+                    ]
+                    
+                if wiz_browse.extra_data:
+                    record.extend([
+                        partner.sql_customer_code,
+                        partner.sql_supplier_code,
+                        partner.sql_destination_code,
+                        ])
+                if partner.news_opt_out:
+                    row_out += 1
+                    xls_pool.write_xls_line(
+                        ws_out, row_out, record)
+                    continue # No more write on file     
+
+                if record[0]: # email present
                     row += 1
                     xls_pool.write_xls_line(ws_ml, row, record)
                 else:        
@@ -256,15 +296,27 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     xls_pool.write_xls_line(
                         ws_err, row_err, record)
 
-            if not(row % 100):
-                _logger.info('... Exporting: %s' % row)
+                if partner.email_promotional_id:
+                    record[0] = clean_mail(partner.email_promotional_id.email)
+                    if record[0]: # email
+                        row += 1
+                        xls_pool.write_xls_line(ws_ml, row, record)
+                    else:        
+                        row_err += 1
+                        xls_pool.write_xls_line(
+                            ws_err, row_err, record)
 
-        _logger.info('Total %s, Mail: %s, Optout: %s, No mail: %s' % (
-            row + row_err + row_out,
-            row,
-            row_out,            
-            row_err,
-            ))
+                if not(row % 100):
+                    _logger.info('... Exporting: %s' % row)
+
+            _logger.info('Total %s, Mail: %s, Optout: %s, No mail: %s' % (
+                row + row_err + row_out,
+                row,
+                row_out,            
+                row_err,
+                ))
+         
+        # Common part:       
         return xls_pool.return_attachment(
             cr, uid,
             'Newsletter', 'newsletter.xlsx', context=context)
@@ -274,6 +326,13 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             'crm.newsletter.category', 'partner_category_news_rel', 
             'partner_id', 'category_id', 
             'Newsletter category'),
+
+        'mode': fields.selection([
+            # Account:
+            ('default', 'Default'),
+            ('promotional', 'Promozionale'),
+            ], 'Accounting', required=True),
+
         'accounting': fields.selection([
             # Account:
             ('customer', 'Customer'),
@@ -319,6 +378,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         }
 
     _defaults = {
+        'mode': lambda *x: 'default',
         'accounting': lambda *x: 'customer',
         'no_opt_out': lambda *x: True,
         }
