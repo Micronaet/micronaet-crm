@@ -183,7 +183,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 if not email:
                     continue
                         
-                records[email] = partner.strip()
+                records[email] = partner
                 
             row = 0
             for email in records:
@@ -193,7 +193,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     
                 row += 1
                 xls_pool.write_xls_line(ws_ml, row, [
-                    partner.name,
+                    partner.name.strip(),
                     email,
                     'X' if italian else '',
                     ])
