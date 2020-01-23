@@ -186,7 +186,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 records[email] = partner
                 
             row = 0
-            for email in records:
+            for email in sorted(records, key=lambda x: records[x].name):
                 partner = records[email]
                 
                 italian = partner.company_id.country_id == partner.country_id
