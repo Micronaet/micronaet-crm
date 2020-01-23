@@ -157,7 +157,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
         if mode == 'promotional':
             header_line = [
-                'Ragione sociale', 'Email promozionale', 'Italiano', 
+                'Partner', 'Email', 'Lingua', 
                 ]
             column_w = [40, 35, 10]                  
 
@@ -195,7 +195,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                 xls_pool.write_xls_line(ws_ml, row, [
                     partner.name.strip(),
                     email,
-                    'X' if italian else '',
+                    'Italiano' if italian else 'Inglese',
                     ])
             
         else:
