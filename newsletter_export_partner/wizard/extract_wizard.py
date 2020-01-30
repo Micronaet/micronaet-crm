@@ -181,7 +181,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
                 # Loop for use N email address for promotionals
                 partner_email = [partner]
-                exlude_ids = set((
+                exclude_ids = set((
                     partner.email_picking_id.id, 
                     partner.email_ddt_id.id, 
                     partner.email_invoice_id.id, 
