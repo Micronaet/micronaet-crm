@@ -362,7 +362,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             ('not_supplier', 'Non fornitore'),
             ('not_destination', 'Non destinazione'),
             
-            ('all', 'All'),unused_email_partner
+            ('all', 'All'),
             ], 'Accounting', required=True),
 
         'with_invoice':fields.boolean('Con fatturato'),
