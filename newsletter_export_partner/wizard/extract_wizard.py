@@ -69,23 +69,6 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
 
         # ---------------------------------------------------------------------
-        # Parameters:
-        # ---------------------------------------------------------------------
-        used_email = (
-            'email',
-            'email_promotional_address', 
-            'email_pricelist_address', 
-            'email_quotation_address', 
-            'email_confirmation_address', 
-            'email_order_address', 
-            #'email_picking_address', 
-            #'email_ddt_address', 
-            #'email_invoice_address', 
-            #'email_payment_address',
-            #'email_pec_address',
-            )
-
-        # ---------------------------------------------------------------------
         # Invoice part:
         # ---------------------------------------------------------------------
         with_invoice = wiz_browse.with_invoice
@@ -197,8 +180,21 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     continue
 
                 # Loop for use N email address for promotionals
-                for email in used_email:
-                    email = eval('partner.%s' % email)
+                partner_email = [partner]
+                exlude_ids = set((
+                    partner.email_picking_address_id.id, 
+                    partner.email_ddt_address_id.id, 
+                    partner.email_invoice_address_id.id, 
+                    partner.email_payment_address_id.id,
+                    partner.email_pec_address_id.id,
+                    ))
+                    
+                for contact in partner.child_ids:
+                    if contact.id not in exclude_ids:
+                        partner_email.append(contact)
+                    
+                for recipient in partner_email:
+                    email = recipient.email
                     if email:
                         email = clean_mail(email)
     
@@ -366,7 +362,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
             ('not_supplier', 'Non fornitore'),
             ('not_destination', 'Non destinazione'),
             
-            ('all', 'All'),
+            ('all', 'All'),unused_email_partner
             ], 'Accounting', required=True),
 
         'with_invoice':fields.boolean('Con fatturato'),
