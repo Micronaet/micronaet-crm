@@ -599,6 +599,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 domain.append(
                     ('product_id', '=', search_product.id))
                 filter_text += u'Prodotto %s, ' % search_product.default_code
+            if search_agent:
+                domain.append(
+                    ('order_id.partner_id.agent_id', '=', search_agent.id))
+                filter_text += u'Agent %s, ' % search_agent.name
 
             # Search and open line:
             order_ids = order_pool.search(cr, uid, domain, context=context)
@@ -681,6 +685,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 if not filter_assigned:     
                     filter_text += \
                         u'Prodotto %s, ' % search_product.default_code
+            if search_agent:
+                domain.append(
+                    ('picking_id.partner_id.agent_id', '=', search_agent.id))
+                filter_text += u'Agent %s, ' % search_agent.name
 
             # Search and open line:
             ddt_ids = ddt_pool.search(cr, uid, domain, context=context)
@@ -760,6 +768,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 if not filter_assigned:     
                     filter_text += \
                         u'Prodotto %s, ' % search_product.default_code
+            if search_agent:
+                domain.append(
+                    ('invoice_id.partner_id.agent_id', '=', search_agent.id))
+                filter_text += u'Agent %s, ' % search_agent.name
 
             # Search and open line:
             invoice_ids = invoice_pool.search(cr, uid, domain, context=context)
