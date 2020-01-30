@@ -69,6 +69,23 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
 
         # ---------------------------------------------------------------------
+        # Parameters:
+        # ---------------------------------------------------------------------
+        used_mail = (
+            'email',
+            'email_promotional_address', 
+            'email_pricelist_address', 
+            'email_quotation_address', 
+            'email_confirmation_address', 
+            'email_order_address', 
+            #'email_picking_address', 
+            #'email_ddt_address', 
+            #'email_invoice_address', 
+            #'email_payment_address',
+            #'email_pec_address',
+            )
+
+        # ---------------------------------------------------------------------
         # Invoice part:
         # ---------------------------------------------------------------------
         with_invoice = wiz_browse.with_invoice
@@ -148,13 +165,14 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         #    ('email_promotional_id', '!=', False),
         #    ])
             
-        
-            
         # Prefetch data:
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
         partners = sorted(partner_pool.browse(
                 cr, uid, partner_ids, context=context), key=lambda x: x.name)
 
+        # ---------------------------------------------------------------------
+        #                       PROMOTIONAL MODE:
+        # ---------------------------------------------------------------------
         if mode == 'promotional':
             header_line = [
                 'Partner', 'Email', 'Lingua', 
@@ -172,18 +190,22 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
             records = {}
             for partner in partners:
+                # Check country parameters:
                 if country_id and partner.country_id.id != country_id:
-                    continue    
-
+                    continue
                 if no_country_id and partner.country_id.id == no_country_id:
                     continue
-                
-                email = clean_mail(partner.email_promotional_address) or \
-                    clean_mail(partner.email)
-                if not email:
-                    continue
+
+                # Loop for use N email address for promotionals
+                for email in used_email:
+                    email = eval('partner.%s' % email)
+                    if email:
+                        email = clean_mail(email)
+    
+                    if not email: # Separate test not in else!
+                        continue
                         
-                records[email] = partner
+                    records[email] = partner
                 
             row = 0
             for email in sorted(records, key=lambda x: records[x].name):
