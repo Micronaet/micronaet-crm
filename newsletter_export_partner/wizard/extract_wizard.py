@@ -71,7 +71,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Parameters:
         # ---------------------------------------------------------------------
-        used_mail = (
+        used_email = (
             'email',
             'email_promotional_address', 
             'email_pricelist_address', 
