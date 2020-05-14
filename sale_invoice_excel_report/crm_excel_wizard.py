@@ -780,15 +780,22 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             _logger.warning('FT total lines: %s' % len(invoice_ids))
             for line in invoice_pool.browse(
                     cr, uid, invoice_ids, context=context):
+                if line.invoice_id.type == 'out_refund':
+                    sign = -1
+                    document_mode = 'NC'
+                else:
+                    sign = 1
+                    document_mode = 'FT'
+                    
                 # Readability:
                 product = line.product_id
                 invoice = line.invoice_id
-                qty = line.quantity
-                subtotal = line.price_subtotal
+                qty = sign * line.quantity
+                subtotal = sign * line.price_subtotal
                 season = self.get_season_period(invoice.date_invoice)
                 
                 master_data.append((
-                    _('FT'),
+                    document_mode,
                     season,
                     invoice.date_invoice[:10],
                     invoice.name,
@@ -1233,8 +1240,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     total_number_document['FT'][season] += 1
                 else:    
                     total_number_document['FT'][season] = 1
-
-            print total_number_document # XXX remove
 
             # -----------------------------------------------------------------
             # Add 2 pages for document and family invoiced:
