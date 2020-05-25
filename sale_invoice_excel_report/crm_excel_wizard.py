@@ -917,13 +917,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             # Header:    
             # -----------------------------------------------------------------
-            excel_pool.write_xls_line(ws_name, row, [
+            header = [
                 'Documento', 'Stagione', 'Data', 'Origine', 
                 'Partner', 'Regione', 'Nazione',
                 'Famiglia', 'Prodotto', 
                 'Scala', 'Sconto', 
                 'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
-                ], default_format=f_header)
+                ]
+            excel_pool.write_xls_line(ws_name, row, header, 
+                default_format=f_header)
+            excel_pool.autofilter(ws_name, row, 0, row, len(header))
 
             # Write record data as is:    
             for record in sorted(master_data):
