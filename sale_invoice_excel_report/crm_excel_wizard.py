@@ -926,7 +926,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ]
             excel_pool.write_xls_line(ws_name, row, header, 
                 default_format=f_header)
-            excel_pool.autofilter(ws_name, row, 0, row, len(header))
+            excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
             # Write record data as is:    
             for record in sorted(master_data):
