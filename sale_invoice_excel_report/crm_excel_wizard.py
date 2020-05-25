@@ -483,6 +483,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         page_comparison = wiz_browse.page_comparison
         page_comparison_family = wiz_browse.page_comparison_family
 
+        # Filter comment:
+        filter_text = 'Documenti: %s%s%s' % (
+            '[OC] ' if data_order else '',
+            '[DDT] ' if data_ddt else '',
+            '[FT] ' if data_invoice else '',
+            )
+
         # ---------------------------------------------------------------------
         # Total document of period
         # ---------------------------------------------------------------------
@@ -557,11 +564,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         #                           COLLECT DATA:
         # ---------------------------------------------------------------------
         master_data = []        
-        filter_text = 'Documenti: %s%s%s' % (
-            '[OC] ' if data_order else '',
-            '[DDT] ' if data_ddt else '',
-            '[FT] ' if data_invoice else '',
-            )
 
         filter_text_total = \
             'Totali documenti del periodo: OC %s, DDT %s, Fatture: %s' % (
@@ -621,7 +623,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             if search_agent:
                 domain.append(
                     ('order_id.partner_id.agent_id', '=', search_agent.id))
-                filter_text += u'Agent %s, ' % search_agent.name
+                filter_text += u'Agente %s, ' % search_agent.name
+            if search_region:
+                domain.append(
+                    ('order_id.partner_id.state_id.region_id', '=', search_region.id))
+                filter_text += u'OC Regione %s, ' % search_region.name
+            if search_country:
+                domain.append(
+                    ('order_id.partner_id.country_id', '=', search_country.id))
+                filter_text += u'OC Nazione %s, ' % search_country.name
 
             # Search and open line:
             order_ids = order_pool.search(cr, uid, domain, context=context)
@@ -708,7 +718,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             if search_agent:
                 domain.append(
                     ('picking_id.partner_id.agent_id', '=', search_agent.id))
-                filter_text += u'Agent %s, ' % search_agent.name
+                filter_text += u'Agente %s, ' % search_agent.name
+            if search_region:
+                domain.append(
+                    ('picking_id.partner_id.state_id.region_id', '=', search_region.id))
+                filter_text += u'PICK Regione %s, ' % search_region.name
+            if search_country:
+                domain.append(
+                    ('picking_id.partner_id.country_id', '=', search_country.id))
+                filter_text += u'PICK Nazione %s, ' % search_country.name
 
             # Search and open line:
             ddt_ids = ddt_pool.search(cr, uid, domain, context=context)
@@ -793,6 +811,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 domain.append(
                     ('invoice_id.partner_id.agent_id', '=', search_agent.id))
                 filter_text += u'Agent %s, ' % search_agent.name
+            if search_region:
+                domain.append(
+                    ('invoice_id.partner_id.state_id.region_id', '=', search_region.id))
+                filter_text += u'FT Regione %s, ' % search_region.name
+            if search_country:
+                domain.append(
+                    ('invoice_id.partner_id.country_id', '=', search_country.id))
+                filter_text += u'FT Nazione %s, ' % search_country.name
 
             # Search and open line:
             invoice_ids = invoice_pool.search(cr, uid, domain, context=context)
