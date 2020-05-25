@@ -229,7 +229,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # TODO    
         # Char
         
-
         # ---------------------------------------------------------------------        
         #                               Excel:
         # ---------------------------------------------------------------------        
@@ -666,6 +665,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     order.name,
                     order.partner_id.name,
                     order.partner_id.state_id.region_id.name or '',
+                    order.partner_id.countr_id or '',
                     
                     product.family_id.name or '',
                     product.default_code or '',
@@ -757,6 +757,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ddt.name,
                     ddt.partner_id.name,
                     ddt.partner_id.state_id.region_id.name or '',
+                    order.partner_id.countr_id or '',
                     
                     product.family_id.name or '',
                     product.default_code or '',
@@ -846,6 +847,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     invoice.name,
                     invoice.partner_id.name,
                     invoice.partner_id.state_id.region_id.name or '',
+                    order.partner_id.countr_id or '',
                     
                     product.family_id.name or '',
                     product.default_code or '',
@@ -917,7 +919,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             excel_pool.write_xls_line(ws_name, row, [
                 'Documento', 'Stagione', 'Data', 'Origine', 
-                'Partner', 'Regione',
+                'Partner', 'Regione', 'Nazione',
                 'Famiglia', 'Prodotto', 
                 'Scala', 'Sconto', 
                 'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
@@ -934,6 +936,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     origin,
                     partner,
                     region,
+                    country,
                     
                     family,
                     default_code,
@@ -1041,6 +1044,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         origin,
                         partner,
                         region,
+                        country,
                         family,
                         default_code,
                         discount,
