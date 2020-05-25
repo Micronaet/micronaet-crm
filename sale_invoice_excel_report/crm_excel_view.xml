@@ -67,6 +67,8 @@
                        <field name="family_id" domain="[('is_family', '=', True)]"/>
                        <field name="product_id" domain="[('is_family', '!=', True)]" />
                        <field name="agent_id" domain="[('is_agent', '=', True)]"/>
+                       <field name="region_id" />
+                       <field name="country_id" />
 
                        <separator string="Document data:" colspan="4"/>
                        <field name="data_order" />

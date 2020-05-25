@@ -470,6 +470,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         search_family = wiz_browse.family_id
         search_agent = wiz_browse.agent_id
 
+        search_region = wiz_browse.region_id
+        search_country = wiz_browse.country_id
+
         data_order = wiz_browse.data_order
         order_full = wiz_browse.order_full
         data_ddt = wiz_browse.data_ddt
@@ -525,6 +528,22 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('partner_id.agent_id', '=', search_agent.id))
             domain_invoice.append(
                 ('partner_id.agent_id', '=', search_agent.id))
+
+        if search_region:
+            domain_sale.append(
+                ('partner_id.state_id.region_id', '=', search_region.id))
+            domain_ddt.append(
+                ('partner_id.state_id.region_id', '=', search_region.id))
+            domain_invoice.append(
+                ('partner_id.state_id.region_id', '=', search_region.id))
+    
+        if search_country:
+            domain_sale.append(
+                ('partner_id.country_id', '=', search_country.id))
+            domain_ddt.append(
+                ('partner_id.country_id', '=', search_country.id))
+            domain_invoice.append(
+                ('partner_id.country_id', '=', search_country.id))
     
         # Total:     
         sale_order_ids = sale_order_pool.search(
