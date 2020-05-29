@@ -64,7 +64,7 @@ class ProductTemplate(orm.Model):
         'status': fields.selection([
             # Raw materials:
             ('exit', 'Uscente'),
-            ('use', 'In uso'),
+            ('used', 'In uso'),
             ('kurtz', 'Kurtz'),
     
             # Both:
