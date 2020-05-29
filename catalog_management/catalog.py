@@ -62,10 +62,18 @@ class ProductTemplate(orm.Model):
             'product_id', 'catalog_id', 
             'Catalog'), 
         'status': fields.selection([
+            # Raw materials:
+            ('exit', 'Uscente'),
+            ('use', 'In uso'),
+            ('kurtz', 'Kurtz'),
+    
+            # Both:
             ('catalog', 'Catalog'),
+            ('obsolete', 'Obsolete'),
+            
+            # Product:
             ('out', 'Out catalog'),
             ('stock', 'Stock'),
-            ('obsolete', 'Obsolete'),
             ('sample', 'Sample'),
             ('promo', 'Promo'),
             ('parent', 'Padre'),
