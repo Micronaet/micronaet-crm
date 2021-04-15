@@ -352,6 +352,7 @@ class ImapServerMail(orm.Model):
             ('email', '=', email),
         ], context=context)
         if partner_ids:  # Link to first partner (master)
+            new_partner = False
             partner = partner_pool.browse(
                 cr, uid, partner_ids, context=context)[0]
             if partner.parent_id:
@@ -359,6 +360,7 @@ class ImapServerMail(orm.Model):
             else:
                 partner_id = partner_ids[0]
         else:  # Create
+            new_partner = True
             partner_id = partner_pool.create(cr, uid, {
                 'name': name,
                 'email': email,
@@ -369,6 +371,7 @@ class ImapServerMail(orm.Model):
         self.write(cr, uid, ids, {
             'partner_id': partner_id,
             'state': 'completed',
+            'new_partner': new_partner,
         }, context=context)
 
     def download_file_eml(self, cr, uid, ids, context=None):
@@ -433,6 +436,7 @@ class ImapServerMail(orm.Model):
         'subject': fields.char('Subject', size=100),
         'date': fields.char('Date', size=30),
         'message': fields.text('Message'),
+        'new_partner': fields.boolean('Partner nuovo'),
         'server_id': fields.many2one('imap.server', 'Server'),
         'partner_id': fields.many2one('res.partner', 'Partner'),
         'state': fields.selection([
@@ -444,3 +448,9 @@ class ImapServerMail(orm.Model):
     _defaults = {
         'state': lambda *x: 'draft',
         }
+
+
+# class ResPartner(orm.Model):
+#    """ Model name: Partner
+#    """
+#    _inherit = 'res.partner'
