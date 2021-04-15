@@ -169,8 +169,9 @@ class ImapServer(orm.Model):
                 else:
                     mail = imaplib.IMAP4(server)  # No more used!
 
-                if_error = _('Error login access user: %s' % address.user)
-                mail.login(address.user, address.password)
+                server_mail = address.user
+                if_error = _('Error login access user: %s' % server_mail)
+                mail.login(server_mail, address.password)
 
                 if_error = _('Error access start folder: %s' % address.folder)
                 mail.select(address.folder)
@@ -202,19 +203,25 @@ class ImapServer(orm.Model):
                 for (param, value) in message.items():
                     if param in record:
                         record[param] = value
-                address_from = record['Date']
+                address_from = record['From']
+                address_to = record['To']
                 odoo_data = {
-                    'to': record['To'],
-                    'from': record['From'],
-                    'date': address_from,
+                    'to': address_to,
+                    'from': address_from,
+                    'date': record['Date'],
                     'received': record['Received'],
                     'message_id': record['Message-Id'],
                     'subject': record['Subject'],
                     'state': 'draft',
                     'server_id': address.id,
                     }
+
+                if server_mail in address_to:
+                    _logger.warning('Jumped server mail is in CCN')
+                    continue
                 is_authorized = False
                 pdb.set_trace()
+
                 for check_mail in authorized:
                     if check_mail in address_from:
                         is_authorized = True
