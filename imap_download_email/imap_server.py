@@ -32,7 +32,6 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DATETIME_FORMATS_MAP,
     float_compare)
 
-
 _logger = logging.getLogger(__name__)
 
 
@@ -261,7 +260,7 @@ class ImapServer(orm.Model):
             mail.logout()
             _logger.info('End read IMAP server')
 
-            category_pool.import_read_email(self, cr, uid, context=context)
+            # category_pool.import_read_email(self, cr, uid, context=context)
         return True
 
     # -------------------------------------------------------------------------
