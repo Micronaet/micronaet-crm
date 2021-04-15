@@ -223,7 +223,6 @@ class ImapServer(orm.Model):
                 if not store_folder:
                     odoo_data['message'] = message
 
-                pdb.set_trace()
                 mail_id = mail_pool.create(
                     cr, uid, odoo_data, context=context)
 
@@ -326,7 +325,7 @@ class ImapServerMail(orm.Model):
     _order = 'date'
 
     _columns = {
-        'message_id': fields.char('ID', size=64, required=True),
+        'message_id': fields.char('ID', size=80),
         'to': fields.char('To', size=100),
         'from': fields.char('From', size=100),
         'received': fields.char('Received', size=100),
