@@ -155,7 +155,6 @@ class ImapServer(orm.Model):
         # now = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
 
         # Read all server:
-        pdb.set_trace()
         for address in self.browse(cr, uid, ids, context=context):
             server = address.host  # '%s:%s' % (address.host, address.port)
             if address.store_as_file:
@@ -325,7 +324,7 @@ class ImapServerMail(orm.Model):
     _columns = {
         'message_id': fields.char('ID', size=64, required=True),
         'to': fields.char('To', size=100),
-        'form': fields.char('From', size=100),
+        'from': fields.char('From', size=100),
         'received': fields.char('Received', size=100),
         'subject': fields.char('Subject', size=100),
         'date': fields.char('Date', size=30),
