@@ -361,7 +361,6 @@ class ImapServerMail(orm.Model):
         attachment_ids = attachment_pool.search(cr, uid, [
             ('name', '=', 'Email'),
             ('datas_fname', '=', 'odoo_email.eml'),
-            ()
         ], context=context)
         if attachment_ids:
             try:
