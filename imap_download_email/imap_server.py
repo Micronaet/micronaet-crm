@@ -159,11 +159,11 @@ class ImapServer(orm.Model):
         for address in self.browse(cr, uid, ids, context=context):
             server = address.host  # '%s:%s' % (address.host, address.port)
             if address.store_as_file:
-                store_path = os.path.expanduser(
-                    os.path.join(address.store_path, cr.dbname))
-                os.system('mkdir -p %s' % store_path)  # Create in not present
+                store_folder = os.path.expanduser(
+                    os.path.join(address.store_folder, cr.dbname))
+                os.system('mkdir -p %s' % store_folder)  # Create if no exist
             else:
-                store_path = False
+                store_folder = False
 
             # -----------------------------------------------------------------
             # Read all email:
@@ -219,7 +219,7 @@ class ImapServer(orm.Model):
                     'state': 'draft',
                     'server_id': address.id,
                     }
-                if not store_path:
+                if not store_folder:
                     odoo_data['message'] = message
 
                 mail_id = mail_pool.create(
@@ -228,12 +228,12 @@ class ImapServer(orm.Model):
                 # -------------------------------------------------------------
                 # Write on file:
                 # -------------------------------------------------------------
-                if store_path:
+                if store_folder:
                     filename = 'auto_%s_%s.eml' % (
                         address.id,
                         mail_id,
                     )
-                    fullname = os.path.join(store_path, cr.dbname, filename)
+                    fullname = os.path.join(store_folder, cr.dbname, filename)
                     f_eml = open(fullname, 'w')
                     f_eml.write(eml_string)
                     f_eml.close()
