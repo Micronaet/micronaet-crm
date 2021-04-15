@@ -332,6 +332,39 @@ class ImapServerMail(orm.Model):
             return os.path.join(store_folder, filename)
         return False
 
+    def parse_address(self, value):
+        """ Extract name and email from address
+        """
+        pdb.set_trace()
+        split_value = value.email.split('<')
+        email = split_value[-1].split('>')[0]
+        name = '<'.join(split_value[:-1]).strip('"')
+        return name, email
+
+    def workflow_confirm(self, cr, uid, ids, context=None):
+        """ Confirm email and import in LEAD
+        """
+        partner_pool = self.pool.get('res.partner')
+        mail_id = ids if type(ids) == int else ids[0]
+        mail = self.browse(cr, uid, mail_id, context=context)
+        name, email = self.parse_address(mail.to)
+
+        partner_ids = partner_pool.search(cr, uid, [
+            ('email', '=', email),
+        ], context=context)
+        pdb.set_trace()
+        if partner_ids:
+            partner = partner_pool.browse(
+                cr, uid, partner_ids, context=context)[0]
+            if partner.parent_id:
+                partner_id = partner.parent_id.id
+            else:
+                partner_id = partner_ids[0]
+            self.write(cr, uid, ids, {
+                'partner_id': partner_id,
+                'state': 'completed',
+            }, context=context)
+
     def download_file_eml(self, cr, uid, ids, context=None):
         """ Get filename if present and retur attachment
         """
