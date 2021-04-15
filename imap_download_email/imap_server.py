@@ -338,8 +338,9 @@ class ImapServerMail(orm.Model):
         pdb.set_trace()
         split_value = value.email.split('<')
         email = split_value[-1].split('>')[0]
-        name = '<'.join(split_value[:-1]).strip('"')
-        return name, email
+        name = '<'.join(split_value[:-1]).strip('"').strip()
+
+        return name or email, email
 
     def workflow_confirm(self, cr, uid, ids, context=None):
         """ Confirm email and import in LEAD
@@ -353,17 +354,25 @@ class ImapServerMail(orm.Model):
             ('email', '=', email),
         ], context=context)
         pdb.set_trace()
-        if partner_ids:
+        if partner_ids:  # Link to first partner (master)
             partner = partner_pool.browse(
                 cr, uid, partner_ids, context=context)[0]
             if partner.parent_id:
                 partner_id = partner.parent_id.id
             else:
                 partner_id = partner_ids[0]
-            self.write(cr, uid, ids, {
-                'partner_id': partner_id,
-                'state': 'completed',
+        else:  # Create
+            partner_id = partner_pool.create(cr, uid, ids, {
+                'name': name,
+                'email': email,
+                'is_company': True,
+                'is_address': False,
             }, context=context)
+
+        self.write(cr, uid, ids, {
+            'partner_id': partner_id,
+            'state': 'completed',
+        }, context=context)
 
     def download_file_eml(self, cr, uid, ids, context=None):
         """ Get filename if present and retur attachment
