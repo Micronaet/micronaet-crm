@@ -437,6 +437,7 @@ class ImapServerMail(orm.Model):
         'date': fields.char('Date', size=30),
         'message': fields.text('Message'),
         'server_id': fields.many2one('imap.server', 'Server'),
+        'partner_id': fields.many2one('res.partner', 'Partner'),
         'state': fields.selection([
             ('draft', 'Draft'),
             ('completed', 'Completed'),  # Elaborated
