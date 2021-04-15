@@ -6,7 +6,8 @@
             <field name="name">imap.server.category.tree</field>
             <field name="model">imap.server.category</field>
             <field name="arch" type="xml">
-                <tree string="IMAP Category" editable="bottom">        
+                <tree string="IMAP Category" editable="bottom">
+                    <field name="code" />
                     <field name="name" />
                     <field name="note" />
                 </tree>
@@ -16,13 +17,14 @@
             <field name="name">imap.server.category.form</field>
             <field name="model">imap.server.category</field>
             <field name="arch" type="xml">
-                <form string="IMAP Category" version="7.0">        
+                <form string="IMAP Category" version="7.0">
                     <sheet>
                         <group colspan="4" col="4">
                             <field name="name" />
+                            <field name="code" />
                             <separator string="Note" colspan="4"/>
                             <field name="note" colspan="4" nolabel="1"/>
-                        </group>    
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -45,15 +47,15 @@
                 <tree string="IMAP Server">
                     <field name="name" />
                     <field name="is_active" />
-                    <field name="name" />                    
+                    <field name="name" />
                     <field name="host" />
-                    <field name="port" />                    
+                    <field name="port" />
                     <field name="user" />
-                    <field name="password" />                    
+                    <field name="password" />
                     <field name="folder" />
-                    <field name="SSL" />                    
+                    <field name="SSL" />
                     <field name="remove" />
-                    <field name="category_id" />                    
+                    <field name="category_id" />
                 </tree>
             </field>
         </record>
@@ -61,27 +63,27 @@
             <field name="name">imap.server.form</field>
             <field name="model">imap.server</field>
             <field name="arch" type="xml">
-                <form string="IMAP Server" version="7.0">        
+                <form string="IMAP Server" version="7.0">
                     <sheet>
                         <group colspan="4" col="4">
                             <field name="is_active" />
                             <field name="name" />
-                            
+
                             <field name="host" />
                             <field name="port" />
-                            
+
                             <field name="user" />
                             <field name="password" />
-                            
+
                             <field name="folder" />
                             <field name="SSL" />
-                            
+
                             <field name="remove" />
                             <field name="category_id" />
-                            
+
                             <separator string="Comment" colspan="4"/>
                             <field name="comment" colspan="4" nolabel="1"/>
-                        </group>    
+                        </group>
                     </sheet>
                 </form>
             </field>
@@ -95,26 +97,26 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
-        
-        <menuitem 
-            parent="base.menu_base_config" 
-            id="menu_imap_server_root" 
+
+        <menuitem
+            parent="base.menu_base_config"
+            id="menu_imap_server_root"
             name="IMAP Server"
             sequence="30"
-            />        
-            <menuitem 
-                parent="menu_imap_server_root" 
-                id="menu_imap_server" 
+            />
+            <menuitem
+                parent="menu_imap_server_root"
+                id="menu_imap_server"
                 action="action_imap_server"
                 sequence="10"
                 />
-            <menuitem 
-                parent="menu_imap_server_root" 
-                id="menu_imap_server_category" 
+            <menuitem
+                parent="menu_imap_server_root"
+                id="menu_imap_server_category"
                 action="action_imap_server_category"
                 sequence="90"
                 />
-        
+
     </data>
 </openerp>
 
