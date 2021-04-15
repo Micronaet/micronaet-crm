@@ -9,6 +9,7 @@
                 <tree string="IMAP mail">
                     <field name="server_id" />
                     <field name="message_id" />
+                    <field name="new_partner" />
                     <field name="partner_id" />
                     <field name="to" />
                     <field name="from" />
@@ -41,6 +42,7 @@
                             <field name="received" />
 
                             <field name="message_id" />
+                            <field name="new_partner" />
 
                             <field name="subject" colspan="4"/>
                             <field name="message" colspan="4" attrs="{'invisible': [('message', '=', False)]}"/>
