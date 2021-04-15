@@ -24,15 +24,9 @@ import logging
 import openerp
 import imaplib
 import email
-import openerp.netsvc as netsvc
-import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
-from openerp import SUPERUSER_ID
-from openerp import tools
 from openerp.tools.translate import _
-from openerp.tools.float_utils import float_round as round
 from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DATETIME_FORMATS_MAP,
@@ -53,6 +47,7 @@ class ImapServerCategory(orm.Model):
     def import_read_email(self, cr, iud, context=None):
         """ Parse message list passed (ID: message)
         """
+        # TODO To be overridden
         '''
         # Pool used:
         user_pool = self.pool.get('res.users')
@@ -157,13 +152,18 @@ class ImapServer(orm.Model):
         _logger.info('Start read # %s IMAP server' % (
             len(ids),
             ))
+        # now = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
 
-        datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         # Read all server:
         pdb.set_trace()
         for address in self.browse(cr, uid, ids, context=context):
-            # TODO remove?? []
             server = address.host  # '%s:%s' % (address.host, address.port)
+            if address.store_in_folder:
+                store_path = os.path.expanduser(
+                    os.path.join(address.store_path, cr.dbname))
+                os.system('mkdir -p %s' % store_path)  # Create in not present
+            else:
+                store_path = False
 
             # -----------------------------------------------------------------
             # Read all email:
@@ -171,9 +171,9 @@ class ImapServer(orm.Model):
             try:
                 if_error = _('Error find imap server: %s' % server)
                 if address.SSL:
-                    mail = imaplib.IMAP4_SSL(server)  # TODO SSL
+                    mail = imaplib.IMAP4_SSL(server)  # SSL
                 else:
-                    mail = imaplib.IMAP4(server)  # TODO SSL
+                    mail = imaplib.IMAP4(server)  # No more used!
 
                 if_error = _('Error login access user: %s' % address.user)
                 mail.login(address.user, address.password)
@@ -190,11 +190,11 @@ class ImapServer(orm.Model):
             tot = 0
             for msg_id in result[0].split():
                 tot += 1
+
                 # Read and parse result:
                 esit, result = mail.fetch(msg_id, '(RFC822)')
                 eml_string = result[0][1]
                 message = email.message_from_string(eml_string)
-
                 record = {
                     'To': False,
                     'From': False,
@@ -209,30 +209,34 @@ class ImapServer(orm.Model):
                     if param in record:
                         record[param] = value
 
-                mail_pool.create(
-                    cr, uid, {
-                        'to': record['To'],
-                        'from': record['From'],
-                        'date': record['Date'],
-                        'received': record['Received'],
-                        'message_id': record['Message-ID'],
-                        'subject': record['Subject'],
-                        'message': message,
-                        'state': 'draft',
-                        'server_id': address.id,
-                        }, context=context)
+                odoo_data = {
+                    'to': record['To'],
+                    'from': record['From'],
+                    'date': record['Date'],
+                    'received': record['Received'],
+                    'message_id': record['Message-ID'],
+                    'subject': record['Subject'],
+                    'state': 'draft',
+                    'server_id': address.id,
+                    }
+                if not store_path:
+                    odoo_data['message'] = message
+
+                mail_id = mail_pool.create(
+                    cr, uid, odoo_data, context=context)
 
                 # -------------------------------------------------------------
                 # Write on file:
                 # -------------------------------------------------------------
-                # eml_file = '%s.eml' % (os.path.join(
-                #    store_folder,
-                #    str(doc_id),
-                #    ))
-                # f_eml = open(eml_file, 'w')
-                # f_eml.write(eml_string)
-                # TODO remove file after confirm
-                # f_eml.close()
+                if store_path:
+                    filename = 'auto_%s_%s.eml' % (
+                        address.id,
+                        mail_id,
+                    )
+                    fullname = os.path.join(store_path, cr.dbname, filename)
+                    f_eml = open(fullname, 'w')
+                    f_eml.write(eml_string)
+                    f_eml.close()
 
                 # TODO manage commit roll back also in email
                 mail.store(msg_id, '+FLAGS', '\\Deleted')
@@ -246,6 +250,7 @@ class ImapServer(orm.Model):
                 address.name,
                 tot,
                 ))
+
             # -----------------------------------------------------------------
             # Close operations:
             # -----------------------------------------------------------------
@@ -291,6 +296,14 @@ class ImapServer(orm.Model):
         'category_id': fields.many2one(
             'imap.server.category', 'Category', required=True),
         'comment': fields.text('Note'),
+
+        # Store:
+        'store_as_file': fields.boolean(
+            'Salva come file',
+            help='Salva la mail come file sul server e tiene un numero minimo'
+                 ' di informazoni nel database'),
+        'store_folder': fields.char(
+            'Folder', size=64, help='Email IMAP folder'),
         }
 
     _defaults = {
