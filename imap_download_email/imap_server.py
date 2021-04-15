@@ -338,7 +338,7 @@ class ImapServerMail(orm.Model):
         pdb.set_trace()
         split_value = address.split('<')
         email = split_value[-1].split('>')[0]
-        name = '<'.join(split_value[:-1]).strip('"').strip()
+        name = '<'.join(split_value[:-1]).strip().strip('"').strip()
 
         return name or email, email
 
