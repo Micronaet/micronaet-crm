@@ -260,7 +260,7 @@ class ImapServer(orm.Model):
             mail.logout()
             _logger.info('End read IMAP server')
 
-            # category_pool.import_read_email(self, cr, uid, context=context)
+            category_pool.import_read_email(cr, uid, context=context)
         return True
 
     # -------------------------------------------------------------------------
