@@ -218,7 +218,7 @@ class ImapServer(orm.Model):
                     'server_id': address.id,
                     }
                 if not record['Message-Id']:
-                    pdb.set_trace()
+                    _logger.warning('No message ID for this email')
                 if not store_folder:
                     odoo_data['message'] = message
 
