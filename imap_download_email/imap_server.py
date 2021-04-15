@@ -218,6 +218,8 @@ class ImapServer(orm.Model):
                     'state': 'draft',
                     'server_id': address.id,
                     }
+                if not record['Message-Id']:
+                    pdb.set_trace()
                 if not store_folder:
                     odoo_data['message'] = message
 
