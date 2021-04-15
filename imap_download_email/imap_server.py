@@ -52,8 +52,6 @@ class ImapServerCategory(orm.Model):
     def import_read_email(self, cr, iud, context=None):
         """ Parse message list passed (ID: message)
         """
-        []
-
         '''
         # Pool used:
         user_pool = self.pool.get('res.users')
@@ -126,7 +124,7 @@ class ImapServerCategory(orm.Model):
             #f_eml.close()
             
             msg_ids.append(msg_id) # at the end (for delete message)'''
-        return msg_ids
+        return True  # msg_ids
 
     _columns = {
         'name': fields.char('IMAP category', size=80, required=True),
@@ -315,13 +313,12 @@ class ImapServerMail(orm.Model):
         'form': fields.char('From', size=100),
         'received': fields.char('Received', size=100),
         'subject': fields.char('Subject', size=100),
-        'form': fields.char('From', size=100),
         'date': fields.char('Date', size=30),
         'message': fields.text('Message'),
         'server_id': fields.many2one('imap.server', 'Server'),
         'state': fields.selection([
             ('draft', 'Draft'),
-            ('completed', 'Completed'), # Elaborated
+            ('completed', 'Completed'),  # Elaborated
             ], 'State'),
         }
 
