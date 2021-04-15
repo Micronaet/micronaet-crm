@@ -105,11 +105,10 @@
                     <field name="host" />
                     <field name="port" />
                     <field name="user" />
-                    <field name="password" />
-                    <field name="folder" />
-                    <field name="SSL" />
+                    <field name="store_folder" />
                     <field name="remove" />
                     <field name="category_id" />
+                    <button name="force_import_email_document" type="object" string="Forza scarico mail"/>
                 </tree>
             </field>
         </record>
@@ -118,6 +117,9 @@
             <field name="model">imap.server</field>
             <field name="arch" type="xml">
                 <form string="IMAP Server" version="7.0">
+                    <header>
+                        <button name="force_import_email_document" type="object" string="Forza scarico mail"/>
+                    </header>
                     <sheet>
                         <notebook>
                             <page name="imap_data" string="Server">
