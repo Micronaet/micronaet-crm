@@ -151,7 +151,6 @@ class ImapServer(orm.Model):
     def force_import_email_document(self, cr, uid, ids, context=None):
         """ Force import passed server import all email in object
         """
-        pdb.set_trace()
         category_pool = self.pool.get('imap.server.category')
         mail_pool = self.pool.get('imap.server.mail')
 
@@ -161,6 +160,7 @@ class ImapServer(orm.Model):
 
         datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         # Read all server:
+        pdb.set_trace()
         for address in self.browse(cr, uid, ids, context=context):
             # TODO remove?? []
             server = address.host  # '%s:%s' % (address.host, address.port)
