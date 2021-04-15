@@ -234,6 +234,7 @@ class ImapServer(orm.Model):
                         mail_id,
                     )
                     fullname = os.path.join(store_folder, filename)
+                    _logger.info('Saving %s ...' % fullname)
                     f_eml = open(fullname, 'w')
                     f_eml.write(eml_string)
                     f_eml.close()
