@@ -60,7 +60,7 @@ class ImapServerCategory(orm.Model):
                 'From': False,
                 'Date': False,
                 'Received': False,
-                'Message-ID': False,
+                'Message-Id': False,
                 'Subject': False,        
                 }
                 
@@ -199,7 +199,7 @@ class ImapServer(orm.Model):
                     'From': False,
                     'Date': False,
                     'Received': False,
-                    'Message-ID': False,
+                    'Message-Id': False,
                     'Subject': False,
                     }
 
@@ -213,7 +213,7 @@ class ImapServer(orm.Model):
                     'from': record['From'],
                     'date': record['Date'],
                     'received': record['Received'],
-                    'message_id': record['Message-ID'],
+                    'message_id': record['Message-Id'],
                     'subject': record['Subject'],
                     'state': 'draft',
                     'server_id': address.id,
