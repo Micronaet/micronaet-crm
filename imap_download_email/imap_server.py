@@ -221,6 +221,7 @@ class ImapServer(orm.Model):
                 if not store_folder:
                     odoo_data['message'] = message
 
+                pdb.set_trace()
                 mail_id = mail_pool.create(
                     cr, uid, odoo_data, context=context)
 
