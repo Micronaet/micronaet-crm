@@ -219,9 +219,8 @@ class ImapServer(orm.Model):
                 if server_mail in address_to:
                     _logger.warning('Jumped server mail is in CCN')
                     continue
-                is_authorized = False
-                pdb.set_trace()
 
+                is_authorized = False
                 for check_mail in authorized:
                     if check_mail in address_from:
                         is_authorized = True

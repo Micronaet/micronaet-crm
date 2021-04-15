@@ -27,7 +27,7 @@
                 <form string="IMAP mail">
                     <header>
                         <button name="download_file_eml" type="object" string="Download EML"/>
-                        <button name="workflow_confirm" type="object" string="Conferma importazione" attrs="{'invisible': [('state', '!=', 'completed')]}"/>
+                        <button name="workflow_confirm" type="object" string="Conferma importazione" attrs="{'invisible': [('state', '=', 'completed')]}"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
