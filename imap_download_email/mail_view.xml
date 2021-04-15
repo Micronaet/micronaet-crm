@@ -1,6 +1,60 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
+        <!--imap.server.mail-->
+        <record model="ir.ui.view" id="view_imap_server_mail_tree">
+            <field name="name">imap.server.mail.tree</field>
+            <field name="model">imap.server.mail</field>
+            <field name="arch" type="xml">
+                <tree string="IMAP mail" editable="bottom">
+                    <field name="server_id" />
+                    <field name="message_id" />
+                    <field name="to" />
+                    <field name="form" />
+                    <field name="received" />
+                    <field name="subject" />
+                    <field name="date" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_imap_server_mail_form">
+            <field name="name">imap.server.mail.form</field>
+            <field name="model">imap.server.mail</field>
+            <field name="arch" type="xml">
+                <form string="IMAP mail">
+                    <header>
+                        <button name="download_file_eml" type="object" string="Download EML"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <group col="4" colspan="4">
+                            <field name="server_id" />
+                            <field name="message_id" />
+
+                            <field name="to" />
+                            <field name="form" />
+
+                            <field name="date" />
+                            <field name="received" />
+
+                            <field name="subject" colspan="4"/>
+                            <field name="message" colspan="4" attrs="{'invisible': [('message', '=', False)]}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_imap_server_mail">
+            <field name="name">IMAP Mail</field>
+            <field name="res_model">imap.server.mail</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_imap_server_mail_tree"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+
         <!--imap.server.category-->
         <record model="ir.ui.view" id="view_imap_server_category_tree">
             <field name="name">imap.server.category.tree</field>
@@ -120,6 +174,12 @@
                 id="menu_imap_server"
                 action="action_imap_server"
                 sequence="10"
+                />
+            <menuitem
+                parent="menu_imap_server_root"
+                id="menu_imap_server_mail"
+                action="action_imap_server_mail"
+                sequence="20"
                 />
             <menuitem
                 parent="menu_imap_server_root"
