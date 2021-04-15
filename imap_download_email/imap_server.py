@@ -18,6 +18,7 @@
 #
 ###############################################################################
 import os
+import pdb
 import sys
 import logging
 import openerp
@@ -150,6 +151,7 @@ class ImapServer(orm.Model):
     def force_import_email_document(self, cr, uid, ids, context=None):
         """ Force import passed server import all email in object
         """
+        pdb.set_trace()
         category_pool = self.pool.get('imap.server.category')
         mail_pool = self.pool.get('imap.server.mail')
 
