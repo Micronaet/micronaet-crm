@@ -380,12 +380,12 @@ class ImapServerMail(orm.Model):
             'res_id': 1,
             }, context=context)
 
-            return {
-                'type' : 'ir.actions.act_url',
-                'url': '/web/binary/saveas?model=ir.attachment&field=datas&'
-                    'filename_field=datas_fname&id=%s' % attachment_id,
-                'target': 'self',
-                }
+        return {
+            'type' : 'ir.actions.act_url',
+            'url': '/web/binary/saveas?model=ir.attachment&field=datas&'
+                'filename_field=datas_fname&id=%s' % attachment_id,
+            'target': 'self',
+            }
 
     _columns = {
         'message_id': fields.char('ID', size=80),
