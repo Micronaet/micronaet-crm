@@ -362,7 +362,7 @@ class ImapServerMail(orm.Model):
             else:
                 partner_id = partner_ids[0]
         else:  # Create
-            partner_id = partner_pool.create(cr, uid, ids, {
+            partner_id = partner_pool.create(cr, uid, {
                 'name': name,
                 'email': email,
                 'is_company': True,
