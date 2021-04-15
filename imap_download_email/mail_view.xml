@@ -6,7 +6,7 @@
             <field name="name">imap.server.mail.tree</field>
             <field name="model">imap.server.mail</field>
             <field name="arch" type="xml">
-                <tree string="IMAP mail" editable="bottom">
+                <tree string="IMAP mail">
                     <field name="server_id" />
                     <field name="message_id" />
                     <field name="to" />
