@@ -321,7 +321,7 @@ class ImapServerMail(orm.Model):
     """
     _name = 'imap.server.mail'
     _description = 'IMAP Server mail'
-    _rec_name = 'message_id'
+    _rec_name = 'subject'
     _order = 'date'
 
     _columns = {
