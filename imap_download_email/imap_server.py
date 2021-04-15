@@ -233,7 +233,7 @@ class ImapServer(orm.Model):
                         address.id,
                         mail_id,
                     )
-                    fullname = os.path.join(store_folder, cr.dbname, filename)
+                    fullname = os.path.join(store_folder, filename)
                     f_eml = open(fullname, 'w')
                     f_eml.write(eml_string)
                     f_eml.close()
