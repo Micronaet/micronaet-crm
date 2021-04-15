@@ -332,11 +332,11 @@ class ImapServerMail(orm.Model):
             return os.path.join(store_folder, filename)
         return False
 
-    def parse_address(self, value):
+    def parse_address(self, address):
         """ Extract name and email from address
         """
         pdb.set_trace()
-        split_value = value.email.split('<')
+        split_value = address.split('<')
         email = split_value[-1].split('>')[0]
         name = '<'.join(split_value[:-1]).strip('"').strip()
 
@@ -375,7 +375,7 @@ class ImapServerMail(orm.Model):
         }, context=context)
 
     def download_file_eml(self, cr, uid, ids, context=None):
-        """ Get filename if present and retur attachment
+        """ Get filename if present and return attachment
         """
         if context is None:
             context = {
