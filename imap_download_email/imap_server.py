@@ -151,12 +151,13 @@ class ImapServer(orm.Model):
         _logger.info('Start read # %s IMAP server' % (
             len(ids),
             ))
-        # now = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
 
         # Read all server:
         for address in self.browse(cr, uid, ids, context=context):
             server = address.host  # '%s:%s' % (address.host, address.port)
             store_as_file = address.store_as_file
+            authorized = [item.strip() for item in
+                          address.authorized.split('|')]
 
             # -----------------------------------------------------------------
             # Read all email:
@@ -201,17 +202,27 @@ class ImapServer(orm.Model):
                 for (param, value) in message.items():
                     if param in record:
                         record[param] = value
-
+                address_from = record['Date']
                 odoo_data = {
                     'to': record['To'],
                     'from': record['From'],
-                    'date': record['Date'],
+                    'date': address_from,
                     'received': record['Received'],
                     'message_id': record['Message-Id'],
                     'subject': record['Subject'],
                     'state': 'draft',
                     'server_id': address.id,
                     }
+                is_authorized = False
+                pdb.set_trace()
+                for check_mail in authorized:
+                    if check_mail in address_from:
+                        is_authorized = True
+                        break
+                if not is_authorized:
+                    _logger.warning('Jumped mail not authorized')
+                    continue
+
                 if not record['Message-Id']:
                     _logger.warning('No message ID for this email')
                 if not store_as_file:
