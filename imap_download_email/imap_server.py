@@ -289,6 +289,10 @@ class ImapServer(orm.Model):
         'category_id': fields.many2one(
             'imap.server.category', 'Category', required=True),
         'comment': fields.text('Note'),
+        'authorized': fields.text(
+            'Autorizzati',
+            help='Email separati da |, es.: '
+                 'nome1@dominio1.it|nome2@dominio2.it'),
 
         # Store:
         'store_as_file': fields.boolean(
@@ -422,9 +426,9 @@ class ImapServerMail(orm.Model):
             }, context=context)
 
         return {
-            'type' : 'ir.actions.act_url',
+            'type': 'ir.actions.act_url',
             'url': '/web/binary/saveas?model=ir.attachment&field=datas&'
-                'filename_field=datas_fname&id=%s' % attachment_id,
+                   'filename_field=datas_fname&id=%s' % attachment_id,
             'target': 'self',
             }
 

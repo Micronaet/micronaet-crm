@@ -147,9 +147,11 @@
 
                                     <field name="store_as_file" />
                                     <field name="store_folder" attrs="{'invisible': [('store_as_file', '=', False)], 'required': [('store_as_file', '=', True)]}"/>
+
+                                    <field name="authorized" colspan="4"/>
                                 </group>
                             </page>
-                            <page name="imap_coment" string="Comment">
+                            <page name="imap_comment" string="Comment">
                                 <group colspan="4" col="4">
                                     <separator string="Comment" colspan="4"/>
                                     <field name="comment" colspan="4" nolabel="1"/>
