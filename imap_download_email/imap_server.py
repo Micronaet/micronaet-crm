@@ -32,13 +32,14 @@ from openerp import SUPERUSER_ID
 from openerp import tools
 from openerp.tools.translate import _
 from openerp.tools.float_utils import float_round as round
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
 _logger = logging.getLogger(__name__)
+
 
 class ImapServerCategory(orm.Model):
     """ Model name: Category of IMAP server (for manage the import mode)
@@ -49,10 +50,10 @@ class ImapServerCategory(orm.Model):
 
     # TODO create overridable procedure for manage the type of import
     def import_read_email(self, cr, iud, context=None):
-        ''' Parse message list passed (ID: message)
-        '''
-        mgs_ids = []
-        
+        """ Parse message list passed (ID: message)
+        """
+        []
+
         '''
         # Pool used:
         user_pool = self.pool.get('res.users')
@@ -126,17 +127,18 @@ class ImapServerCategory(orm.Model):
             
             msg_ids.append(msg_id) # at the end (for delete message)'''
         return msg_ids
-    
-    _columns = {  
+
+    _columns = {
         'name': fields.char('IMAP category', size=80, required=True),
-        'code': fields.char('Code', size=15, required=True),        
+        'code': fields.char('Code', size=15, required=True),
         'note': fields.text('Note'),
         }
-        
+
     _sql_constraints = [
-        ('code_uniq', 'unique(code)', 'Code must be unique!'),        
-        ]    
-        
+        ('code_uniq', 'unique(code)', 'Code must be unique!'),
+        ]
+
+
 class ImapServer(orm.Model):
     """ Model name: CRM Lead IMAP
     """
@@ -148,18 +150,20 @@ class ImapServer(orm.Model):
     # Download IMAP server procedure:
     # -------------------------------------------------------------------------
     def force_import_email_document(self, cr, uid, ids, context=None):
-        ''' Force import passed server import all email in object
-        '''
-        category_pool = self.pool.get('imap.server.category')        
+        """ Force import passed server import all email in object
+        """
+        category_pool = self.pool.get('imap.server.category')
+        mail_pool = self.pool.get('imap.server.mail')
+
         _logger.info('Start read # %s IMAP server' % (
-            len(ids), 
+            len(ids),
             ))
-        
-        now = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+
+        datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
         # Read all server:
         for address in self.browse(cr, uid, ids, context=context):
-            delete_ids = []
-            server = address.host #'%s:%s' % (address.host, address.port)
+            # TODO remove?? []
+            server = address.host  # '%s:%s' % (address.host, address.port)
 
             # -----------------------------------------------------------------
             # Read all email:
@@ -167,21 +171,21 @@ class ImapServer(orm.Model):
             try:
                 if_error = _('Error find imap server: %s' % server)
                 if address.SSL:
-                    mail = imaplib.IMAP4_SSL(server) # TODO SSL
+                    mail = imaplib.IMAP4_SSL(server)  # TODO SSL
                 else:
-                    mail = imaplib.IMAP4(server) # TODO SSL
-                
+                    mail = imaplib.IMAP4(server)  # TODO SSL
+
                 if_error = _('Error login access user: %s' % address.user)
                 mail.login(address.user, address.password)
-                
+
                 if_error = _('Error access start folder: %s' % address.folder)
                 mail.select(address.folder)
             except:
                 raise osv.except_osv(
-                    _('IMAP server error:'), 
+                    _('IMAP server error:'),
                     if_error,
-                    )        
-                    
+                    )
+
             esit, result = mail.search(None, 'ALL')
             tot = 0
             for msg_id in result[0].split():
@@ -197,79 +201,80 @@ class ImapServer(orm.Model):
                     'Date': False,
                     'Received': False,
                     'Message-ID': False,
-                    'Subject': False,        
+                    'Subject': False,
                     }
-                
+
                 # Populate parameters:
                 for (param, value) in message.items():
                     if param in record:
                         record[param] = value
 
-                mail.create(cr, uid, {
-                    'to': record['To'],
-                    'from': record['From'],
-                    'date': record['Date'],
-                    'received': record['Received'],
-                    'message_id': record['Message-ID'],
-                    'subject': record['Subject'],
-                    'message': message,
-                    'state': 'draft',
-                    'server_id': address.id,
-                    }, context=context)
-                    
+                mail_pool.create(
+                    cr, uid, {
+                        'to': record['To'],
+                        'from': record['From'],
+                        'date': record['Date'],
+                        'received': record['Received'],
+                        'message_id': record['Message-ID'],
+                        'subject': record['Subject'],
+                        'message': message,
+                        'state': 'draft',
+                        'server_id': address.id,
+                        }, context=context)
+
                 # -------------------------------------------------------------
                 # Write on file:
                 # -------------------------------------------------------------
-                #eml_file = '%s.eml' % (os.path.join(
-                #    store_folder, 
+                # eml_file = '%s.eml' % (os.path.join(
+                #    store_folder,
                 #    str(doc_id),
-                #    ))                
-                #f_eml = open(eml_file, 'w')
-                #f_eml.write(eml_string)
+                #    ))
+                # f_eml = open(eml_file, 'w')
+                # f_eml.write(eml_string)
                 # TODO remove file after confirm
-                #f_eml.close()
+                # f_eml.close()
 
-                # TODO manage commit roll back also in email            
-                mail.store(msg_id, '+FLAGS', '\\Deleted')        
+                # TODO manage commit roll back also in email
+                mail.store(msg_id, '+FLAGS', '\\Deleted')
                 _logger.info('Read mail: To: %s - From: %s - Subject: %s' % (
                     record['To'],
                     record['From'],
                     record['Subject'],
                     ))
-                
+
             _logger.info('End read IMAP %s [tot msg: %s]' % (
                 address.name,
                 tot,
-                ))           
+                ))
             # -----------------------------------------------------------------
-            # Close operations:    
+            # Close operations:
             # -----------------------------------------------------------------
-            #mail.expunge() # TODO clean trash bin
+            # mail.expunge() # TODO clean trash bin
             mail.close()
             mail.logout()
             _logger.info('End read IMAP server')
-            
-            category_pool.import_read_email(self, cr, iud, context=context)
+
+            category_pool.import_read_email(self, cr, uid, context=context)
         return True
-    
+
     # -------------------------------------------------------------------------
     # Scheduled operations for all IMAP Server:
     # -------------------------------------------------------------------------
-    def schedule_import_email_document(self, cr, uid, category_code=False, 
-            context=None):
-        ''' Search schedule address and launch importation:
-        '''
+    def schedule_import_email_document(
+            self, cr, uid, category_code=False, context=None):
+        """ Search schedule address and launch importation:
+        """
         domain = [('is_active', '=', True)]
         if category_code:
-            domain.append(('category_id.code', '=', category_code), )     
+            domain.append(('category_id.code', '=', category_code), )
         imap_ids = self.search(cr, uid, domain, context=context)
-        
-        if not imap_ids:           
-            return False            
+
+        if not imap_ids:
+            return False
         return self.force_import_email_document(
             cr, uid, imap_ids, context=context)
-        
-    _columns = {  
+
+    _columns = {
         'is_active': fields.boolean('Is active'),
         'name': fields.char('Email', size=80, required=True),
         'host': fields.char(
@@ -287,13 +292,14 @@ class ImapServer(orm.Model):
             'imap.server.category', 'Category', required=True),
         'comment': fields.text('Note'),
         }
-    
+
     _defaults = {
         'is_active': lambda *a: True,
         'port': lambda *a: 993,
         'SSL': lambda *a: True,
         'folder': lambda *a: 'INBOX',
         }
+
 
 class ImapServerMail(orm.Model):
     """ Model name: Mail imported
@@ -302,7 +308,7 @@ class ImapServerMail(orm.Model):
     _description = 'IMAP Server mail'
     _rec_name = 'message_id'
     _order = 'date'
-        
+
     _columns = {
         'message_id': fields.char('ID', size=64, required=True),
         'to': fields.char('To', size=100),
@@ -311,15 +317,14 @@ class ImapServerMail(orm.Model):
         'subject': fields.char('Subject', size=100),
         'form': fields.char('From', size=100),
         'date': fields.char('Date', size=30),
-        'message': fields.text('Message'),  
+        'message': fields.text('Message'),
         'server_id': fields.many2one('imap.server', 'Server'),
         'state': fields.selection([
             ('draft', 'Draft'),
             ('completed', 'Completed'), # Elaborated
             ], 'State'),
-        }        
+        }
 
     _defaults = {
         'state': lambda *x: 'draft',
-        }        
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:1111111
+        }
