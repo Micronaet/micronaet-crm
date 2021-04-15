@@ -335,11 +335,9 @@ class ImapServerMail(orm.Model):
     def parse_address(self, address):
         """ Extract name and email from address
         """
-        pdb.set_trace()
         split_value = address.split('<')
         email = split_value[-1].split('>')[0]
         name = '<'.join(split_value[:-1]).strip().strip('"').strip()
-
         return name or email, email
 
     def workflow_confirm(self, cr, uid, ids, context=None):
@@ -361,7 +359,6 @@ class ImapServerMail(orm.Model):
             else:
                 partner_id = partner_ids[0]
         else:  # Create
-            pdb.set_trace()
             partner_id = partner_pool.create(cr, uid, {
                 'name': name,
                 'email': email,
