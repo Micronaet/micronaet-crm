@@ -353,7 +353,6 @@ class ImapServerMail(orm.Model):
         partner_ids = partner_pool.search(cr, uid, [
             ('email', '=', email),
         ], context=context)
-        pdb.set_trace()
         if partner_ids:  # Link to first partner (master)
             partner = partner_pool.browse(
                 cr, uid, partner_ids, context=context)[0]
@@ -362,6 +361,7 @@ class ImapServerMail(orm.Model):
             else:
                 partner_id = partner_ids[0]
         else:  # Create
+            pdb.set_trace()
             partner_id = partner_pool.create(cr, uid, {
                 'name': name,
                 'email': email,
