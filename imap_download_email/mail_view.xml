@@ -84,7 +84,7 @@
                                     <field name="category_id" />
 
                                     <field name="store_as_file" />
-                                    <field name="store_folder" attrs="{'invisible': [('store_as_file', '=', False)]}"/>
+                                    <field name="store_folder" attrs="{'invisible': [('store_as_file', '=', False)], 'required': [('store_as_file', '=', True)]}"/>
                                 </group>
                             </page>
                             <page name="imap_coment" string="Comment">
