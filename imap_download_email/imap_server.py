@@ -156,12 +156,7 @@ class ImapServer(orm.Model):
         # Read all server:
         for address in self.browse(cr, uid, ids, context=context):
             server = address.host  # '%s:%s' % (address.host, address.port)
-            if address.store_as_file:
-                store_folder = os.path.expanduser(
-                    os.path.join(address.store_folder, cr.dbname))
-                os.system('mkdir -p %s' % store_folder)  # Create if no exist
-            else:
-                store_folder = False
+            store_as_file = address.store_as_file
 
             # -----------------------------------------------------------------
             # Read all email:
@@ -219,7 +214,7 @@ class ImapServer(orm.Model):
                     }
                 if not record['Message-Id']:
                     _logger.warning('No message ID for this email')
-                if not store_folder:
+                if not store_as_file:
                     odoo_data['message'] = message
 
                 mail_id = mail_pool.create(
@@ -228,13 +223,10 @@ class ImapServer(orm.Model):
                 # -------------------------------------------------------------
                 # Write on file:
                 # -------------------------------------------------------------
-                if store_folder:
-                    filename = 'auto_%s_%s.eml' % (
-                        address.id,
-                        mail_id,
-                    )
-                    fullname = os.path.join(store_folder, filename)
-                    _logger.info('Saving %s ...' % fullname)
+                if store_as_file:
+                    fullname = mail_pool.get_fullname(
+                        cr, uid, mail_id, context=context)
+                    _logger.info('...Saving %s' % fullname)
                     f_eml = open(fullname, 'w')
                     f_eml.write(eml_string)
                     f_eml.close()
@@ -322,6 +314,78 @@ class ImapServerMail(orm.Model):
     _description = 'IMAP Server mail'
     _rec_name = 'subject'
     _order = 'date'
+
+    def get_fullname(self, cr, uid, ids, context=None):
+        """
+        """
+        mail_id = ids if type(ids) == int else ids[0]
+        mail = self.browse(cr, uid, mail_id, context=context)
+        server = mail.address_id
+        filename = 'auto_%s_%s.eml' % (
+            server.id,
+            mail_id,
+        )
+        if server.store_as_file:
+            store_folder = os.path.expanduser(
+                os.path.join(server.store_folder, cr.dbname))
+            os.system('mkdir -p %s' % store_folder)  # Create if no exist
+            return os.path.join(store_folder, filename)
+        return False
+
+    def download_file_eml(self, cr, uid, ids, context=None):
+        """ Get filename if present and retur attachment
+        """
+        if context is None:
+            context = {
+                'lang': 'it_IT',
+                }
+
+        mail_id = ids[0]
+
+        # Pool used:
+        attachment_pool = self.pool.get('ir.attachment')
+
+        fullname = self.get_fullname(
+            cr, uid, mail_id, context=context)
+
+        try:
+            b64 = open(fullname, 'rb').read().encode('base64')
+        except:
+            _logger.error(_('Cannot return file: %s') % fullname)
+            raise osv.except_osv(
+                _('Report error'),
+                _('Cannot return file: %s') % fullname,
+                )
+
+        # Clean previous attachement:
+        attachment_ids = attachment_pool.search(cr, uid, [
+            ('name', '=', 'Email'),
+            ('datas_fname', '=', 'odoo_email.eml'),
+            ()
+        ], context=context)
+        if attachment_ids:
+            try:
+                attachment_pool.unlink(
+                    cr, uid, attachment_ids, context=context)
+            except:
+                _logger.error('Cannot delete previous attachment returned')
+
+        attachment_id = attachment_pool.create(cr, uid, {
+            'name': 'Email',
+            'datas_fname': 'odoo_email.eml',
+            'type': 'binary',
+            'datas': b64,
+            'partner_id': 1,
+            'res_model': 'res.partner',
+            'res_id': 1,
+            }, context=context)
+
+            return {
+                'type' : 'ir.actions.act_url',
+                'url': '/web/binary/saveas?model=ir.attachment&field=datas&'
+                    'filename_field=datas_fname&id=%s' % attachment_id,
+                'target': 'self',
+                }
 
     _columns = {
         'message_id': fields.char('ID', size=80),
