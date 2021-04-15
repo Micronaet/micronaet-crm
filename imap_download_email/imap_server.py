@@ -320,7 +320,7 @@ class ImapServerMail(orm.Model):
         """
         mail_id = ids if type(ids) == int else ids[0]
         mail = self.browse(cr, uid, mail_id, context=context)
-        server = mail.address_id
+        server = mail.server_id
         filename = 'auto_%s_%s.eml' % (
             server.id,
             mail_id,
