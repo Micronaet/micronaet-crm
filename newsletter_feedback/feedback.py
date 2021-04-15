@@ -112,8 +112,8 @@ class ResCompany(orm.Model):
             date = WS.cell(row, 0).value
             error = WS.cell(row, 1).value
             email = WS.cell(row, 2).value
-            active = WS.cell(row, 3).value or False # transform in boolean
-            remove = WS.cell(row, 4).value or False # transform in boolean
+            active = WS.cell(row, 3).value or False  # transform in boolean
+            remove = WS.cell(row, 4).value or False  # transform in boolean
 
             if not email or not date:
                 _logger.error('Jump line: %s' % i)
@@ -175,7 +175,7 @@ class ResPartner(orm.Model):
             'crm.newsletter.feedback.category', 'Newsletter category',
             help='Esit of newsletter'),
         'news_feedback_date': fields.date('Feedback date'),
-        'news_opt_out':fields.boolean('Opt out'),
+        'news_opt_out': fields.boolean('Opt out'),
         'newsletter_ids': fields.one2many(
             'crm.newsletter.feedback.log', 'partner_id', 'Activity log'),
         }

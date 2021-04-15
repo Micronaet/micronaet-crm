@@ -158,7 +158,7 @@ class ImapServer(orm.Model):
         pdb.set_trace()
         for address in self.browse(cr, uid, ids, context=context):
             server = address.host  # '%s:%s' % (address.host, address.port)
-            if address.store_in_folder:
+            if address.store_as_file:
                 store_path = os.path.expanduser(
                     os.path.join(address.store_path, cr.dbname))
                 os.system('mkdir -p %s' % store_path)  # Create in not present
