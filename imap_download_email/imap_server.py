@@ -47,7 +47,6 @@ class ImapServerCategory(orm.Model):
         """ Parse message list passed (ID: message)
         """
         mail_pool = self.pool.get('imap.server.mail')
-
         mail_ids = mail_pool.search(cr, uid, [
             ('state', '=', 'draft')], context=context)
         return mail_pool.workflow_confirm(cr, uid, mail_ids, context=context)
