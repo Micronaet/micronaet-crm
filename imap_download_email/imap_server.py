@@ -43,83 +43,14 @@ class ImapServerCategory(orm.Model):
     _order = 'name'
 
     # TODO create overridable procedure for manage the type of import
-    def import_read_email(self, cr, iud, context=None):
+    def import_read_email(self, cr, uid, context=None):
         """ Parse message list passed (ID: message)
         """
-        # TODO To be overridden
-        '''
-        # Pool used:
-        user_pool = self.pool.get('res.users')
-        partner_pool = self.pool.get('res.partner')
-        
-        # Save message somewhere?
-        for msg_id, message in new_mail.iteritems():
-            record = {
-                'To': False,
-                'From': False,
-                'Date': False,
-                'Received': False,
-                'Message-Id': False,
-                'Subject': False,        
-                }
-                
-            # Populate parameters:
-            for (param, value) in message.items():
-                if param in record:
-                    record[param] = value
+        mail_pool = self.pool.get('imap.server.mail')
 
-            # Extract user:
-            email_address = (
-                record.get('From') or '').split('<')[-1].split('>')[0]
-
-            user_id = 1
-            if email_address:
-                # Search user:
-                user_ids = user_pool.search(cr, uid, [
-                    ('email', '=', email_address),
-                    ], context=context)
-                if user_ids:
-                    user_id = user_ids[0]
-
-            # Try to search partner from 'to address':
-            to_address = (record.get('To') or '').split(', ')
-            if to_address: # Take only the first                   
-                email_address = \
-                    to_address[0].split('<')[-1].split('>')[0]
-                    
-            if email_address:
-                # Search user:
-                partner_ids = partner_pool.search(cr, uid, [
-                    ('email', '=', email_address),
-                    ], context=context)
-                if partner_ids:
-                    partner_id = partner_ids[0]
-                    if len(partner_ids) > 1:
-                        _logger.warning(
-                            '%s partner with address: %s' % (
-                                len(partner_ids),
-                                email_address,
-                                ))
-
-            _logger.info('Read mail: To: %s - From: %s - Subject: %s' % (
-                record['To'],
-                record['From'],
-                record['Subject'],
-                ))
-            # -------------------------------------------------------------
-            # Write on file:
-            # -------------------------------------------------------------
-            #eml_file = '%s.eml' % (os.path.join(
-            #    store_folder, 
-            #    str(doc_id),
-            #    ))                
-            #f_eml = open(eml_file, 'w')
-            #f_eml.write(eml_string)
-            # TODO remove file after confirm
-            #f_eml.close()
-            
-            msg_ids.append(msg_id) # at the end (for delete message)'''
-        return True  # msg_ids
+        mail_ids = mail_pool.search(cr, uid, [
+            ('state', '=', 'draft')], context=context)
+        return mail_pool.workflow_confirm(cr, uid, mail_ids, context=context)
 
     _columns = {
         'is_active': fields.boolean('Attivo'),
@@ -373,35 +304,43 @@ class ImapServerMail(orm.Model):
         """ Confirm email and import in LEAD
         """
         partner_pool = self.pool.get('res.partner')
-        mail_id = ids if type(ids) == int else ids[0]
-        mail = self.browse(cr, uid, mail_id, context=context)
-        name, email = self.parse_address(mail.to)
+        for mail in self.browse(cr, uid, ids, context=context):
+            if mail.state == 'confirmed':
+                _logger.warning('Mail yet confirmed')
+                continue
 
-        partner_ids = partner_pool.search(cr, uid, [
-            ('email', '=', email),
-        ], context=context)
-        if partner_ids:  # Link to first partner (master)
-            new_partner = False
-            partner = partner_pool.browse(
-                cr, uid, partner_ids, context=context)[0]
-            if partner.parent_id:
-                partner_id = partner.parent_id.id
-            else:
-                partner_id = partner_ids[0]
-        else:  # Create
-            new_partner = True
-            partner_id = partner_pool.create(cr, uid, {
-                'name': name,
-                'email': email,
-                'is_company': True,
-                'is_address': False,
+            name, email = self.parse_address(mail.to)
+            partner_ids = partner_pool.search(cr, uid, [
+                ('email', '=', email),
+            ], context=context)
+            if partner_ids:  # Link to first partner (master)
+                new_partner = False
+                partner = partner_pool.browse(
+                    cr, uid, partner_ids, context=context)[0]
+                if partner.parent_id:
+                    partner_id = partner.parent_id.id
+                else:
+                    partner_id = partner_ids[0]
+            else:  # Create
+                new_partner = True
+
+                # Setup partner extra data:
+                newsletter_category_id = \
+                    mail.category_id.newsletter_category_id.id
+                partner_id = partner_pool.create(cr, uid, {
+                    'name': name,
+                    'email': email,
+                    'is_company': True,
+                    'is_address': False,
+                    'newsletter_category_id': newsletter_category_id,
+                }, context=context)
+
+            self.write(cr, uid, ids, {
+                'partner_id': partner_id,
+                'state': 'completed',
+                'new_partner': new_partner,
             }, context=context)
-
-        self.write(cr, uid, ids, {
-            'partner_id': partner_id,
-            'state': 'completed',
-            'new_partner': new_partner,
-        }, context=context)
+        return True
 
     def download_file_eml(self, cr, uid, ids, context=None):
         """ Get filename if present and return attachment
