@@ -356,6 +356,8 @@ class ImapServerMail(orm.Model):
     def parse_address(self, address):
         """ Extract name and email from address
         """
+        if not address:
+            return '', ''
         split_value = address.split('<')
         email = split_value[-1].split('>')[0]
         name = '<'.join(split_value[:-1]).strip().strip('"').strip()
