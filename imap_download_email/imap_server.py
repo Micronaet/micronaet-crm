@@ -281,15 +281,16 @@ class ImapServer(orm.Model):
     # Scheduled operations for all IMAP Server:
     # -------------------------------------------------------------------------
     def schedule_import_email_document(
-            self, cr, uid, category_code=False, context=None):
+            self, cr, uid, context=None):
         """ Search schedule address and launch importation:
         """
-        domain = [('is_active', '=', True)]
-        if category_code:
-            domain.append(('category_id.code', '=', category_code), )
+        domain = [
+            ('is_active', '=', True),
+            ('category_id.is_active', '=', True),
+        ]
         imap_ids = self.search(cr, uid, domain, context=context)
-
         if not imap_ids:
+            _logger.warning('No IMAP active to check')
             return False
         return self.force_import_email_document(
             cr, uid, imap_ids, context=context)
