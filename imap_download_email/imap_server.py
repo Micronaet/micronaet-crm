@@ -482,9 +482,10 @@ class ResPartner(orm.Model):
         res = {}
         mail_pool = self.pool.get('imap.server.mail')
         for partner in self.browse(cr, uid, ids, context):
-            res[partner.id] = mail_pool.search_count([
-                ('partner_id', '=', partner.id),
-            ])
+            res[partner.id] = mail_pool.search_count(
+                cr, uid, [
+                    ('partner_id', '=', partner.id),
+                ], context=context)
         return res
 
     _columns = {
