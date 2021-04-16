@@ -16,6 +16,8 @@
                     <field name="received" />
                     <field name="subject" />
                     <field name="date" />
+                    <button name="download_file_eml" type="object" string="Download EML" icon="gtk-zoom-in"/>
+                    <button name="workflow_confirm" type="object" string="Conferma importazione" attrs="{'invisible': [('state', '=', 'completed')]}" icon="gtk-ok"/>
                     <field name="state" />
                 </tree>
             </field>
@@ -26,8 +28,8 @@
             <field name="arch" type="xml">
                 <form string="IMAP mail">
                     <header>
-                        <button name="download_file_eml" type="object" string="Download EML"/>
-                        <button name="workflow_confirm" type="object" string="Conferma importazione" attrs="{'invisible': [('state', '=', 'completed')]}"/>
+                        <button name="download_file_eml" type="object" string="Download EML" icon="gtk-zoom-in"/>
+                        <button name="workflow_confirm" type="object" string="Conferma importazione" attrs="{'invisible': [('state', '=', 'completed')]}" icon="gtk-ok"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
