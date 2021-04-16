@@ -30,11 +30,12 @@
     'license': 'AGPL-3',
     'depends': [
         'base',
+        'crm_newsletter_category',  # Newsletter category
         ],
     'init_xml': [],
     'demo': [],
     'data': [
-        'security/ir.model.access.csv',    
+        'security/ir.model.access.csv',
         'mail_view.xml',
         'scheduler.xml',
         ],

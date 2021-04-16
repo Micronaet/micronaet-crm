@@ -122,10 +122,15 @@ class ImapServerCategory(orm.Model):
         return True  # msg_ids
 
     _columns = {
+        'is_active': fields.boolean('Attivo'),
         'name': fields.char('IMAP category', size=80, required=True),
         'code': fields.char('Code', size=15, required=True),
         'note': fields.text('Note'),
-        }
+
+        # Auto setup partner:
+        'newsletter_category_id': fields.many2one(
+            'crm.newsletter.category', 'Newsletter category'),
+    }
 
     _sql_constraints = [
         ('code_uniq', 'unique(code)', 'Code must be unique!'),
