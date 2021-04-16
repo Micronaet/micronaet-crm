@@ -1,23 +1,6 @@
 <?xml version="1.0"?>
 <openerp>
     <data>
-        <record id="view_partners_mail_button_form" model="ir.ui.view">
-            <field name="name">res.partner.mail.button.form</field>
-            <field name="model">res.partner</field>
-            <field name="inherit_id" ref="base.view_partner_form"/>
-            <field name="arch" type="xml">
-                <data>
-                    <xpath expr="//div[@name='buttons']" position="inside">
-                        <button class="oe_inline oe_stat_button" type="action"
-                            name="%(crm.crm_case_category_act_oppor11)d"
-                            icon="fa-email"
-                            context="{'search_default_partner_id': active_id}">
-                            <field string="E-mail" name="email_count" widget="statinfo"/>
-                        </button>
-                    </xpath>
-                </data>
-            </field>
-        </record>
         <!--imap.server.mail-->
         <record model="ir.ui.view" id="view_imap_server_mail_tree">
             <field name="name">imap.server.mail.tree</field>
@@ -190,6 +173,24 @@
             <field name="view_id" ref="view_imap_server_tree"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
+        </record>
+
+        <record id="view_partners_mail_button_form" model="ir.ui.view">
+            <field name="name">res.partner.mail.button.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    <xpath expr="//div[@name='buttons']" position="inside">
+                        <button class="oe_inline oe_stat_button" type="action"
+                            name="%(crm.action_imap_server_mail)d"
+                            icon="fa-envelope"
+                            context="{'search_default_partner_id': active_id}">
+                            <field string="E-mail" name="email_count" widget="statinfo"/>
+                        </button>
+                    </xpath>
+                </data>
+            </field>
         </record>
 
         <menuitem
