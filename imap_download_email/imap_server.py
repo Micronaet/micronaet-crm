@@ -471,7 +471,23 @@ class ImapServerMail(orm.Model):
         }
 
 
-# class ResPartner(orm.Model):
-#    """ Model name: Partner
-#    """
-#    _inherit = 'res.partner'
+class ResPartner(orm.Model):
+    """ Model name: Partner
+    """
+    _inherit = 'res.partner'
+
+    def _get_email_count(self, cr, uid, ids, field_name, arg, context=None):
+        """ Total of email present
+        """
+        res = {}
+        mail_pool = self.pool.get('imap.server.mail')
+        for partner in self.browse(cr, uid, ids, context):
+            res[partner.id] = mail_pool.search_count([
+                ('partner_id', '=', partner.id),
+            ])
+        return res
+
+    _columns = {
+        'email_count': fields.function(
+            _get_email_count, string='# Email', type='integer'),
+    }
