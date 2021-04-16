@@ -22,7 +22,7 @@
             <field name="name">imap.server.mail.tree</field>
             <field name="model">imap.server.mail</field>
             <field name="arch" type="xml">
-                <tree string="IMAP mail" colors="blue:new_partner=True;red=partner_id == False and state == 'confirmed'">
+                <tree string="IMAP mail" colors="blue:new_partner=True;red:partner_id == False and state == 'confirmed'">
                     <field name="server_id" />
                     <field name="message_id" />
                     <field name="new_partner" />
