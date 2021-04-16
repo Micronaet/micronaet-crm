@@ -2,11 +2,28 @@
 <openerp>
     <data>
         <!--imap.server.mail-->
+        <record model="ir.ui.view" id="view_imap_server_mail_search">
+            <field name="name">imap.server.mail.search</field>
+            <field name="model">imap.server.mail</field>
+            <field name="arch" type="xml">
+                <search string="IMAP Mail" version="7.0">
+                    <field name="name" />
+                    <field name="subject" />
+                    <field name="partner_id" filter_domain="[('partner_id','=',self)]"/>
+                    <filter name="state_draft" string="Bozza" domain="[('state','=','draft')]"/>
+                    <filter name="state_draft" string="Analizzate" domain="[('state','=','completed')]"/>
+                    <group expand="0" string="Raggruppa per...">
+                        <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Stato" context="{'group_by': 'state'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
         <record model="ir.ui.view" id="view_imap_server_mail_tree">
             <field name="name">imap.server.mail.tree</field>
             <field name="model">imap.server.mail</field>
             <field name="arch" type="xml">
-                <tree string="IMAP mail">
+                <tree string="IMAP mail" colors="blue:new_partner=True;red=partner_id == False and state == 'confirmed'">
                     <field name="server_id" />
                     <field name="message_id" />
                     <field name="new_partner" />
