@@ -324,8 +324,11 @@ class ImapServerMail(orm.Model):
                 new_partner = True
 
                 # Setup partner extra data:
-                newsletter_category_id = \
-                    mail.server_id.category_id.newsletter_category_id.id
+                try:
+                    newsletter_category_id = \
+                        mail.server_id.category_id.newsletter_category_id.id
+                except:
+                    newsletter_category_id = False
                 partner_id = partner_pool.create(cr, uid, {
                     'name': name,
                     'email': email,
