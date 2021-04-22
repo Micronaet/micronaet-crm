@@ -289,14 +289,19 @@ class ImapServerMail(orm.Model):
             return os.path.join(store_folder, filename)
         return False
 
-    def parse_address(self, address):
+    def parse_address(self, address, subject):
         """ Extract name and email from address
         """
+        token = '-'
         if not address:
             return '', ''
         split_value = address.split('<')
         email = split_value[-1].split('>')[0]
-        name = '<'.join(split_value[:-1]).strip().strip('"').strip()
+        if token in subject:
+            name = subject.split(token)[0].strip()
+        else:
+            name = '<'.join(split_value[:-1]).strip().strip('"').strip()
+
         return name or email, email
 
     def workflow_confirm(self, cr, uid, ids, context=None):
@@ -308,7 +313,7 @@ class ImapServerMail(orm.Model):
                 _logger.warning('Mail yet confirmed')
                 continue
 
-            name, email = self.parse_address(mail.to)
+            name, email = self.parse_address(mail.to, mail.subject)
             partner_ids = partner_pool.search(cr, uid, [
                 ('email', '=', email),
             ], context=context)
