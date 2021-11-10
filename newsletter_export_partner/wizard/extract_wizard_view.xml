@@ -10,10 +10,10 @@
                    <header>
                        <button string="Cancel" special="cancel" />
                        <button name="action_done" string="Done" type="object" icon="gtk-jump-to" class="oe_highlight" />
-                   </header>                   
+                   </header>
                    <group colspan="4" col="4">
                        <field name="mode" />
-                       <newline/>
+                       <field name="agent_id" />
 
                        <field name="no_opt_out" />
                        <field name="extra_data" />
@@ -21,15 +21,15 @@
                        <field name="newsletter_category_ids" widget="many2many_tags" colspan="4"/>
 
                        <field name="accounting" />
-                       <field name="state_id" />                       
+                       <field name="state_id" />
 
                        <field name="country_id" />
                        <field name="no_country_id" />
 
                        <field name="fiscal_id" />
                        <field name="no_fiscal_id" />
-                       
-                       <field name="with_invoice" />  
+
+                       <field name="with_invoice" />
                        <field name="invoice_date" attrs="{'invisible': [('with_invoice','=',False)]}"/>
 
                    </group>
@@ -44,14 +44,14 @@
           <field name="view_mode">form</field>
           <field name="target">new</field>
           <field name="view_id" ref="res_partner_newsletter_extract_wizard_view"/>
-      </record>      
-      
-      <menuitem 
-          parent="base.menu_base_config" 
-          id="menu_res_partner_newsletter_extract_wizard" 
+      </record>
+
+      <menuitem
+          parent="base.menu_base_config"
+          id="menu_res_partner_newsletter_extract_wizard"
           action="action_res_partner_newsletter_extract_wizard"
           sequence="40"
           />
-      
+
     </data>
 </openerp>
