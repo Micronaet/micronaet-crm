@@ -290,7 +290,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     'X' if partner.is_company else '',
                     'X' if partner.customer else '',
                     'X' if partner.supplier else '',
-                    agent.name or '',
+                    partner.agent_id.name or '',
 
                     partner.name,
                     partner.city,
@@ -311,9 +311,9 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     row_out += 1
                     xls_pool.write_xls_line(
                         ws_out, row_out, record)
-                    continue # No more write on file
+                    continue  # No more write on file
 
-                if record[0]: # email present
+                if record[0]:  # email present
                     row += 1
                     xls_pool.write_xls_line(ws_ml, row, record)
                 else:
@@ -323,7 +323,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
 
                 if partner.email_promotional_id:
                     record[0] = clean_mail(partner.email_promotional_id.email)
-                    if record[0]: # email
+                    if record[0]:  # email
                         row += 1
                         xls_pool.write_xls_line(ws_ml, row, record)
                     else:
