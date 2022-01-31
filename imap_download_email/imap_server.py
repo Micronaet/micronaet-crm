@@ -107,7 +107,8 @@ class ImapServer(orm.Model):
 
                 server_mail = address.user
                 if_error = _('Error login access user: %s' % server_mail)
-                mail.login(server_mail, address.password)
+                error = mail.login(server_mail, address.password)
+                print(error)
 
                 if_error = _('Error access start folder: %s' % address.folder)
                 mail.select(address.folder)
