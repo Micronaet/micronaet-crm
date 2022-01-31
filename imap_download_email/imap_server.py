@@ -108,14 +108,14 @@ class ImapServer(orm.Model):
                 server_mail = address.user
                 if_error = _('Error login access user: %s' % server_mail)
                 error = mail.login(server_mail, address.password)
-                print(error)
 
                 if_error = _('Error access start folder: %s' % address.folder)
                 mail.select(address.folder)
             except:
+                _logger.error(sys.exc_info())
                 raise osv.except_osv(
                     _('IMAP server error:'),
-                    if_error,
+                    'Dettaglio: %s \n%s' % (if_error, sys.exc_info()),
                     )
 
             esit, result = mail.search(None, 'ALL')
