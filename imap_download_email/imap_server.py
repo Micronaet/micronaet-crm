@@ -88,7 +88,6 @@ class ImapServer(orm.Model):
             ))
 
         # Read all server:
-        import pdb; pdb.set_trace()
         for address in self.browse(cr, uid, ids, context=context):
             server = address.host  # '%s:%s' % (address.host, address.port)
             store_as_file = address.store_as_file
