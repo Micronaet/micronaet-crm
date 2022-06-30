@@ -875,6 +875,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     invoice.partner_id.name,
                     invoice.partner_id.state_id.region_id.name or '',
                     invoice.partner_id.country_id.name or '',
+                    invoice.partner_id.statistic_category_id.name or '',
 
                     product.family_id.name or '',
                     product.default_code or '',
@@ -920,7 +921,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             excel_pool.column_width(ws_name, [
                 8, 10, 8, 15,
-                35, 20, 20,
+                35, 20, 20, 15,
                 15, 10,
                 10, 10,
                 10, 10, 10, 15, 3
@@ -946,7 +947,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             header = [
                 'Documento', 'Stagione', 'Data', 'Origine',
-                'Partner', 'Regione', 'Nazione',
+                'Partner', 'Regione', 'Nazione', 'Cat. Stat.',
                 'Famiglia', 'Prodotto',
                 'Scala', 'Sconto',
                 'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
@@ -967,6 +968,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     partner,
                     region,
                     country,
+                    statistic_category,
 
                     family,
                     default_code,
@@ -1075,6 +1077,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         partner,
                         region,
                         country,
+                        statistic_category,
                         family,
                         default_code,
                         discount,
