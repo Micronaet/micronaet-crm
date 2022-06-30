@@ -12,31 +12,31 @@
                        <button name="action_sale_report" string="Sale report" type="object" icon="gtk-print" class="oe_highlight" />
                        <button name="action_ddt_report" string="DDT report" type="object" icon="gtk-print" class="oe_highlight" />
                        <button name="action_invoice_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
-                   </header>                   
+                   </header>
                    <group colspan="4" col="4">
                         <separator string="Period:" colspan="4"/>
-                        <field name="from_date" />                   
+                        <field name="from_date" />
                         <field name="to_date" />
-                        
+
                         <separator string="Filter:" colspan="4"/>
-                        <field name="partner_id" domain="[('is_company', '=', True)]"/>                   
-                        <field name="agent_id" domain="[('is_agent', '=', True)]" />                   
-                        
+                        <field name="partner_id" domain="[('is_company', '=', True)]"/>
+                        <field name="agent_id" domain="[('is_agent', '=', True)]" />
+
                         <field name="family_id" domain="[('is_family', '=', True)]"/>
                         <field name="product_id" domain="[('is_family', '!=', True)]" />
-                        
+
                         <field name="country_id" />
                         <field name="state_id" />
 
                         <field name="region_id" />
-                        
+
                         <separator string="Detail page:" colspan="4"/>
                         <field name="sorted" />
-                        
+
                         <separator string="OLAP page:" colspan="4"/>
                         <field name="x_axis" />
                         <field name="y_axis" />
-                        
+
                         <field name="field_number" />
                         <field name="field_real" />
                         <field name="field_total" />
@@ -53,35 +53,36 @@
                   <header>
                       <button string="Cancel" special="cancel" />
                       <button name="action_extract_all" string="Report" type="object" icon="gtk-print" class="oe_highlight" />
-                  </header>                   
+                  </header>
                   <group colspan="4" col="4">
                        <separator string="Period:" colspan="4"/>
-                       <field name="from_date" />                   
+                       <field name="from_date" />
                        <field name="to_date" />
-                       
+
                        <field name="reference_date" />
                        <field name="with_previsional" />
-                       
+
                        <separator string="Filter:" colspan="4"/>
-                       <field name="partner_id" domain="[('is_company', '=', True)]"/>                   
+                       <field name="partner_id" domain="[('is_company', '=', True)]"/>
                        <field name="family_id" domain="[('is_family', '=', True)]"/>
                        <field name="product_id" domain="[('is_family', '!=', True)]" />
                        <field name="agent_id" domain="[('is_agent', '=', True)]"/>
                        <field name="region_id" />
                        <field name="country_id" />
+                       <field name="statistic_category_id" />
 
                        <separator string="Document data:" colspan="4"/>
                        <field name="data_order" />
                        <field name="order_full" attrs="{'invisible': [('data_order','=',False)]}" />
-                       
+
                        <field name="data_ddt" />
                        <field name="data_invoice" />
-                       
+
                        <separator string="Excel sheet:" colspan="4"/>
                        <field name="page_detail" />
                        <field name="page_price" />
                        <field name="page_comparison" />
-                       <field name="page_comparison_family" />                       
+                       <field name="page_comparison_family" />
                   </group>
                </form>
            </field>
@@ -94,7 +95,7 @@
           <field name="view_mode">form</field>
           <field name="target">new</field>
           <field name="view_id" ref="crm_excel_extract_report_wizard_view"/>
-      </record>      
+      </record>
       <record model="ir.actions.act_window" id="action_crm_excel_extract_report_all_wizard">
           <field name="name">CRM Extract All wizard</field>
           <field name="res_model">crm.excel.extract.report.wizard</field>
@@ -102,25 +103,25 @@
           <field name="view_mode">form</field>
           <field name="target">new</field>
           <field name="view_id" ref="crm_excel_extract_report_wizard_all_view"/>
-      </record>      
-      
+      </record>
+
       <!--TODO Menu position-->
-      <menuitem 
-          parent="base.menu_reporting" 
-          id="menu_crm_root" 
+      <menuitem
+          parent="base.menu_reporting"
+          id="menu_crm_root"
           name="CRM"
           sequence="10"
           />
-          <menuitem 
-              parent="menu_crm_root" 
-              id="menu_crm_excel_extract_report" 
+          <menuitem
+              parent="menu_crm_root"
+              id="menu_crm_excel_extract_report"
               action="action_crm_excel_extract_report_wizard"
               sequence="10"/>
-          <menuitem 
-              parent="menu_crm_root" 
-              id="menu_crm_excel_extract_all_report" 
+          <menuitem
+              parent="menu_crm_root"
+              id="menu_crm_excel_extract_all_report"
               action="action_crm_excel_extract_report_all_wizard"
               sequence="20"/>
-          
+
     </data>
 </openerp>
