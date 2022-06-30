@@ -675,6 +675,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     order.partner_id.name,
                     order.partner_id.state_id.region_id.name or '',
                     order.partner_id.country_id.name or '',
+                    order.partner_id.statistic_category_id.name or '',
 
                     product.family_id.name or '',
                     product.default_code or '',
@@ -776,6 +777,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ddt.partner_id.name,
                     ddt.partner_id.state_id.region_id.name or '',
                     ddt.partner_id.country_id.name or '',
+                    ddt.partner_id.statistic_category_id.name or '',
 
                     product.family_id.name or '',
                     product.default_code or '',
@@ -960,7 +962,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             for record in sorted(master_data):
                 row += 1
 
-                (# Record to variable:
+                (   # Record to variable:
                     document,
                     season,
                     date,
