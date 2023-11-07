@@ -108,7 +108,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 _logger.info('%s Create %s' % (row, name))
         return True
 
-    def crm_contact_custom_import_xls(self, cr, uid, path, sheet, context=None):
+    def crm_contact_custom_import_xls(
+            self, cr, uid, path, sheet, context=None):
         """ Contact custom file import procedure
             Mode > Contact custom file (B)
         """
@@ -126,9 +127,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 os.path.join(path, 'contact_warning_log.csv'), 'w', 'utf-8'),
             }
 
-        # ---------------------------------------------------------------------
+        # =====================================================================
         #                    Setup used external tables:
-        # ---------------------------------------------------------------------
+        # =====================================================================
         # 1. Setup newsletter:
         newsletter_db = {}
         newsletter_ids = newsletter_pool.search(cr, uid, [], context=context)
@@ -175,9 +176,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             if campaign.name not in campaign_db:
                 campaign_db[campaign.name] = campaign.id
 
-        # ---------------------------------------------------------------------
-        # Read XLSX Sheet
-        # ---------------------------------------------------------------------
+        # =====================================================================
+        #                          Read XLSX Sheet
+        # =====================================================================
         start_row = 1  # no header
         for row in range(start_row, sheet.max_row):
             is_company = not (sheet.cell(row, 0).value or '').strip()
@@ -237,8 +238,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 error_text += u'[Campagna non trovata: %s] ' % campaign
 
             # Newsletter if present check ID:
-            if newsletter and not newsletter_category_id:
-                error_text += u'[Newsletter non trovata: %s] ' % newsletter
+            if group and not newsletter_category_id:
+                error_text += u'[Newsletter non trovata: %s] ' % group
 
             # State if present check ID:
             if state and not state_id:
@@ -272,7 +273,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
                 'newsletter_category_id': newsletter_category_id,
                 'type_id': campaign_id,
-                'note': note,
+                'mexal_note': note,
                 }
 
             partner_ids = partner_pool.search(cr, uid, [
@@ -376,6 +377,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         if mode == 'xls':
             return self.name_email_import_xls(
                 cr, uid, sheet, context=context)
+
         # ---------------------------------------------------------------------
         # B Mode > Custom:
         # ---------------------------------------------------------------------
