@@ -256,11 +256,12 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             # Partner creation:
             # -----------------------------------------------------------------
             contact_name = u'%s %s' % (first_name, last_name)
+            partner_name = name or contact_name
             partner_data = {
                 'is_company': is_company,
                 'user_id': uid,
 
-                'name': name or contact_name,
+                'name': partner_name,
 
                 'street': street,
                 'city': city,
@@ -280,7 +281,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 }
 
             partner_ids = partner_pool.search(cr, uid, [
-                ('name', '=', name),
+                ('name', '=', partner_name),
             ], context=context)
 
             if partner_ids:
