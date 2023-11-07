@@ -175,7 +175,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         campaign_ids = campaign_pool.search(cr, uid, [], context=context)
         for campaign in campaign_pool.browse(
                 cr, uid, campaign_ids, context=context):
-            name = state.name.upper()
+            name = campaign.name.upper()
             if name not in campaign_db:
                 campaign_db[name] = campaign.id
 
