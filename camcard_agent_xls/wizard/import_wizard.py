@@ -59,7 +59,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
     _defaults = {
         # Default value:
-        'mode': lambda *x: 'camcard',
+        'mode': lambda *x: 'custom',
         }
 
     # Utility:
