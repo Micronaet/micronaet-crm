@@ -122,9 +122,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
         log_file = {
             'error': codecs.open(
-                os.path.join(path, 'contact_error_log.csv'), 'w', 'utf-8'),
+                os.path.join(path, 'contact.error_log.csv'), 'w', 'utf-8'),
             'warning': codecs.open(
-                os.path.join(path, 'contact_warning_log.csv'), 'w', 'utf-8'),
+                os.path.join(path, 'contact.warning_log.csv'), 'w', 'utf-8'),
             }
 
         # =====================================================================
@@ -135,8 +135,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         newsletter_ids = newsletter_pool.search(cr, uid, [], context=context)
         for newsletter in newsletter_pool.browse(
                 cr, uid, newsletter_ids, context=context):
-            if newsletter.name not in newsletter_db:
-                newsletter_db[newsletter.name] = newsletter.id
+            name = newsletter.name.upper()
+            if name not in newsletter_db:
+                newsletter_db[name] = newsletter.id
 
         # 2. Setup country:
         country_db = {
@@ -157,7 +158,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         state_db = {
             'name': {},
             'code': {},
-        }
+            }
         state_ids = state_pool.search(cr, uid, [], context=context)
         for state in state_pool.browse(
                 cr, uid, state_ids, context=context):
@@ -173,8 +174,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         campaign_ids = campaign_pool.search(cr, uid, [], context=context)
         for campaign in campaign_pool.browse(
                 cr, uid, campaign_ids, context=context):
-            if campaign.name not in campaign_db:
-                campaign_db[campaign.name] = campaign.id
+            name = state.name.upper()
+            if name not in campaign_db:
+                campaign_db[name] = campaign.id
 
         # =====================================================================
         #                          Read XLSX Sheet
@@ -189,9 +191,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
             street = sheet.cell(row, 4).value
             city = sheet.cell(row, 5).value
-            state = sheet.cell(row, 6).value  # State (foreign)
+            state = (sheet.cell(row, 6).value or '').upper  # foreign
             zipcode = sheet.cell(row, 7).value
-            country = sheet.cell(row, 8).value  # Country (foreign)
+            country = (sheet.cell(row, 8).value or '').upper  # foreign
 
             website = sheet.cell(row, 9).value
             phone = sheet.cell(row, 10).value
@@ -199,8 +201,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             email = sheet.cell(row, 12).value
             # fax = sheet.cell(row, 21).value
 
-            group = sheet.cell(row, 13).value  # Newsletter (foreign)
-            campaign = sheet.cell(row, 14).value  # Campaign (foreign)
+            group = (sheet.cell(row, 13).value or '').upper  # Newsl. foreign
+            campaign = (sheet.cell(row, 14).value or '').upper  # Camp. foreign
 
             note = sheet.cell(row, 15).value
             # birthday = sheet.cell(row, 31).value
@@ -225,12 +227,12 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             campaign_id = campaign_db.get(campaign, '')
 
             # -----------------------------------------------------------------
-            # Check error:
+            #                            Check error:
             # -----------------------------------------------------------------
-            error_text = warning_text = ''
+            error_text = warning_text = u''
 
             # Mandatory company or contact reference
-            if not name or not (first_name or last_name):
+            if not name and not first_name and not last_name:
                 error_text += u'[Non trovato nome o Società] ' % row
 
             # Campaign if present check ID:
@@ -252,7 +254,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             # -----------------------------------------------------------------
             # Partner creation:
             # -----------------------------------------------------------------
-            contact_name = '%s %s' % (first_name, last_name)
+            contact_name = u'%s %s' % (first_name, last_name)
             partner_data = {
                 'is_company': is_company,
                 'user_id': uid,
@@ -281,11 +283,14 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             ], context=context)
 
             if partner_ids:
-                # todo remove some fields?
+                # todo remove some fields?:
+                # del(partner_data['newsletter_category_id'])
+                # del(partner_data['type_id'])
+
                 partner_pool.write(
                     cr, uid, partner_ids, partner_data, context=context)
                 partner_id = partner_ids[0]
-                _logger.info('%s Update %s' % (row, name))
+                _logger.info(u'%s Update %s' % (row, name))
                 warning_text += u'[Partner già presente %s ID %s ' \
                                 u'(aggiornato)] ' % (
                                     name or contact_name, partner_id
@@ -293,12 +298,12 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             else:
                 partner_id = partner_pool.create(
                     cr, uid, partner_data, context=context)
-                _logger.info('%s Create %s' % (row, name))
+                _logger.info(u'%s Create %s' % (row, name))
 
             # -----------------------------------------------------------------
             # Contact setup:
             # -----------------------------------------------------------------
-            if first_name or last_name and name:
+            if name and (first_name or last_name):
                 # Create also contact
                 contact_data = {
                     'name': contact_name,
@@ -312,9 +317,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
                 if contact_ids:
                     partner_pool.write(
-                        cr, uid, contact_ids, contact_ids, context=context)
+                        cr, uid, contact_ids, contact_data, context=context)
                     _logger.info('%s Update contact %s' % (row, contact_name))
-                    warning_text += u'[Contato già presente %s ID %s ' \
+                    warning_text += u'[Contatto già presente %s ID %s ' \
                                     u'(aggiornato)] ' % (
                                         contact_name, contact_ids[0]
                                         )
