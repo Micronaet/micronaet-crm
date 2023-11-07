@@ -20,6 +20,7 @@
 ##############################################################################
 
 import os
+import pdb
 import sys
 import logging
 import xlrd
@@ -117,8 +118,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         partner_pool = self.pool.get('res.partner')
         newsletter_pool = self.pool.get('crm.newsletter.category')
         campaign_pool = self.pool.get('crm.tracking.campaign')
-        country_pool = self.pool.get('rec.country')
-        state_pool = self.pool.get('rec.state')
+        country_pool = self.pool.get('res.country')
+        state_pool = self.pool.get('res.country.state')
 
         log_file = {
             'error': codecs.open(
@@ -148,7 +149,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         for country in country_pool.browse(
                 cr, uid, country_ids, context=context):
             name = country.name.upper()
-            code = country.code.upper()
+            code = (country.code or '').upper()
             if name not in country_db['name']:
                 country_db['name'][name] = country.id
             if code not in country_db['code']:
@@ -182,7 +183,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         #                          Read XLSX Sheet
         # =====================================================================
         start_row = 1  # no header
-        for row in range(start_row, sheet.max_row):
+        for row in range(start_row, sheet.nrows):
             is_company = not (sheet.cell(row, 0).value or '').strip()
             name = sheet.cell(row, 1).value  # Company
             first_name = sheet.cell(row, 2).value
