@@ -192,9 +192,9 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
             street = sheet.cell(row, 4).value
             city = sheet.cell(row, 5).value
-            state = (sheet.cell(row, 6).value or '').upper  # foreign
+            state = (sheet.cell(row, 6).value or '').upper()  # foreign
             zipcode = sheet.cell(row, 7).value
-            country = (sheet.cell(row, 8).value or '').upper  # foreign
+            country = (sheet.cell(row, 8).value or '').upper()  # foreign
 
             website = sheet.cell(row, 9).value
             phone = sheet.cell(row, 10).value
@@ -202,8 +202,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             email = sheet.cell(row, 12).value
             # fax = sheet.cell(row, 21).value
 
-            group = (sheet.cell(row, 13).value or '').upper  # Newsl. foreign
-            campaign = (sheet.cell(row, 14).value or '').upper  # Camp. foreign
+            group = (sheet.cell(row, 13).value or '').upper()  # Newsl. foreign
+            campaign = (sheet.cell(row, 14).value or '').upper()  # Camp. foreign
 
             note = sheet.cell(row, 15).value
             # birthday = sheet.cell(row, 31).value
@@ -333,13 +333,13 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             # Manage error log:
             # -----------------------------------------------------------------
             if error_text:
-                log_file['error'].write(u'%s. %s' % (
+                log_file['error'].write(u'%s. %s\n' % (
                     row, error_text,
                 ))
                 log_file['error'].flush()
 
             if warning_text:
-                log_file['warning'].write(u'%s. %s' % (
+                log_file['warning'].write(u'%s. %s\n' % (
                     row, warning_text,
                 ))
                 log_file['warning'].flush()
