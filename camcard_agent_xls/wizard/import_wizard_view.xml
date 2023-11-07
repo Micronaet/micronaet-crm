@@ -9,12 +9,12 @@
                   <group>
                      <field name="mode" />
                   </group>
-                  
+
                   <footer>
-                        <button name="camcard_import_xls" string="Import" type="object" class="oe_highlight"/>
+                        <button name="camcard_import_xls" string="Importa file" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel" />
-                  </footer>                    
+                  </footer>
               </form>
             </field>
         </record>
@@ -27,11 +27,11 @@
             <field name="view_id" ref="view_res_partner_camcard_import_wizard"/>
             <field name="target">new</field>
         </record>
-        <menuitem 
-            parent="crm_newsletter_category.menu_res_partner_newletter" 
-            id="menu_res_partner_camcard_import_wizard" 
+        <menuitem
+            parent="crm_newsletter_category.menu_res_partner_newletter"
+            id="menu_res_partner_camcard_import_wizard"
             action="action_res_partner_camcard_import_wizard"
             sequence="99"
-            />      
+            />
     </data>
 </openerp>
