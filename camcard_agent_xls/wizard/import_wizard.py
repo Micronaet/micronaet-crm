@@ -120,6 +120,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         campaign_pool = self.pool.get('crm.tracking.campaign')
         country_pool = self.pool.get('res.country')
         state_pool = self.pool.get('res.country.state')
+        model_pool = self.pool.get('ir.model.data')
 
         log_file = {
             'error': codecs.open(
@@ -184,6 +185,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         # =====================================================================
         pdb.set_trace()
         start_row = 1  # no header
+        selected_ids = []
         for row in range(start_row, sheet.nrows):
             is_company = (sheet.cell(row, 0).value or '').strip() != ''
             name = sheet.cell(row, 1).value  # Company
@@ -298,10 +300,12 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                                 u'(aggiornato)] ' % (
                                     name or contact_name, partner_id
                                     )
+                partner_id = partner_ids[0]
             else:
                 partner_id = partner_pool.create(
                     cr, uid, partner_data, context=context)
                 _logger.info(u'%s Create %s' % (row, name))
+            selected_ids.append(partner_id)
 
             # -----------------------------------------------------------------
             # Contact setup:
@@ -345,7 +349,31 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                     row, warning_text,
                 ))
                 log_file['warning'].flush()
-        return True
+
+        # Return view with selected partner:
+        tree_id = model_pool.get_object_reference(
+            cr, uid,
+            'crm_newsletter_category', 'view_res_partner_newsletter_tree'
+        )[1]
+        form_id = False
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Partner importati'),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_id': False,
+            'res_model': 'res.partner',
+            # 'view_id': view_id, # False
+            'views': [
+                (tree_id, 'tree'),
+                (form_id, 'form'),
+            ],
+            'domain': [('id', 'in', selected_ids)],
+            'context': context,
+            'target': 'current',  # 'new'
+            'nodestroy': False,
+        }
 
     def camcard_import_xls(self, cr, uid, ids, context=None):
         """ Camcard import procedure
