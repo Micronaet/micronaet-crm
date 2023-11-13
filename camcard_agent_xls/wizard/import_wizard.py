@@ -183,8 +183,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         # =====================================================================
         #                          Read XLSX Sheet
         # =====================================================================
-        pdb.set_trace()
-        start_row = 1  # no header
+        start_row = 1  # header
         selected_ids = []
         for row in range(start_row, sheet.nrows):
             is_company = (sheet.cell(row, 0).value or '').strip() != ''
