@@ -205,7 +205,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             # fax = sheet.cell(row, 21).value
 
             group = (sheet.cell(row, 13).value or '').upper()  # Newsletter
-            campaign = (sheet.cell(row, 14).value or '').upper()  # Campagne
+            campaign = (sheet.cell(row, 14).value or '').upper()  # Campaign
 
             note = sheet.cell(row, 15).value
             # birthday = sheet.cell(row, 31).value
