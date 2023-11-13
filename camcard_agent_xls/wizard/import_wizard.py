@@ -185,7 +185,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         pdb.set_trace()
         start_row = 1  # no header
         for row in range(start_row, sheet.nrows):
-            is_company = not (sheet.cell(row, 0).value or '').strip()
+            is_company = (sheet.cell(row, 0).value or '').strip() != ''
             name = sheet.cell(row, 1).value  # Company
             first_name = sheet.cell(row, 2).value
             last_name = sheet.cell(row, 3).value
@@ -203,8 +203,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             email = sheet.cell(row, 12).value
             # fax = sheet.cell(row, 21).value
 
-            group = (sheet.cell(row, 13).value or '').upper()  # Newsl. foreign
-            campaign = (sheet.cell(row, 14).value or '').upper()  # Camp. foreign
+            group = (sheet.cell(row, 13).value or '').upper()  # Newsletter
+            campaign = (sheet.cell(row, 14).value or '').upper()  # Campagne
 
             note = sheet.cell(row, 15).value
             # birthday = sheet.cell(row, 31).value
@@ -235,7 +235,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
             # Mandatory company or contact reference
             if not name and not first_name and not last_name:
-                error_text += u'[Non trovato nome o Società] ' % row
+                error_text += u'[Non trovato nome o Società: %s] ' % (row + 1)
 
             # Campaign if present check ID:
             if campaign and not campaign_id:
