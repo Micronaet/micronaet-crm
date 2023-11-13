@@ -198,10 +198,10 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             zipcode = sheet.cell(row, 7).value
             country = (sheet.cell(row, 8).value or '').upper()  # foreign
 
-            website = sheet.cell(row, 9).value
-            phone = sheet.cell(row, 10).value
-            mobile = sheet.cell(row, 11).value
-            email = sheet.cell(row, 12).value
+            website = (sheet.cell(row, 9).value or '').lower()
+            phone = str(sheet.cell(row, 10).value or '').rstrip('.0')
+            mobile = str(sheet.cell(row, 11).value or '').rstrip('.0')
+            email = (sheet.cell(row, 12).value or '').lower()
             # fax = sheet.cell(row, 21).value
 
             group = (sheet.cell(row, 13).value or '').upper()  # Newsletter
