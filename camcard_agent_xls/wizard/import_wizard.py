@@ -237,6 +237,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             # Mandatory company or contact reference
             if not name and not first_name and not last_name:
                 error_text += u'[Non trovato nome o Società: %s] ' % (row + 1)
+                continue  # Not imported
 
             # Campaign if present check ID:
             if campaign and not campaign_id:
