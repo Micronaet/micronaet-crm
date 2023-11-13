@@ -364,7 +364,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             'view_mode': 'tree,form',
             'res_id': False,
             'res_model': 'res.partner',
-            # 'view_id': view_id, # False
+            'view_id': tree_id,
             'views': [
                 (tree_id, 'tree'),
                 (form_id, 'form'),
