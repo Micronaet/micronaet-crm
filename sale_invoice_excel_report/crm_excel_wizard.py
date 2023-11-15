@@ -329,7 +329,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             product = line.product_id
             order = line.order_id
             partner = order.partner_id
-            #agent = partner.agent_id
+            # agent = partner.agent_id
 
             qty = line.product_uom_qty
             subtotal = line.price_subtotal
