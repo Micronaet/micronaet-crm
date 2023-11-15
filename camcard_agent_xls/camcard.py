@@ -60,7 +60,7 @@ class ResPartner(orm.Model):
             'res_id': ids[0],
             'res_model': 'res.partner',
             'view_id': view_id,
-            'views': [(view_id, 'form'),(False, 'tree')],
+            'views': [(view_id, 'form'), (False, 'tree')],
             'domain': [],
             'context': context,
             'target': 'current',  # 'new'
