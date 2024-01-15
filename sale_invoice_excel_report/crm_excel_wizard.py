@@ -689,6 +689,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     order.date_order[:10],
                     order.name,
                     order.partner_id.name,
+                    order.partner_id.property_account_position.name,
                     order.partner_id.state_id.region_id.name or '',
                     order.partner_id.country_id.name or '',
                     order.partner_id.statistic_category_id.name or '',
@@ -797,6 +798,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ddt.date[:10],
                     ddt.name,
                     ddt.partner_id.name,
+                    ddt.partner_id.property_account_position.name,
                     ddt.partner_id.state_id.region_id.name or '',
                     ddt.partner_id.country_id.name or '',
                     ddt.partner_id.statistic_category_id.name or '',
@@ -903,6 +905,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     invoice.date_invoice[:10],
                     invoice.name,
                     invoice.partner_id.name,
+                    invoice.partner_id.property_account_position.name,
                     invoice.partner_id.state_id.region_id.name or '',
                     invoice.partner_id.country_id.name or '',
                     invoice.partner_id.statistic_category_id.name or '',
@@ -951,7 +954,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             excel_pool.column_width(ws_name, [
                 8, 10, 8, 15,
-                35, 20, 20, 15,
+                35, 20, 20, 20, 15,
                 15, 10,
                 10, 10,
                 10, 10, 10, 15, 3
@@ -977,7 +980,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             header = [
                 'Documento', 'Stagione', 'Data', 'Origine',
-                'Partner', 'Regione', 'Nazione', 'Cat. Stat.',
+                'Partner', 'Pos. fiscale', 'Regione', 'Nazione', 'Cat. Stat.',
                 'Famiglia', 'Prodotto',
                 'Scala', 'Sconto',
                 'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
@@ -996,6 +999,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     date,
                     origin,
                     partner,
+                    fiscal_position,
                     region,
                     country,
                     statistic_category,
@@ -1105,6 +1109,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         date,
                         origin,
                         partner,
+                        fiscal_position,
                         region,
                         country,
                         statistic_category,
