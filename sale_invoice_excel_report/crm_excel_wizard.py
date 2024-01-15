@@ -344,7 +344,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 order.date_order,
                 self.get_season_period(order.date_order),
                 partner.name,
-                partner.property_account_position or '',
+                partner.property_account_position.name or '',
                 partner.agent_id.name,
 
                 partner.street,
