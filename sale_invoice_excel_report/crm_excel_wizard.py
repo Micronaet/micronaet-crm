@@ -727,7 +727,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             # Many2one
             if search_fiscal:
-                domain_sale.append(
+                domain.append(
                     ('picking_id.partner_id.property_account_position', '=',
                      search_fiscal.id))
                 if not filter_assigned:
@@ -837,7 +837,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             # Many2one
             if search_fiscal:
-                domain_sale.append(
+                domain.append(
                     ('invoice_id.partner_id.property_account_position', '=',
                      search_fiscal.id))
                 if not filter_assigned:
