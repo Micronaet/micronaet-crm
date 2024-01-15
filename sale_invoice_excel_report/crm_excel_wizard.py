@@ -418,7 +418,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         return excel_pool.return_attachment(cr, uid, 'CRM Report')
 
-    # TODO Also DDT
+    # todo Also DDT
     def action_ddt_report(self, cr, uid, ids, context=None):
         """ Event for button done
         """
@@ -444,7 +444,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             context = {}
 
         order_pool = self.pool.get('sale.order.line')
-        ddt_pool = self.pool.get('stock.move') # use stock move
+        ddt_pool = self.pool.get('stock.move')  # use stock move
         invoice_pool = self.pool.get('account.invoice.line')
         excel_pool = self.pool.get('excel.writer')
 
@@ -620,15 +620,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             # Many2one
             if search_fiscal:
-                domain_sale.append(
+                domain.append(
                     ('order_id.partner_id.property_account_position', '=',
                      search_fiscal.id))
-                domain_ddt.append(
-                    ('order_id.partner_id.property_account_position', '=',
-                     search_fiscal.id))
-                domain_invoice.append(
-                    ('order_id.partner_id.property_account_position', '=',
-                     search_fiscal.id))
+                filter_text += u'Pos. fiscale %s, ' % search_fiscal.name
             if search_partner:
                 domain.append(
                     ('order_id.partner_id', '=', search_partner.id))
@@ -734,12 +729,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 domain_sale.append(
                     ('picking_id.partner_id.property_account_position', '=',
                      search_fiscal.id))
-                domain_ddt.append(
-                    ('picking_id.partner_id.property_account_position', '=',
-                     search_fiscal.id))
-                domain_invoice.append(
-                    ('picking_id.partner_id.property_account_position', '=',
-                     search_fiscal.id))
+                if not filter_assigned:
+                    filter_text += u'Pos. fiscale %s, ' % search_fiscal.name
             if search_partner:
                 domain.append(
                     ('picking_id.partner_id', '=', search_partner.id))
@@ -847,12 +838,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 domain_sale.append(
                     ('invoice_id.partner_id.property_account_position', '=',
                      search_fiscal.id))
-                domain_ddt.append(
-                    ('invoice_id.partner_id.property_account_position', '=',
-                     search_fiscal.id))
-                domain_invoice.append(
-                    ('invoice_id.partner_id.property_account_position', '=',
-                     search_fiscal.id))
+                if not filter_assigned:
+                    filter_text += u'Pos. fiscale %s, ' % search_fiscal.name
             if search_partner:
                 domain.append(
                     ('invoice_id.partner_id', '=', search_partner.id))
