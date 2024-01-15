@@ -530,7 +530,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             domain_invoice.append(
                 ('partner_id.property_account_position', '=',
                  search_fiscal.id))
-
         if search_partner:
             domain_sale.append(
                 ('partner_id', '=', search_partner.id))
@@ -620,6 +619,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 filter_text += u'Alla data %s, ' % to_date
 
             # Many2one
+            if search_fiscal:
+                domain_sale.append(
+                    ('order_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
+                domain_ddt.append(
+                    ('order_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
+                domain_invoice.append(
+                    ('order_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
             if search_partner:
                 domain.append(
                     ('order_id.partner_id', '=', search_partner.id))
@@ -721,6 +730,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     filter_text += u'Alla data %s, ' % to_date
 
             # Many2one
+            if search_fiscal:
+                domain_sale.append(
+                    ('picking_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
+                domain_ddt.append(
+                    ('picking_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
+                domain_invoice.append(
+                    ('picking_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
             if search_partner:
                 domain.append(
                     ('picking_id.partner_id', '=', search_partner.id))
@@ -824,6 +843,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     filter_text += u'Alla data %s, ' % to_date
 
             # Many2one
+            if search_fiscal:
+                domain_sale.append(
+                    ('invoice_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
+                domain_ddt.append(
+                    ('invoice_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
+                domain_invoice.append(
+                    ('invoice_id.partner_id.property_account_position', '=',
+                     search_fiscal.id))
             if search_partner:
                 domain.append(
                     ('invoice_id.partner_id', '=', search_partner.id))
