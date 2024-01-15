@@ -280,7 +280,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         excel_pool.column_width(ws_name, [
             20, 20, 35,
-            20, 15, 15, 35, 15, 35,
+            20, 15, 15, 35, 22, 35,
             30, 30, 30,
             10, 10, 10, 10, 15,
             ])
