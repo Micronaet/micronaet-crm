@@ -147,7 +147,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         # Browseable:
         partner = wiz_browse.partner_id
-        fiscal_position = wiz_browse.partner_id.property_account_position
         agent = wiz_browse.agent_id
         product = wiz_browse.product_id
         family = wiz_browse.family_id
@@ -345,7 +344,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 order.date_order,
                 self.get_season_period(order.date_order),
                 partner.name,
-                fiscal_position.name or '',
+                partner.property_account_position or '',
                 partner.agent_id.name,
 
                 partner.street,
@@ -404,7 +403,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         x or 'NON PRESENTE',
                         ], default_format=f_text)
 
-                col = 1 # Reset colume every loop
+                col = 1  # Reset colume every loop
                 for y in sorted(olap_data['y_header']): # XXX Sort!
                     key = (x, y)
                     record = olap_data['data'].get(
