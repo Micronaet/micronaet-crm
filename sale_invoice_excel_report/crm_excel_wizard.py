@@ -464,6 +464,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         with_previsional = wiz_browse.with_previsional
 
         # Browseable:
+        search_fiscal = wiz_browse.fiscal_position_id
         search_partner = wiz_browse.partner_id
         search_product = wiz_browse.product_id
         search_family = wiz_browse.family_id
@@ -518,6 +519,17 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('date', '<=', to_date))
             domain_invoice.append(
                 ('date_invoice', '<=', to_date))
+
+        if search_fiscal:
+            domain_sale.append(
+                ('partner_id.property_account_position', '=',
+                 search_fiscal.id))
+            domain_ddt.append(
+                ('partner_id.property_account_position', '=',
+                 search_fiscal.id))
+            domain_invoice.append(
+                ('partner_id.property_account_position', '=',
+                 search_fiscal.id))
 
         if search_partner:
             domain_sale.append(
@@ -1430,6 +1442,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         'to_date': fields.date('To date <='),
 
         # Foreign keys:
+        'fiscal_position_id': fields.many2one(
+            'account.fiscal.position', 'Posizione fiscale'),
         'partner_id': fields.many2one('res.partner', 'Partner'),
         'family_id': fields.many2one('product.template', 'Family'),#todo filter
         'product_id': fields.many2one('product.product', 'Product'),

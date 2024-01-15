@@ -63,7 +63,8 @@
                        <field name="with_previsional" />
 
                        <separator string="Filter:" colspan="4"/>
-                       <field name="partner_id" domain="[('is_company', '=', True)]"/>
+                       <field name="partner_id" domain="[('is_company', '=', True)]" />
+                       <field name="fiscal_position_id" />
                        <field name="family_id" domain="[('is_family', '=', True)]"/>
                        <field name="product_id" domain="[('is_family', '!=', True)]" />
                        <field name="agent_id" domain="[('is_agent', '=', True)]"/>
