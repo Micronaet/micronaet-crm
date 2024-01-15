@@ -147,6 +147,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         # Browseable:
         partner = wiz_browse.partner_id
+        fiscal_position = wiz_browse.partner_id.property_account_position
         agent = wiz_browse.agent_id
         product = wiz_browse.product_id
         family = wiz_browse.family_id
@@ -274,7 +275,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         excel_pool.column_width(ws_name, [
             20, 20, 35,
-            20, 15, 15, 35, 35,
+            20, 15, 15, 35, 15, 35,
             30, 30, 30,
             10, 10, 10, 10, 15,
             ])
@@ -289,8 +290,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         row += 1
         excel_pool.write_xls_line(ws_name, row, [
             'Prodotto', 'Famiglia', 'Descrizione',
-            'Documento', 'Data', 'Stagione', 'Partner', 'Agente',
-            'Via', 'Paese', 'Regione',
+            'Documento', 'Data', 'Stagione', 'Partner', 'Pos. fiscale',
+            'Agente', 'Via', 'Paese', 'Regione',
             'Q.', 'Listino', 'Sconto %', 'Prezzo Netto', 'Subtotale',
             ], default_format=f_header)
 
@@ -344,6 +345,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 order.date_order,
                 self.get_season_period(order.date_order),
                 partner.name,
+                fiscal_position.name or '',
                 partner.agent_id.name,
 
                 partner.street,
@@ -387,7 +389,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 header_col.extend(empty_header)
 
             excel_pool.column_width(ws_name, [
-                40, ]) # TODO add other
+                40, ])  # TODO add other
             excel_pool.write_xls_line(
                 ws_name, row, header_col_title, default_format=f_header)
             row += 1
