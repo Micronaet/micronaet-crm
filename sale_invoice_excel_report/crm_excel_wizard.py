@@ -147,6 +147,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         # Browseable:
         partner = wiz_browse.partner_id
+        fiscal = wiz_browse.fiscal_position_id
         agent = wiz_browse.agent_id
         product = wiz_browse.product_id
         family = wiz_browse.family_id
@@ -200,6 +201,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             domain.append(
                 ('order_id.partner_id', '=', partner.id))
             filter_text += u'Cliente %s, ' % partner.name
+        if fiscal:
+            domain.append(
+                ('order_id.partner_id.property_account_position', '=',
+                 fiscal.id))
+            filter_text += u'Pos. fiscale %s, ' % fiscal.name
         if agent:
             domain.append(
                 ('order_id.partner_id.agent_id', '=', agent.id))
