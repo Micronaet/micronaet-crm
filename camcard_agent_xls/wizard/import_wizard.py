@@ -317,6 +317,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
                 log_file['log'].write(u'%s. Aggiorno %s\n' % (
                     row, name))
+                log_file['log'].flush()
 
             else:
                 partner_id = partner_pool.create(
@@ -324,6 +325,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 _logger.info(u'%s Create %s' % (row, name))
                 log_file['log'].write(u'%s. Creo %s\n' % (
                     row, name))
+                log_file['log'].flush()
             selected_ids.append(partner_id)
 
             # -----------------------------------------------------------------
@@ -351,6 +353,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                                         )
                     log_file['log'].write(u'%s. >> Aggiorno contatto %s\n' % (
                         row, contact_name))
+                    log_file['log'].flush()
 
                 else:
                     partner_pool.create(
@@ -358,6 +361,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                     _logger.info('%s Create contact %s' % (row, contact_name))
                     log_file['log'].write(u'%s. >> Creo contatto %s\n' % (
                         row, contact_name))
+                    log_file['log'].flush()
 
             # -----------------------------------------------------------------
             # Manage error log:
