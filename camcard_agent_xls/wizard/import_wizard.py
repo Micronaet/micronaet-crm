@@ -385,6 +385,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         )[1]
         form_id = False
 
+        _logger.info('Log file saved in path: %s' % path)
+
         return {
             'type': 'ir.actions.act_window',
             'name': _('Partner importati'),
