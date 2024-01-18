@@ -187,6 +187,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         # =====================================================================
         start_row = 1  # header
         selected_ids = []
+        pdb.set_trace()
         for row in range(start_row, sheet.nrows):
             error_text = warning_text = u''
 
