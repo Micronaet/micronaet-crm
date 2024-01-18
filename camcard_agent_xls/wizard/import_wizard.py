@@ -128,7 +128,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             'warning': codecs.open(
                 os.path.join(path, 'contact.warning_log.csv'), 'w', 'utf-8'),
             'log': codecs.open(
-                os.path.join(path, 'import_log.csv'), 'w', 'utf-8'),
+                os.path.join(path, 'contact.import_log.csv'), 'w', 'utf-8'),
             }
 
         # =====================================================================
@@ -187,7 +187,6 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         # =====================================================================
         start_row = 1  # header
         selected_ids = []
-        pdb.set_trace()
         for row in range(start_row, sheet.nrows):
             error_text = warning_text = u''
 
