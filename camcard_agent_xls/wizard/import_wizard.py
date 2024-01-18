@@ -282,7 +282,7 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 'street': street,
                 'city': city,
                 'state_id': state_id,
-                'zipcode': zipcode,
+                'zip': zipcode,
                 'country_id': country_id,
 
                 'website': website,
