@@ -204,14 +204,14 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
 
             website = (sheet.cell(row, 9).value or '').lower()
 
+            phone = sheet.cell(row, 10).value or ''
             try:
-                phone = sheet.cell(row, 10).value or ''
                 phone = str(phone).rstrip('.0')
             except:
                 error_text += u'[Numero di telefono non leggibile: %s]' % phone
 
+            mobile = sheet.cell(row, 11).value or ''
             try:
-                mobile = sheet.cell(row, 11).value or ''
                 mobile = str(mobile).rstrip('.0')
             except:
                 error_text += u'[Numero di cell. non leggibile: %s]' % mobile
