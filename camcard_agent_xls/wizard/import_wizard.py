@@ -127,6 +127,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                 os.path.join(path, 'contact.error_log.csv'), 'w', 'utf-8'),
             'warning': codecs.open(
                 os.path.join(path, 'contact.warning_log.csv'), 'w', 'utf-8'),
+            'log': codecs.open(
+                os.path.join(path, 'import_log.csv'), 'w', 'utf-8'),
             }
 
         # =====================================================================
@@ -186,6 +188,8 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
         start_row = 1  # header
         selected_ids = []
         for row in range(start_row, sheet.nrows):
+            error_text = warning_text = u''
+
             is_company = (sheet.cell(row, 0).value or '').strip() != ''
             name = sheet.cell(row, 1).value  # Company
             first_name = sheet.cell(row, 2).value
@@ -199,8 +203,19 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             country = (sheet.cell(row, 8).value or '').upper()  # foreign
 
             website = (sheet.cell(row, 9).value or '').lower()
-            phone = str(sheet.cell(row, 10).value or '').rstrip('.0')
-            mobile = str(sheet.cell(row, 11).value or '').rstrip('.0')
+
+            try:
+                phone = sheet.cell(row, 10).value or ''
+                phone = str(phone).rstrip('.0')
+            except:
+                error_text += u'[Numero di telefono non leggibile: %s]' % phone
+
+            try:
+                mobile = sheet.cell(row, 11).value or ''
+                mobile = str(mobile).rstrip('.0')
+            except:
+                error_text += u'[Numero di cell. non leggibile: %s]' % mobile
+
             email = (sheet.cell(row, 12).value or '').lower()
             # fax = sheet.cell(row, 21).value
 
@@ -232,8 +247,6 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
             # -----------------------------------------------------------------
             #                            Check error:
             # -----------------------------------------------------------------
-            error_text = warning_text = u''
-
             # Mandatory company or contact reference
             if not name and not first_name and not last_name:
                 error_text += u'[Non trovato nome o Società: %s] ' % (row + 1)
@@ -301,10 +314,16 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                                     name or contact_name, partner_id
                                     )
                 partner_id = partner_ids[0]
+
+                log_file['log'].write(u'%s. Aggiorno %s\n' % (
+                    row, name))
+
             else:
                 partner_id = partner_pool.create(
                     cr, uid, partner_data, context=context)
                 _logger.info(u'%s Create %s' % (row, name))
+                log_file['log'].write(u'%s. Creo %s\n' % (
+                    row, name))
             selected_ids.append(partner_id)
 
             # -----------------------------------------------------------------
@@ -330,10 +349,15 @@ class ResPartnerCamcardImportWizard(osv.osv_memory):
                                     u'(aggiornato)] ' % (
                                         contact_name, contact_ids[0]
                                         )
+                    log_file['log'].write(u'%s. >> Aggiorno contatto %s\n' % (
+                        row, contact_name))
+
                 else:
                     partner_pool.create(
                         cr, uid, contact_data, context=context)
                     _logger.info('%s Create contact %s' % (row, contact_name))
+                    log_file['log'].write(u'%s. >> Creo contatto %s\n' % (
+                        row, contact_name))
 
             # -----------------------------------------------------------------
             # Manage error log:
