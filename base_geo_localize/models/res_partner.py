@@ -33,7 +33,8 @@ _logger = logging.getLogger(__name__)
 google_url = "https://www.google.com/maps/place/" \
              "{lat1}°{lat2}'{lat3}\"N+{lon1}°{lon2}'{lon3}\"E/" \
              "@{latitude},{longitude}"
-
+google_url = 'https://www.google.com/maps/place/' \
+             '{latitude},{longitude}/@{latitude},{longitude},17z/data=!3m1!4b1'
 
 class ResPartner(osv.osv):
     """ Add extra fields
@@ -48,6 +49,7 @@ class ResPartner(osv.osv):
         'geo_altitude': fields.float('Geo Altitudine', digits=(16, 5)),
     }
 
+    '''
     def get_geo_grade(self, value):
         """ Return 45.23456 in 45°23'44.6"
         """
@@ -57,6 +59,7 @@ class ResPartner(osv.osv):
         value -= item2
         item3 = value * 60.0
         return item1, item2, item3
+    '''
 
     # Button event:
     def open_geo_localize(self, cr, uid, ids, context=None):
@@ -64,12 +67,12 @@ class ResPartner(osv.osv):
         """
         partner = self.browse(cr, uid, ids, context=context)[0]
         latitude = partner.geo_latitude
-        lat1, lat2, lat3 = self.get_geo_grade(latitude)
+        # lat1, lat2, lat3 = self.get_geo_grade(latitude)
         longitude = partner.geo_longitude
-        lon1, lon2, lon3 = self.get_geo_grade(longitude)
+        # lon1, lon2, lon3 = self.get_geo_grade(longitude)
         url = google_url.format(
-            lat1=lat1, lat2=lat2, lat3=lat3,
-            lon1=lon1, lon2=lon2, lon3=lon3,
+            # lat1=lat1, lat2=lat2, lat3=lat3,
+            # lon1=lon1, lon2=lon2, lon3=lon3,
             latitude=latitude,
             longitude=longitude,
             )
