@@ -29,12 +29,9 @@ from datetime import datetime
 
 _logger = logging.getLogger(__name__)
 
-# google_url = 'https://www.google.com/maps/@{latitude},{longitude}'
-google_url = "https://www.google.com/maps/place/" \
-             "{lat1}°{lat2}'{lat3}\"N+{lon1}°{lon2}'{lon3}\"E/" \
-             "@{latitude},{longitude}"
 google_url = 'https://www.google.com/maps/place/' \
              '{latitude},{longitude}/@{latitude},{longitude},17z/data=!3m1!4b1'
+
 
 class ResPartner(osv.osv):
     """ Add extra fields
