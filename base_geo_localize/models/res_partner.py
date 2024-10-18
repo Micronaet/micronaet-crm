@@ -41,7 +41,7 @@ class ResPartner(osv.osv):
     }
 
     # Button event:
-    def get_geo_data(self, cr, uid, ids, context=None):
+    def geo_localize(self, cr, uid, ids, context=None):
         """ Extract geo data from address
         """
         geolocator = Nominatim(user_agent="ODOO Micronaet")
