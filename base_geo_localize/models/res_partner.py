@@ -43,7 +43,7 @@ class ResPartner(osv.osv):
 
     _columns = {
         'geo_find': fields.boolean(
-            'Localizzato', help='Generato con geolocalizzazione')
+            'Localizzato', help='Generato con geolocalizzazione'),
         'geo_address': fields.char('Geo Indirizzo', size=180),
         'geo_latitude': fields.float('Geo Latitudine', digits=(16, 5)),
         'geo_longitude': fields.float('Geo Longitudine', digits=(16, 5)),
