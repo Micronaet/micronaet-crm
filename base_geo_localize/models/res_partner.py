@@ -101,8 +101,13 @@ class ResPartner(osv.osv):
             partner.country_id.name or '',
             )
         _logger.info('Geolocalize: {}'.format(partner_address))
-        location = geolocator.geocode(partner_address)
-
+        try:
+            location = geolocator.geocode(partner_address)
+        except:
+            raise osv.except_osv(
+                _('Errore:'),
+                _('Timeout del servizio!'),
+                )
         try:
             data = {
                 'geo_find': True,
