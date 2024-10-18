@@ -66,9 +66,7 @@ class ResPartner(osv.osv):
         """
         partner = self.browse(cr, uid, ids, context=context)[0]
         latitude = partner.geo_latitude
-        # lat1, lat2, lat3 = self.get_geo_grade(latitude)
         longitude = partner.geo_longitude
-        # lon1, lon2, lon3 = self.get_geo_grade(longitude)
         if not longitude or not latitude:
             raise osv.except_osv(
                 _('Errore:'),
