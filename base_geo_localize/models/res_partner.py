@@ -68,8 +68,8 @@ class ResPartner(osv.osv):
         longitude = partner.geo_longitude
         lon1, lon2, lon3 = self.get_geo_grade(longitude)
         url = google_url.format(
-            lat1, lat2, lat3,
-            lon1, lon2, lon3,
+            lat1=lat1, lat2=lat2, lat3=lat3,
+            lon1=lon1, lon2=lon2, lon3=lon3,
             latitude=latitude,
             longitude=longitude,
             )
