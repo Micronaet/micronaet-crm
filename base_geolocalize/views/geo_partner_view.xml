@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+        <record id="view_crm_partner_geodata_form" model="ir.ui.view">
+            <field name="name">res.partner.geodata</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook[last()]" position="inside">
+                    <page string="Geolocalizzazione" name="geo_localization">
+                        <group colspan="2" col="4">
+                            <separator string="Geo Localizzazione" colspan="2"/>
+                            <button string="Geo Localize" name="geo_localize" colspan="2" icon="gtk-apply" type="object"/>
+
+                            <field name="geo_address" colspan="4"/>
+                            <field name="geo_latitude"/>
+                            <field name="geo_longitude"/>
+
+                            <field name="geo_altitude"/>
+                            <field name="geo_date"/>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
