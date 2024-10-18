@@ -42,6 +42,8 @@ class ResPartner(osv.osv):
     _inherit = "res.partner"
 
     _columns = {
+        'geo_find': fields.boolean(
+            'Localizzato', help='Generato con geolocalizzazione')
         'geo_address': fields.char('Geo Indirizzo', size=180),
         'geo_latitude': fields.float('Geo Latitudine', digits=(16, 5)),
         'geo_longitude': fields.float('Geo Longitudine', digits=(16, 5)),
@@ -99,11 +101,20 @@ class ResPartner(osv.osv):
             partner.country_id.name or '',
             ))
 
-        data = {
-            'geo_address': location.address,
-            'geo_altitude': location.altitude,
-            'geo_latitude': location.latitude,
-            'geo_longitude': location.longitude,
-            'geo_date': datetime.now(),
-        }
-        return self.write(cr, uid, [partner.id], data, context=context)
+        try:
+            data = {
+                'geo_find': True,
+                'geo_address': location.address,
+                'geo_altitude': location.altitude,
+                'geo_latitude': location.latitude,
+                'geo_longitude': location.longitude,
+                'geo_date': datetime.now(),
+            }
+            self.write(cr, uid, [partner.id], data, context=context)
+            return True
+        except:
+            self.write(cr, uid, [partner.id], {
+                'geo_find': False,
+                'geo_address': 'Errore indirizzo non decifrabile!'
+            }, context=context)
+            return False
