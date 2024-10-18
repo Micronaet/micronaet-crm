@@ -20,15 +20,18 @@
 #
 ###############################################################################
 
+import logging
 from openerp.osv import osv, fields
 from openerp import tools
 from openerp.tools.translate import _
 from geopy.geocoders import Nominatim
 from datetime import datetime
 
+_logger = logging.getLogger(__name__)
+
 # google_url = 'https://www.google.com/maps/@{latitude},{longitude}'
-google_url = "https://www.google.com/maps/place/" \
-             "{latitude_grad}\"N+{longitude_grad}\"E/@{latitude},{longitude}"
+google_url = u"https://www.google.com/maps/place/" \
+             u"{latitude_grad}\"N+{longitude_grad}\"E/@{latitude},{longitude}"
 
 
 class ResPartner(osv.osv):
@@ -52,7 +55,7 @@ class ResPartner(osv.osv):
         item2 = int(value * 60.0)
         value -= item2
         item3 = value * 60.0
-        return "'{}°{}'{}\"".format(item1, item2, item3)
+        return u"'{}°{}'{}\"".format(item1, item2, item3)
 
     # Button event:
     def open_geo_localize(self, cr, uid, ids, context=None):
@@ -69,7 +72,7 @@ class ResPartner(osv.osv):
             latitude=latitude,
             longitude=longitude,
             )
-
+        _logger.info('Open MPS: {}'.format(url))
         return {
             'type': 'ir.actions.act_url',
             'url': url,
