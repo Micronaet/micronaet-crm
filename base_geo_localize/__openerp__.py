@@ -22,21 +22,24 @@
 ###############################################################################
 
 {
-    'name': 'Partners Geo-Localization',
-    'version': '1.0',
-    'category': 'Customer Relationship Management',
-    'description': """
-        ========================
-        Partners geolocalization
-        ========================
-        """,
-    'author': 'Micronaet S.r.l.',
-    'depends': ['base'],
+    'name': 'Geolocalize Partner',
+    'version': '0.1',
+    'category': 'CRM',
+    'description': '''
+        Geolocalize partner extra data        
+        ''',
+    'author': 'Micronaet S.r.l. - Nicola Riolini',
+    'website': 'http://www.micronaet.it',
+    'license': 'AGPL-3',
+    'depends': [
+        'base',
+        ],
+    'init_xml': [],
     'demo': [],
     'data': [
         'views/geo_partner_view.xml',
-    ],
-    'test': [],
+        ],
+    'active': False,
     'installable': True,
     'auto_install': False,
-}
+    }
