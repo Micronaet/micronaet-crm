@@ -31,7 +31,8 @@ _logger = logging.getLogger(__name__)
 
 # google_url = 'https://www.google.com/maps/@{latitude},{longitude}'
 google_url = "https://www.google.com/maps/place/" \
-             "{latitude_grad}\"N+{longitude_grad}\"E/@{latitude},{longitude}"
+             "{lat1}°{lat2}'{lat3}\"N+{lon1}°{lon2}'{lon3}\"E/" \
+             "@{latitude},{longitude}"
 
 
 class ResPartner(osv.osv):
@@ -55,7 +56,7 @@ class ResPartner(osv.osv):
         item2 = int(value * 60.0)
         value -= item2
         item3 = value * 60.0
-        return "'{}°{}'{}\"".format(item1, item2, item3)
+        return item1, item2, item3
 
     # Button event:
     def open_geo_localize(self, cr, uid, ids, context=None):
@@ -63,12 +64,12 @@ class ResPartner(osv.osv):
         """
         partner = self.browse(cr, uid, ids, context=context)[0]
         latitude = partner.geo_latitude
-        latitude_grad = self.get_geo_grade(latitude)
+        lat1, lat2, lat3 = self.get_geo_grade(latitude)
         longitude = partner.geo_longitude
-        longitude_grad = self.get_geo_grade(longitude)
+        lon1, lon2, lon3 = self.get_geo_grade(longitude)
         url = google_url.format(
-            latitude_grad=latitude_grad,
-            longitude_grad=longitude_grad,
+            lat1, lat2, lat3,
+            lon1, lon2, lon3,
             latitude=latitude,
             longitude=longitude,
             )
