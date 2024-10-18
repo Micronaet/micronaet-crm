@@ -69,6 +69,11 @@ class ResPartner(osv.osv):
         # lat1, lat2, lat3 = self.get_geo_grade(latitude)
         longitude = partner.geo_longitude
         # lon1, lon2, lon3 = self.get_geo_grade(longitude)
+        if not longitude or not latitude:
+            raise osv.except_osv(
+                _('Errore:'),
+                _('Non trovata Lat. o Long.!'),
+                )
         url = google_url.format(
             # lat1=lat1, lat2=lat2, lat3=lat3,
             # lon1=lon1, lon2=lon2, lon3=lon3,
