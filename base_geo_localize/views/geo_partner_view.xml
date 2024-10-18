@@ -10,7 +10,8 @@
                     <page string="Geolocalizzazione" name="geo_localization">
                         <group colspan="2" col="4">
                             <separator string="Geo Localizzazione" colspan="2"/>
-                            <button string="Geo Localize" name="geo_localize" colspan="2" icon="gtk-apply" type="object"/>
+                            <button string="Geo Localize" name="geo_localize" colspan="1" icon="gtk-refresh" type="object"/>
+                            <button string="Apri in Maps" name="open_geo_localize" colspan="1" icon="gtk-open" type="object"/>
 
                             <field name="geo_address" colspan="4"/>
                             <field name="geo_latitude"/>

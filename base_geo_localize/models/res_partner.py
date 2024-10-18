@@ -26,6 +26,8 @@ from openerp.tools.translate import _
 from geopy.geocoders import Nominatim
 from datetime import datetime
 
+google_url = 'https://www.google.com/maps/@{latitude},{longitude}'
+
 
 class ResPartner(osv.osv):
     """ Add extra fields
@@ -41,6 +43,20 @@ class ResPartner(osv.osv):
     }
 
     # Button event:
+    def open_geo_localize(self, cr, uid, ids, context=None):
+        """
+        """
+        partner = self.browse(cr, uid, ids, context=context)[0]
+        url = google_url.format(
+            latitude=partner.geo_latitude,
+            longitude=partner.geo_longitude,
+            )
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'new',
+        }
+
     def geo_localize(self, cr, uid, ids, context=None):
         """ Extract geo data from address
         """
