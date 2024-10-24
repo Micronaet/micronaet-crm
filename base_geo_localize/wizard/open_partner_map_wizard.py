@@ -132,7 +132,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             context = {}
         ctx = context.copy()
         context['only_geo'] = False
-        return self.action_open_partner_all(cr, uid, ids, context=ctx)
+        return self.action_open_partner(cr, uid, ids, context=ctx)
 
     def action_open_partner(self, cr, uid, ids, context=None):
         """ Event for button done
