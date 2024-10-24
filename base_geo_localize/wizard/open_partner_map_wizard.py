@@ -128,9 +128,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # 'country_id': fields.many2one(
         #    'res.country', 'Nazione',
         #    help='Seleziona nazione'),
-        # 'state_id': fields.many2one(
-        #    'res.state', 'Provincia',
-        #    help='Seleziona nazione'),
+        'state_id': fields.many2one(
+            'res.country.state', 'Provincia',
+            help='Seleziona provincia'),
         'city': fields.char('Città', size=60),
         'state_code': fields.char('Provincia', size=4),
     }

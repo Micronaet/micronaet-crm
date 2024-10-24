@@ -12,8 +12,10 @@
                        <button name="action_done" string="Apri mappa" type="object" icon="gtk-jump-to" class="oe_highlight" />
                    </header>
                    <group colspan="4" col="4">
-                        <field name="city" />
+                        <field name="state_id" />
                         <field name="state_code" />
+
+                        <field name="city" />
                    </group>
                 </form>
             </field>
