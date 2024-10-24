@@ -55,16 +55,48 @@ class ResPartnerMapGeocodes(orm.TransientModel):
     """
     _name = 'res.partner.map.geocodes'
 
+    # todo
+    def return_attachment(self, cr, uid, name, filename, context=None):
+        """ Return HTML page
+        """
+        # Pool used:
+        attachment_pool = self.pool.get('ir.attachment')
+        origin = '/tmp/{}'.format(filename)
+
+        try:
+            b64 = open(origin, 'rb').read().encode('base64')
+        except:
+            raise osv.except_osv(
+                _('Report error'),
+                _('Cannot return file: %s') % origin,
+                )
+
+        attachment_id = attachment_pool.create(cr, uid, {
+            'name': name,
+            'datas_fname': 'HTML Mappa',
+            'type': 'binary',
+            'datas': b64,
+            'partner_id': 1,
+            'res_model': 'res.partner',
+            'res_id': 1,
+            }, context=context)
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/binary/saveas?model=ir.attachment&field=datas&'
+                   'filename_field=datas_fname&id=%s' % attachment_id,
+            'target': 'self',
+            }
+
     # --------------------
     # Wizard button event:
     # --------------------
-    def action_done(self, cr, uid, ids, context=None):
-        """ Event for button done
+    def get_domain(self, cr, uid, ids, context=None):
+        """ Generate domain from wizard
         """
-        partner_pool = self.pool.get('res.partner')
-
         if context is None:
             context = {}
+        only_geo = context.get('only_geo', True)
 
         wizard = self.browse(cr, uid, ids, context=context)[0]
         state_code = wizard.state_code
@@ -72,10 +104,14 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         state = wizard.state_id
 
         # Only partner with geocodes:
-        domain = [
-            ('geo_latitude', '!=', 0),
-            ('geo_longitude', '!=', 0),
-        ]
+        if only_geo:
+            domain = [
+                ('geo_latitude', '!=', 0),
+                ('geo_longitude', '!=', 0),
+            ]
+        else:
+            domain = []
+
         if state_code:
             domain.append(
                 ('state_id.code', '=', state_code))
@@ -87,6 +123,54 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if state:
             domain.append(
                 ('state_id', '=', state.id))
+        return domain
+
+    def action_open_partner_all(self, cr, uid, ids, context=None):
+        """ Event for button done
+        """
+        if context is None:
+            context = {}
+        ctx = context.copy()
+        context['only_geo'] = False
+        return self.action_open_partner_all(cr, uid, ids, context=ctx)
+
+    def action_open_partner(self, cr, uid, ids, context=None):
+        """ Event for button done
+        """
+        partner_pool = self.pool.get('res.partner')
+        model_pool = self.pool.get('ir.model.data')
+
+        domain = self.get_domain(cr, uid, ids, context=context)
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
+
+        tree_id = False
+        # tree_id = model_pool.get_object_reference(
+        #    cr, uid, 'base', 'view_res_partner_form')[1]
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Partner'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': partner_ids[0],
+            'res_model': 'res.partner',
+            # 'view_id': view_id, # False
+            'views': [
+                (False, 'form'),
+                (tree_id, 'tree'),
+            ],
+            'domain': [('id', 'in', partner_ids)],
+            'context': context,
+            'target': 'current',  # 'new'
+            'nodestroy': False,
+        }
+
+    def action_done(self, cr, uid, ids, context=None):
+        """ Event for button done
+        """
+        partner_pool = self.pool.get('res.partner')
+
+        domain = self.get_domain(cr, uid, ids, context=context)
 
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
         partner_data = {}
