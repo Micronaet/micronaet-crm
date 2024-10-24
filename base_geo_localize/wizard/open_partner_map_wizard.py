@@ -72,8 +72,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         # Only partner with geocodes:
         domain = [
-            ('geo_latitude', '!=', False),
-            ('geo_longitude', '!=', False),
+            ('geo_latitude', '!=', 0),
+            ('geo_longitude', '!=', 0),
         ]
         if state_code:
             domain.append(
