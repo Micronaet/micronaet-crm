@@ -86,7 +86,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         partner_data = {}
         for partner in partner_pool.browse(
                 cr, uid, partner_ids, context=context):
-            partner_data[partner.name] = (
+            partner_ref = '{} {}-{}'.format(
+                partner.name,
+                partner.street,
+                partner.city,
+            )
+            partner_data[partner_ref] = (
                 partner.geo_latitude,
                 partner.geo_longitude,
             )
