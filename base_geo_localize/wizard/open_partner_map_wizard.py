@@ -156,8 +156,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'res_model': 'res.partner',
             # 'view_id': view_id, # False
             'views': [
-                (False, 'form'),
                 (tree_id, 'tree'),
+                (False, 'form'),
             ],
             'domain': [('id', 'in', partner_ids)],
             'context': context,
