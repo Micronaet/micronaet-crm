@@ -1,7 +1,8 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP)
+# ODOO (ex OpenERP) 
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<https://micronaet.com>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -12,7 +13,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -20,27 +21,5 @@
 #
 ###############################################################################
 
-{
-    'name': 'Geolocalize Partner',
-    'version': '0.1',
-    'category': 'CRM',
-    'description': '''
-        Geolocalize partner extra data        
-        ''',
-    'author': 'Micronaet S.r.l. - Nicola Riolini',
-    'website': 'http://www.micronaet.it',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        ],
-    'init_xml': [],
-    'demo': [],
-    'data': [
-        'views/geo_partner_view.xml',
+from . import open_partner_map_wizard
 
-        'wizard/open_partner_map_view.xml',
-        ],
-    'active': False,
-    'installable': True,
-    'auto_install': False,
-    }
