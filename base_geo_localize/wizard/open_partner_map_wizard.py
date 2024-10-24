@@ -69,6 +69,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         wizard = self.browse(cr, uid, ids, context=context)[0]
         state_code = wizard.state_code
         city = wizard.city
+        state = wizard.state_id
 
         # Only partner with geocodes:
         domain = [
@@ -82,6 +83,10 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if city:
             domain.append(
                 ('city', '=', city))
+
+        if state:
+            domain.append(
+                ('state_id', '=', state.id))
 
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
         partner_data = {}
