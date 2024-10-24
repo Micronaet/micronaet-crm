@@ -23,6 +23,7 @@
 
 
 import os
+import pdb
 import sys
 import logging
 import requests
@@ -84,6 +85,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
         partner_data = {}
+        pdb.set_trace()
         for partner in partner_pool.browse(
                 cr, uid, partner_ids, context=context):
             partner_ref = '{} {}-{}'.format(
