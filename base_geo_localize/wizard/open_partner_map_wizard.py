@@ -299,7 +299,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             try:
                 phone = (partner.phone or '').strip()
                 if phone:
-                    info_window += "Tel.: <a href='callto://{}'>{}</a>" \
+                    info_window += "Tel.: <a href='callto:{}'>{}</a>" \
                                    "<br/>".format(
                                     phone, phone)
             except:
@@ -308,7 +308,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             try:
                 email = (partner.email or '').strip()
                 if email:
-                    info_window += "Mail: <a href='mailto://{}'>{}</a>" \
+                    info_window += "Mail: <a href='mailto:{}'>{}</a>" \
                                    "<br/>".format(
                                     email, email)
             except:
