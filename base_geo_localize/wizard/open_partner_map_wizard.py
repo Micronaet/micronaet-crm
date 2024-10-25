@@ -272,3 +272,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         'is_contact': fields.boolean('Includi contatti'),
         'is_lead': fields.boolean('Includi lead'),
     }
+
+    _defaults = {
+        'is_customer': lambda *x: True,
+    }
