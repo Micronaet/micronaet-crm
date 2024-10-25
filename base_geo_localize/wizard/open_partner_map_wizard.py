@@ -201,7 +201,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 # label
                 # title
             }
-            if partner.website:
+            website = (partner.website or '').strip()
+            if website:
                 record['info_window'] =\
                     "<a href='{}'>WWW</a>".format(partner.website)
             partner_data[partner_ref] = record
