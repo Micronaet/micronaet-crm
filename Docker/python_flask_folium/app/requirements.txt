@@ -1,5 +1,6 @@
 # Maps:
-gmplot==1.4.1
+# gmplot==1.4.1
+folium==0.18.0
 
 # Utility:
 python-dateutil==2.9.0.post0

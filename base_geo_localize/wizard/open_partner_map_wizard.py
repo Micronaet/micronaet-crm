@@ -285,12 +285,10 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 color = '#9370DB'
 
             record = {
-                'lat': partner.geo_latitude,
-                'lng': partner.geo_longitude,
+                'location': [partner.geo_latitude, partner.geo_longitude],
                 'color': color,
-                'title': partner_name,
-                # label
-                # title
+                'tooltip': partner_name,
+                # popup
             }
 
             # -----------------------------------------------------------------
@@ -327,7 +325,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
             # info_window = ''  # todo remove
             if info_window:
-                record['info_window'] = info_window
+                record['popup'] = info_window
 
             partner_data[partner_ref] = record
 

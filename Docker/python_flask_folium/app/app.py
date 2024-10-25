@@ -8,7 +8,7 @@
 
 import os
 import pdb
-import gmplot
+import folium
 import traceback
 from flask import Flask, render_template, request, send_from_directory, jsonify
 from datetime import datetime
@@ -54,25 +54,39 @@ def home():
     """ Hello page, log access on a file
     """
     partner_data = request.json
-    filename = 'gmplod_{}.html'.format(
+    filename = 'folium_{}.html'.format(
         datetime.now().strftime('%Y%m%d%H%M%S'))
     temp_file = './templates/{}'.format(filename)
     if request.method == 'POST':
         # Dynamic page:
         try:
-            gmap = False
+            fmap = False
             for partner in partner_data:
                 record = partner_data[partner]
 
+                if 'color' in record:
+                    icon = folium.Icon(icon=record['color'])
+                else:
+                    icon = folium.Icon(icon='cloud')
+                record['icon'] = icon
+
                 # Create Maps at first record:
-                if not gmap:
-                    gmap = gmplot.GoogleMapPlotter(
+                if not fmap:
+                    fmap = folium.Map(
                         record['lat'],
                         record['lng'],
-                        zoom=12)
-                gmap.marker(**record)
+                        titles='Clienti',
+                        zoom_start=12,
+                    )
+                folium.Marker(**record).add_to(fmap)
 
-            gmap.draw(temp_file)
+                # Marker:
+                # location = [45.3288, -121.6625],
+                # tooltip = "Click me!",
+                # popup = "Mt. Hood Meadows",
+                # icon = folium.Icon(icon="cloud"),
+
+            fmap.save(temp_file)
             return filename
         except:
             return ''  # No file means error!
