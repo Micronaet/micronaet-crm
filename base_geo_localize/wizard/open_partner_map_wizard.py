@@ -182,13 +182,32 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 partner.street,
                 partner.city,
             )
-            partner_data[partner_ref] = (
-                partner.geo_latitude,
-                partner.geo_longitude,
-            )
+
+            # Color setup:
+            if partner.sql_customer_code:
+                color = 'green'
+            elif partner.sql_supplier_code:
+                color = 'red'
+            elif partner.is_company:
+                color = '#9400D3'
+            else:
+                color = '#9370DB'
+
+            record = {
+                'lat': partner.geo_latitude,
+                'lng': partner.geo_longitude,
+                'color': color,
+                'title': partner.name.replace('\n', ' '),
+                # label
+                # title
+            }
+            if partner.website:
+                record['info_window'] =\
+                    "<a href='{}'>WWW</a>".format(partner.website)
+            partner_data[partner_ref] = record
 
         # ---------------------------------------------------------------------
-        # Call MAPS Flask:
+        #                         Call MAPS Flask:
         # ---------------------------------------------------------------------
         headers = {
             'Content-type': 'application/json',
