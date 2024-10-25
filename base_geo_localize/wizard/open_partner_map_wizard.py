@@ -248,6 +248,11 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'nodestroy': False,
         }
 
+    def action_download(self, cr, uid, ids, context=None):
+        """ Download instead of open directly
+        """
+        return True
+
     def action_done(self, cr, uid, ids, context=None):
         """ Event for button done
         """

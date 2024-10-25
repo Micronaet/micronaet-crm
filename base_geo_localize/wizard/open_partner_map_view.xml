@@ -10,10 +10,11 @@
                    <header>
                        <button string="Annulla" special="cancel" />
 
-                       <button name="action_open_partner" string="Partner selezionati (con Geo)" type="object" icon="gtk-jump-to" class="oe_highlight" />
-                       <button name="action_open_partner_all" string="Partner selezionati (tutti)" type="object" icon="gtk-jump-to" class="oe_highlight" />
+                       <button name="action_open_partner" string="Partner selezionati (con Geo)" type="object" icon="gtk-index" class="oe_highlight" />
+                       <button name="action_open_partner_all" string="Partner selezionati (tutti)" type="object" icon="gtk-justify-fill" class="oe_highlight" />
 
                        <button name="action_done" string="Apri mappa (con Geo)" type="object" icon="gtk-jump-to" class="oe_highlight" />
+                       <button name="action_download" string="Download mappa (con Geo)" type="object" icon="gtk-save" class="oe_highlight" />
                    </header>
                    <group colspan="4" col="4">
                        <separator string="Tipologia di partner:" colspan="4"/>
