@@ -303,11 +303,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                                "<br/>".format(
                                 phone, phone)
 
-            email = (partner.email or '').strip()
-            if email:
-                info_window += "Mail: <a href='mailto://{}'>{}</a>" \
-                               "<br/>".format(
-                                email, email)
+            try:
+                email = (partner.email or '').strip()
+                if email:
+                    info_window += "Mail: <a href='mailto://{}'>{}</a>" \
+                                   "<br/>".format(
+                                    email, email)
+            except:
+                _logger.error('Error converting mail')
+                pass
 
             website = (partner.website or '').strip()
             if website:
