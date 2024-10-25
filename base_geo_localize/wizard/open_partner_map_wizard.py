@@ -40,6 +40,7 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DATETIME_FORMATS_MAP,
     float_compare)
+from unidecode import unidecode
 
 
 _logger = logging.getLogger(__name__)
@@ -271,7 +272,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 partner.street,
                 partner.city,
             )
-            partner_name = partner.name.replace('\n', ' ')
+            partner_name = unidecode(partner.name.replace('\n', ' '))
 
             # Color setup:
             if partner.sql_customer_code:
