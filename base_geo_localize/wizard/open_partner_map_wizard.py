@@ -195,7 +195,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         else:
             lead_ids = False
 
-        pdb.set_trace()
         partner_ids = set()
         if customer_ids:
             partner_ids = partner_ids.union(customer_ids)
