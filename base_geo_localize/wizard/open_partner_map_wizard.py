@@ -294,7 +294,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             # -----------------------------------------------------------------
             # Info Window:
             # -----------------------------------------------------------------
-            info_window = ''
+            info_window = '{}<br/>'.format(partner.name)
 
             if partner.phone:
                 info_window = "Tel.: <a href='callto://{}'>{}</a><br/>".format(
