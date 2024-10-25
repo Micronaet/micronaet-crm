@@ -297,11 +297,14 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             # -----------------------------------------------------------------
             info_window = '{}<br/>'.format(partner_name)
 
-            phone = (partner.phone or '').strip()
-            if phone:
-                info_window += "Tel.: <a href='callto://{}'>{}</a>" \
-                               "<br/>".format(
-                                phone, phone)
+            try:
+                phone = (partner.phone or '').strip()
+                if phone:
+                    info_window += "Tel.: <a href='callto://{}'>{}</a>" \
+                                   "<br/>".format(
+                                    phone, phone)
+            except:
+                _logger.error('Error converting phone')
 
             try:
                 email = (partner.email or '').strip()
@@ -311,13 +314,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                                     email, email)
             except:
                 _logger.error('Error converting mail')
-                pass
 
-            website = (partner.website or '').strip()
-            if website:
-                info_window += "Sito: <a href='{}' target= '_blank'>{}</a>" \
-                               "<br/>".format(
-                                website, website)
+            try:
+                website = (partner.website or '').strip()
+                if website:
+                    info_window += "Sito: <a href='{}' target= '_blank'>{}" \
+                                   "</a><br/>".format(
+                                    website, website)
+            except:
+                _logger.error('Error converting phone')
 
             if info_window:
                 record['info_window'] = info_window
