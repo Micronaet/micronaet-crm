@@ -330,22 +330,22 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             ('yes', 'Sì'),
             ('no', 'No'),
             ('all', 'Indifferente'),
-        ]),
+        ], 'Cliente', required=True),
         'supplier_mode': fields.selection([
             ('yes', 'Sì'),
             ('no', 'No'),
             ('all', 'Indifferente'),
-        ]),
+        ], 'Fornitore', required=True),
         'contact_mode': fields.selection([
             ('yes', 'Sì'),
             ('no', 'No'),
             ('all', 'Indifferente'),
-        ]),
+        ], 'Contatto', required=True),
         'lead_mode': fields.selection([
             ('yes', 'Sì'),
             ('no', 'No'),
             ('all', 'Indifferente'),
-        ]),
+        ], 'Lead', required=True),
     }
 
     _defaults = {
