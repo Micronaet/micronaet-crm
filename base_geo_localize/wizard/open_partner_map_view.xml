@@ -16,11 +16,11 @@
                        <button name="action_done" string="Apri mappa (con Geo)" type="object" icon="gtk-jump-to" class="oe_highlight" />
                    </header>
                    <group colspan="4" col="4">
-                       <separator string="Tipi di contatto:" colspan="4"/>
-                       <field name="is_customer" />
-                       <field name="is_supplier" />
-                       <field name="is_contact" />
-                       <!--<field name="is_lead" />-->
+                       <separator string="Tipologia di partner:" colspan="4"/>
+                       <field name="contact_mode" />
+                       <field name="customer_mode" />
+                       <!--<field name="contact_mode" />-->
+                       <field name="lead_mode" />
 
                        <separator string="Filtri:" colspan="4"/>
                        <field name="state_id" />

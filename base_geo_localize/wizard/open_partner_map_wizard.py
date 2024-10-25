@@ -94,6 +94,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
     def get_domain(self, cr, uid, ids, context=None):
         """ Generate domain from wizard
         """
+        partner_pool = self.pool.get('res.partner')
+
         if context is None:
             context = {}
         only_geo = context.get('only_geo', True)
@@ -112,7 +114,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         else:
             domain = []
 
+        # ---------------------------------------------------------------------
         # Filter:
+        # ---------------------------------------------------------------------
         if state_code:
             domain.append(
                 ('state_id.code', '=', state_code))
@@ -125,28 +129,83 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             domain.append(
                 ('state_id', '=', state.id))
 
-        # Partner mode:
-        selected_one = False
-        if wizard.is_customer:
-            selected_one = True
-            domain.append(
-                ('sql_customer_code', '!=', False))
-        if wizard.is_supplier:
-            selected_one = True
-            domain.append(
-                ('sql_supplier_code', '!=', False))
-        if not wizard.is_contact:
-            selected_one = True
-            domain.append(
-                ('is_company', '=', True))
+        # ---------------------------------------------------------------------
+        # Set operation:
+        # ---------------------------------------------------------------------
+        # Customer:
+        # ---------------------------------------------------------------------
+        customer_mode = wizard.customer_mode
+        this_domain = domain[:]
+        if customer_mode == 'yes':
+            this_domain.append(
+                ('sql_customer_code', '!=', False),
+            )
+            customer_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+        elif customer_mode == 'no':
+            this_domain.append(
+                ('sql_customer_code', '=', False),
+            )
+            customer_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+        else:
+            customer_ids = False
 
-        if not selected_one:
-            # Only lead:
-            domain.extend([
+        # ---------------------------------------------------------------------
+        # Supplier:
+        # ---------------------------------------------------------------------
+        supplier_mode = wizard.supplier_mode
+        this_domain = domain[:]
+        if supplier_mode == 'yes':
+            this_domain.append(
+                ('sql_supplier_code', '!=', False),
+            )
+            supplier_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+        elif supplier_mode == 'no':
+            this_domain.append(
+                ('sql_supplier_code', '=', False),
+            )
+            supplier_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+        else:
+            supplier_ids = False
+
+        # ---------------------------------------------------------------------
+        # Lead:
+        # ---------------------------------------------------------------------
+        lead_mode = wizard.lead_mode
+        this_domain = domain[:]
+        if lead_mode == 'yes':
+            this_domain.extend([
+                ('sql_customer_code', '=', False),
+                ('sql_supplier_code', '=', False),
+            ])
+            lead_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+        elif lead_mode == 'no':
+            # todo work with mode filter?
+            this_domain.extend([
+                '|',
                 ('sql_customer_code', '!=', False),
                 ('sql_supplier_code', '!=', False),
-                ])
+            ])
+            lead_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+        else:
+            lead_ids = False
 
+        partner_ids = set()
+        if customer_ids:
+            partner_ids.add(customer_ids)
+        if supplier_ids:
+            partner_ids.add(supplier_ids)
+        if lead_ids:
+            partner_ids.add(lead_ids)
+        if partner_ids:
+            domain.append(
+                ('id', 'in', tuple(partner_ids)),
+            )
         return domain
 
     def action_open_partner_all(self, cr, uid, ids, context=None):
@@ -267,12 +326,29 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         'city': fields.char('Città', size=60),
         'state_code': fields.char('Provincia', size=4),
 
-        'is_customer': fields.boolean('Includi clienti'),
-        'is_supplier': fields.boolean('Includi fornitori'),
-        'is_contact': fields.boolean('Includi contatti'),
-        'is_lead': fields.boolean('Includi lead'),
+        'customer_mode': fields.selection([
+            ('yes', 'Sì'),
+            ('no', 'No'),
+            ('all', 'Indifferente'),
+        ]),
+        'supplier_mode': fields.selection([
+            ('yes', 'Sì'),
+            ('no', 'No'),
+            ('all', 'Indifferente'),
+        ]),
+        'contact_mode': fields.selection([
+            ('yes', 'Sì'),
+            ('no', 'No'),
+            ('all', 'Indifferente'),
+        ]),
+        'lead_mode': fields.selection([
+            ('yes', 'Sì'),
+            ('no', 'No'),
+            ('all', 'Indifferente'),
+        ]),
     }
 
     _defaults = {
-        'is_customer': lambda *x: True,
+        'customer_mode': lambda *x: 'yes',
+        'lead_mode': lambda *x: 'yes',
     }
