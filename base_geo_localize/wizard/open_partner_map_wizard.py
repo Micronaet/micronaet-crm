@@ -309,7 +309,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
             website = (partner.website or '').strip()
             if website:
-                info_window += "Sito: <a href='{}'>{}</a><br/>".format(
+                info_window += "Sito: <a href='{}' target= '_blank'>" \
+                               "{}</a><br/>".format(
                     website,
                     website,
                     )
