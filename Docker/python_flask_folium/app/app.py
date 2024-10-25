@@ -64,10 +64,15 @@ def home():
             for partner in partner_data:
                 record = partner_data[partner]
 
+                # [‘red’, ‘blue’, ‘green’, ‘purple’, ‘orange’, ‘darkred’,
+                # ’lightred’, ‘beige’, ‘darkblue’, ‘darkgreen’, ‘cadetblue’,
+                # ‘darkpurple’, ‘white’, ‘pink’, ‘lightblue’, ‘lightgreen’,
+                # ‘gray’, ‘black’, ‘lightgray’]
                 if 'color' in record:
-                    icon = folium.Icon(icon=record['color'])
+                    icon = folium.Icon(color=record['color'])
+                    del(record['color'])
                 else:
-                    icon = folium.Icon(icon='cloud')
+                    icon = folium.Icon(color='grey')
                 record['icon'] = icon
 
                 # Create Maps at first record:
