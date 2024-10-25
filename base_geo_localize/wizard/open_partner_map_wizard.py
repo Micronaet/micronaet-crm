@@ -297,23 +297,22 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             info_window = ''
 
             if partner.phone:
-                info_window = "Tel.: <a href='callto://{}'>{}</a>".format(
+                info_window = "Tel.: <a href='callto://{}'>{}</a><br/>".format(
                     partner.phone,
                     partner.phone,
                 )
 
             if partner.email:
-                info_window = "Mail: <a href='mailto://{}'>{}</a>".format(
+                info_window = "Mail: <a href='mailto://{}'>{}</a><br/>".format(
                     partner.email,
                     partner.email,
                 )
 
             website = (partner.website or '').strip()
             if website:
-                info_window += \
-                    "Sito: <a href='{}'>{}</a>".format(
-                        website,
-                        website,
+                info_window += "Sito: <a href='{}'>{}</a><br/>".format(
+                    website,
+                    website,
                     )
 
             if info_window:
