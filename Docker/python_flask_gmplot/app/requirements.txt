@@ -1,0 +1,17 @@
+# Maps:
+gmplot==1.4.1
+
+# Utility:
+python-dateutil==2.9.0.post0
+tzdata==2024.1
+pytz==2024.1
+
+# XlsxWriter==3.2.0
+
+# Flask:
+click==8.0.3
+Flask==2.0.2
+itsdangerous==2.0.1
+Jinja2==3.0.2
+MarkupSafe==2.0.1
+Werkzeug==2.0.2

@@ -1,0 +1,211 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  //font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  // font-size: 11px;
+  color: #444;
+  }
+
+/*
+ * Formatting the header area
+ */
+header {
+  background-color: #96c2ff;
+  height: 35px;
+  width: 100%;
+  opacity: .9;
+  margin-bottom: 10px;
+}
+header h1.logo {
+  margin: 0;
+  font-size: 1.7em;
+  color: #fff;
+  text-transform: uppercase;
+  float: left;
+}
+header h1.logo:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+/*
+ * Formatting the footer area
+ */
+footer {
+  background-color: #96c2ff;
+  height: 35px;
+  width: 100%;
+  opacity: .9;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+footer h1.logo {
+  margin: 0;
+  font-size: 1.7em;
+  color: #fff;
+  text-transform: uppercase;
+  float: left;
+}
+footer h1.logo:hover {
+  color: #fff;
+  text-decoration: none;
+}
+
+/*
+ * Centering the body content
+ */
+.container {
+  width: 1220px;
+  margin: 0 auto;
+  padding-left: 5px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  // box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+div.mes {
+    font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* FORM ELEMENTS: */
+input[type=summit] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    border-radius: 6px;
+    border: none;
+    background: #6E6D70;
+    box-shadow: 0px 0.5px 1px rgb(0 0 0 / 10%), inset 0px 0.5px 0.5px rgb(255 255 255 / 50%), 0px 0px 0px 0.5px rgb(0 0 0 / 12%);
+    color: #DFDEDF;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+/*input[type=text], input[type=date], input[type=number], input[type=list]  {*/
+input {
+    padding: 1px;
+    border: 2px solid #ccc;
+    -webkit-border-radius: 4px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+input.mandatory {
+    background-color: #BBDEFB;
+}
+input.excluded {
+    background-color: #f799a9;
+    }
+
+[list="sort_list"] {
+    padding: 1px;
+    border: 2px solid #ccc;
+    -webkit-border-radius: 4px;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+[list="sort_list"].mandatory {
+    padding: 1px;
+    border: 2px solid #ccc;
+    -webkit-border-radius: 4px;
+    border-radius: 5px;
+    background-color: #BBDEFB;
+}
+/*  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+*/
+
+div.home {
+  padding: 10px 0 30px 0;
+  // background-color: #E6E6FA;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+div.about {
+  padding: 10px 0 30px 0;
+  // background-color: #E6E6FA;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+div.error {
+  padding: 10px 0 30px 0;
+  background-color: #E6E6FA;
+  -webkit-border-radius: 6px;
+     -moz-border-radius: 6px;
+          border-radius: 6px;
+}
+
+h2 {
+  font-size: 3em;
+  margin-top: 40px;
+  text-align: center;
+  letter-spacing: -2px;
+}
+h3 {
+  font-size: 1.7em;
+  font-weight: 100;
+  margin-top: 30px;
+  text-align: center;
+  letter-spacing: -1px;
+  color: #999;
+}
+
+.menu {
+  float: right;
+  margin-top: 8px;
+}
+.menu li {
+  display: inline;
+  border-right: 1px #000 solid;
+  padding-right: 10px;
+}
+.menu li + li {
+  margin-left: 35px;
+}
+.menu li a {
+  color: #444;
+  text-decoration: none;
+}
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  // border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 220px;
+  background-color: #2f3136;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
+div img {
+    width: 180px;
+    text-align: center;
+    margin-left: 15px;
+    margin-right: 20px;
+    padding: 10px;
+    -webkit-border-radius: 6px;
+       -moz-border-radius: 6px;
+           border-radius: 6px;
+}
