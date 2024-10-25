@@ -297,6 +297,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             # Info Window:
             # -----------------------------------------------------------------
             info_window = '{}<br/>'.format(partner_name)
+            info_window = ''  # todo remove
 
             try:
                 phone = (partner.phone or '').strip()
