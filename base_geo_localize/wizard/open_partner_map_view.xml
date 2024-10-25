@@ -20,7 +20,7 @@
                        <separator string="Tipologia di partner:" colspan="4"/>
                        <field name="customer_mode" />
                        <field name="supplier_mode" />
-                       <field name="lead_mode" />
+                       <!--<field name="lead_mode" />-->
                        <!--<field name="contact_mode" />-->
 
                        <separator string="Filtri:" colspan="4"/>
