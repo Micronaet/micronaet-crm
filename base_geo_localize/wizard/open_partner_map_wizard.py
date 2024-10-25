@@ -280,9 +280,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             elif partner.sql_supplier_code:
                 color = 'red'
             elif partner.is_company:
-                color = 'purple'
+                color = 'orange'
             else:
-                color = 'blue'
+                color = 'yellow'
 
             record = {
                 'location': [partner.geo_latitude, partner.geo_longitude],
