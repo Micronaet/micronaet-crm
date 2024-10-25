@@ -350,5 +350,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
     _defaults = {
         'customer_mode': lambda *x: 'yes',
+        'supplier_mode': lambda *x: 'no',
         'lead_mode': lambda *x: 'yes',
+        'contact_mode': lambda *x: 'all',
     }

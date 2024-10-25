@@ -17,10 +17,10 @@
                    </header>
                    <group colspan="4" col="4">
                        <separator string="Tipologia di partner:" colspan="4"/>
-                       <field name="contact_mode" />
                        <field name="customer_mode" />
-                       <!--<field name="contact_mode" />-->
+                       <field name="supplier_mode" />
                        <field name="lead_mode" />
+                       <!--<field name="contact_mode" />-->
 
                        <separator string="Filtri:" colspan="4"/>
                        <field name="state_id" />
