@@ -299,21 +299,21 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
             phone = (partner.phone or '').strip()
             if phone:
-                info_window = "Tel.: <a href='callto://{}'>{}</a><br/>".format(
-                    phone, phone)
+                info_window += "Tel.: <a href='callto://{}'>{}</a>" \
+                               "<br/>".format(
+                                phone, phone)
 
             email = (partner.email or '').strip()
             if email:
-                info_window = "Mail: <a href='mailto://{}'>{}</a><br/>".format(
-                    email, email)
+                info_window += "Mail: <a href='mailto://{}'>{}</a>" \
+                               "<br/>".format(
+                                email, email)
 
             website = (partner.website or '').strip()
             if website:
-                info_window += "Sito: <a href='{}' target= '_blank'>" \
-                               "{}</a><br/>".format(
-                    website,
-                    website,
-                    )
+                info_window += "Sito: <a href='{}' target= '_blank'>{}</a>" \
+                               "<br/>".format(
+                                website, website)
 
             if info_window:
                 record['info_window'] = info_window
