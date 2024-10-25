@@ -313,7 +313,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                                    "<br/>".format(
                                     email, email)
             except:
-                _logger.error('Error converting mail {}'.format(email))
+                _logger.error('Error converting mail')
 
             try:
                 website = (partner.website or '').strip()
