@@ -325,7 +325,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             except:
                 _logger.error('Error converting phone')
 
-            info_window = ''  # todo remove
+            # info_window = ''  # todo remove
             if info_window:
                 record['info_window'] = info_window
 
