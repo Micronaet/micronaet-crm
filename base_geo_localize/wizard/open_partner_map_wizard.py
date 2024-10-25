@@ -112,6 +112,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         else:
             domain = []
 
+        # Filter:
         if state_code:
             domain.append(
                 ('state_id.code', '=', state_code))
@@ -123,6 +124,29 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if state:
             domain.append(
                 ('state_id', '=', state.id))
+
+        # Partner mode:
+        selected_one = False
+        if wizard.is_customer:
+            selected_one = True
+            domain.append(
+                ('sql_customer_code', '!=', False))
+        if wizard.is_supplier:
+            selected_one = True
+            domain.append(
+                ('sql_supplier_code', '!=', False))
+        if not wizard.is_contact:
+            selected_one = True
+            domain.append(
+                ('is_company', '=', True))
+
+        if not selected_one:
+            # Only lead:
+            domain.extend([
+                ('sql_customer_code', '!=', False),
+                ('sql_supplier_code', '!=', False),
+                ])
+
         return domain
 
     def action_open_partner_all(self, cr, uid, ids, context=None):
@@ -242,4 +266,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             help='Seleziona provincia'),
         'city': fields.char('Città', size=60),
         'state_code': fields.char('Provincia', size=4),
+
+        'is_customer': fields.boolean('Includi clienti'),
+        'is_supplier': fields.boolean('Includi fornitori'),
+        'is_contact': fields.boolean('Includi contatti'),
+        'is_lead': fields.boolean('Includi lead'),
     }
