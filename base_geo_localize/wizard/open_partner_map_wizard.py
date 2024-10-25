@@ -198,11 +198,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         pdb.set_trace()
         partner_ids = set()
         if customer_ids:
-            partner_ids.add(customer_ids)
+            partner_ids = partner_ids.union(customer_ids)
         if supplier_ids:
-            partner_ids.add(supplier_ids)
+            partner_ids = partner_ids.union(supplier_ids)
         if lead_ids:
-            partner_ids.add(lead_ids)
+            partner_ids = partner_ids.union(lead_ids)
+
         if partner_ids:
             domain.append(
                 ('id', 'in', tuple(partner_ids)),
