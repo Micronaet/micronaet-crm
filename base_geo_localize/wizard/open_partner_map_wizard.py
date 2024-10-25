@@ -271,6 +271,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 partner.street,
                 partner.city,
             )
+            partner_name = partner.name.replace('\n', ' ')
 
             # Color setup:
             if partner.sql_customer_code:
@@ -286,7 +287,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 'lat': partner.geo_latitude,
                 'lng': partner.geo_longitude,
                 'color': color,
-                'title': partner.name.replace('\n', ' '),
+                'title': partner_name,
                 # label
                 # title
             }
@@ -294,19 +295,17 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             # -----------------------------------------------------------------
             # Info Window:
             # -----------------------------------------------------------------
-            info_window = '{}<br/>'.format(partner.name)
+            info_window = '{}<br/>'.format(partner_name)
 
-            if partner.phone:
+            phone = (partner.phone or '').strip()
+            if phone:
                 info_window = "Tel.: <a href='callto://{}'>{}</a><br/>".format(
-                    partner.phone,
-                    partner.phone,
-                )
+                    phone, phone)
 
-            if partner.email:
+            email = (partner.email or '').strip()
+            if email:
                 info_window = "Mail: <a href='mailto://{}'>{}</a><br/>".format(
-                    partner.email,
-                    partner.email,
-                )
+                    email, email)
 
             website = (partner.website or '').strip()
             if website:
