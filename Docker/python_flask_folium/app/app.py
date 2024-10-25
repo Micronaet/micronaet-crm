@@ -73,8 +73,7 @@ def home():
                 # Create Maps at first record:
                 if not fmap:
                     fmap = folium.Map(
-                        record['lat'],
-                        record['lng'],
+                        location=record['location'],
                         titles='Clienti',
                         zoom_start=12,
                     )
