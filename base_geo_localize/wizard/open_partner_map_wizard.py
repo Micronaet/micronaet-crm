@@ -280,9 +280,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             elif partner.sql_supplier_code:
                 color = 'red'
             elif partner.is_company:
-                color = '#9400D3'
+                color = 'purple'
             else:
-                color = '#9370DB'
+                color = 'blue'
 
             record = {
                 'location': [partner.geo_latitude, partner.geo_longitude],
@@ -294,12 +294,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             # -----------------------------------------------------------------
             # Info Window:
             # -----------------------------------------------------------------
-            info_window = '{}<br/>'.format(partner_name)
+            popup = '{}<br/>'.format(partner_name)
 
             try:
                 phone = (partner.phone or '').strip()
                 if phone:
-                    info_window += "Tel.: <a href='callto:{}'>{}</a>" \
+                    popup += "Tel.: <a href='callto:{}'>{}</a>" \
                                    "<br/>".format(
                                     phone, phone)
             except:
@@ -308,7 +308,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             try:
                 email = (partner.email or '').strip()
                 if email:
-                    info_window += "Mail: <a href='mailto:{}'>{}</a>" \
+                    popup += "Mail: <a href='mailto:{}'>{}</a>" \
                                    "<br/>".format(
                                     email, email)
             except:
@@ -317,15 +317,14 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             try:
                 website = (partner.website or '').strip()
                 if website:
-                    info_window += "Sito: <a href='{}' target= '_blank'>{}" \
+                    popup += "Sito: <a href='{}' target= '_blank'>{}" \
                                    "</a><br/>".format(
                                     website, website)
             except:
                 _logger.error('Error converting phone')
 
-            # info_window = ''  # todo remove
-            if info_window:
-                record['popup'] = info_window
+            if popup:
+                record['popup'] = popup
 
             partner_data[partner_ref] = record
 
