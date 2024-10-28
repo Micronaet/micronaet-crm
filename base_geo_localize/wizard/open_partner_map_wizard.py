@@ -315,8 +315,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 phone = (partner.phone or '').strip()
                 if phone:
                     popup += "Tel.: <a href='callto:{}'>{}</a>" \
-                                   "<br/>".format(
-                                    phone, phone)
+                             "<br/>".format(phone, phone)
             except:
                 _logger.error('Error converting phone')
 
