@@ -51,6 +51,12 @@ flask_url = 'http://192.168.1.182:5001'
 url_open = '%s/open?filename={}' % flask_url
 
 
+def clean_utf8(value):
+    """ Clean UTF8
+    """
+    return (value or '').encode('utf8').decode('utf8')
+
+
 class ResPartnerMapGeocodes(orm.TransientModel):
     """ Wizard for Geocode partner
     """
@@ -268,9 +274,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         for partner in partner_pool.browse(
                 cr, uid, partner_ids, context=context):
             partner_ref = '{} {}-{}'.format(
-                partner.name,
-                partner.street,
-                partner.city,
+                clean_utf8(partner.name),
+                clean_utf8(partner.street),
+                clean_utf8(partner.city),
             )
             partner_name = unidecode(partner.name.replace('\n', ' '))
 
