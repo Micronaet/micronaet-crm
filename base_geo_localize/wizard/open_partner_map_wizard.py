@@ -61,7 +61,7 @@ def clean_utf8(value):
 def clean_ascii(value):
     """ Clean ASCII
     """
-    return (value or '').encode('ascii', 'ignore').decode('ascii')
+    return (value or '').encode('ascii', 'replace').decode('ascii')
 
 
 class ResPartnerMapGeocodes(orm.TransientModel):
