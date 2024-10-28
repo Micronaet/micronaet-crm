@@ -100,15 +100,15 @@ class ResPartner(osv.osv):
 
         partner_address = 'OVERRIDDEN'
         try:
+            street = u'{} {}'.format(
+                    clean_utf8(partner.street), clean_utf8(partner.street2))
+            zipcode = clean_utf8(partner.zip).replace(' ', '')
+            city = clean_utf8(partner.city)
+            province = ' ({})'.format(partner.state_id.code) if \
+                partner.state_id else ''
+            country = clean_utf8(partner.country_id.name)
             partner_address = u'{} - {} {}{} {}'.format(
-                '{} {}'.format(
-                    clean_utf8(partner.street), clean_utf8(partner.street2)),
-                clean_utf8(partner.zip).replace(' ', ''),
-                clean_utf8(partner.city),
-                ' ({})'.format(partner.state_id.code) if
-                partner.state_id else '',
-                clean_utf8(partner.country_id.name),
-            )
+                street, zipcode, city, province, country)
             _logger.info(u'Geolocalize: {}'.format(partner_address))
         except:
             pdb.set_trace()
