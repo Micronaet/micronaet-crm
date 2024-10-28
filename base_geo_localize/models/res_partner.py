@@ -98,8 +98,9 @@ class ResPartner(osv.osv):
         geolocator = Nominatim(user_agent="ODOO Micronaet")
         partner = self.browse(cr, uid, ids, context=context)[0]
 
+        partner_address = 'OVERRIDDEN'
         try:
-            partner_address = '{} - {} {}{} {}'.format(
+            partner_address = u'{} - {} {}{} {}'.format(
                 '{} {}'.format(
                     clean_utf8(partner.street), clean_utf8(partner.street2)),
                 clean_utf8(partner.zip).replace(' ', ''),
@@ -107,10 +108,12 @@ class ResPartner(osv.osv):
                 ' ({})'.format(partner.state_id.code) if
                 partner.state_id else '',
                 clean_utf8(partner.country_id.name),
-                )
+            )
             _logger.info(u'Geolocalize: {}'.format(partner_address))
         except:
             pdb.set_trace()
+            _logger.info(u'Error, strange text: {}'.format(partner_address))
+            return False
         try:
             location = geolocator.geocode(partner_address)
         except:
