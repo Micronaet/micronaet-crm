@@ -113,7 +113,6 @@ class ResPartner(osv.osv):
             _logger.info(u'Geolocalize ID {}: {}'.format(
                 partner.id, partner_address))
         except:
-            pdb.set_trace()
             _logger.info(u'Error, strange text: {}'.format(partner_address))
             return False
         try:
