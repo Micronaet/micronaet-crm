@@ -118,6 +118,7 @@ class ResPartner(osv.osv):
         try:
             location = geolocator.geocode(partner_address)
         except:
+            pdb.set_trace()
             raise osv.except_osv(
                 _('Errore:'),
                 _('Timeout del servizio!'),
