@@ -323,8 +323,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 email = (partner.email or '').strip()
                 if email:
                     popup += "Mail: <a href='mailto:{}'>{}</a>" \
-                                   "<br/>".format(
-                                    email, email)
+                             "<br/>".format(email, email)
             except:
                 _logger.error('Error converting mail')
 
@@ -332,8 +331,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 website = (partner.website or '').strip()
                 if website:
                     popup += "Sito: <a href='{}' target= '_blank'>{}" \
-                                   "</a><br/>".format(
-                                    website, website)
+                             "</a><br/>".format(website, website)
             except:
                 _logger.error('Error converting phone')
 
