@@ -110,7 +110,8 @@ class ResPartner(osv.osv):
 
             partner_address = u'{} - {} {}{} {}'.format(
                 street, zipcode, city, province, country)
-            _logger.info(u'Geolocalize: {}'.format(partner_address))
+            _logger.info(u'Geolocalize ID {}: {}'.format(
+                partner.id, partner_address))
         except:
             pdb.set_trace()
             _logger.info(u'Error, strange text: {}'.format(partner_address))
