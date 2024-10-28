@@ -292,6 +292,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 color = 'green'
             elif partner.sql_supplier_code:
                 color = 'red'
+            elif partner.sql_destination_code:
+                color = 'blue'
             elif partner.is_company:
                 color = 'orange'
             else:
