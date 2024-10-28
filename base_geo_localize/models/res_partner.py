@@ -113,7 +113,7 @@ class ResPartner(osv.osv):
             _logger.info(u'Geolocalize ID {}: {}'.format(
                 partner.id, partner_address))
         except:
-            _logger.info(u'Error, strange text: {}'.format(partner_address))
+            _logger.info(u'Error, strange char: {}'.format(partner_address))
             return False
         try:
             location = geolocator.geocode(partner_address)
@@ -131,8 +131,7 @@ class ResPartner(osv.osv):
                 'geo_longitude': location.longitude,
                 'geo_date': datetime.now(),
             }
-            self.write(cr, uid, [partner.id], data, context=context)
-            return True
+            return self.write(cr, uid, [partner.id], data, context=context)
         except:
             self.write(cr, uid, [partner.id], {
                 'geo_find': False,
