@@ -98,19 +98,21 @@ class ResPartner(osv.osv):
         geolocator = Nominatim(user_agent="ODOO Micronaet")
         partner = self.browse(cr, uid, ids, context=context)[0]
 
-        partner_address = u'{} - {} {}{} {}'.format(
-            u'{} {}'.format(
-                clean_utf8(partner.street), clean_utf8(partner.street2)),
-            clean_utf8(partner.zip),
-            clean_utf8(partner.city),
-            u' ({})'.format(partner.state_id.code) if partner.state_id else '',
-            clean_utf8(partner.country_id.name),
-            )
-        _logger.info(u'Geolocalize: {}'.format(partner_address))
+        try:
+            partner_address = u'{} - {} {}{} {}'.format(
+                u'{} {}'.format(
+                    clean_utf8(partner.street), clean_utf8(partner.street2)),
+                clean_utf8(partner.zip),
+                clean_utf8(partner.city),
+                u' ({})'.format(partner.state_id.code) if partner.state_id else '',
+                clean_utf8(partner.country_id.name),
+                )
+            _logger.info(u'Geolocalize: {}'.format(partner_address))
+        except:
+            pdb.set_trace()
         try:
             location = geolocator.geocode(partner_address)
         except:
-            pdb.set_trace()
             raise osv.except_osv(
                 _('Errore:'),
                 _('Timeout del servizio!'),
