@@ -93,7 +93,7 @@ class ResPartner(osv.osv):
         def clean_utf8(value):
             """ Clean UTF8
             """
-            return (value or '').encode('utf8')
+            return (value or '').encode('utf8').decode('utf8')
 
         geolocator = Nominatim(user_agent="ODOO Micronaet")
         partner = self.browse(cr, uid, ids, context=context)[0]
@@ -107,12 +107,9 @@ class ResPartner(osv.osv):
             province = ' ({})'.format(partner.state_id.code) if \
                 partner.state_id else ''
             country = clean_utf8(partner.country_id.name)
+
             partner_address = u'{} - {} {}{} {}'.format(
-                street.decode('utf8'),
-                zipcode.decode('utf8'),
-                city.decode('utf8'),
-                province.decode('utf8'),
-                country.decode('utf8'))
+                street, zipcode, city, province, country)
             _logger.info(u'Geolocalize: {}'.format(partner_address))
         except:
             pdb.set_trace()
