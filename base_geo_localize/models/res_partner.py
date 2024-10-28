@@ -108,7 +108,11 @@ class ResPartner(osv.osv):
                 partner.state_id else ''
             country = clean_utf8(partner.country_id.name)
             partner_address = u'{} - {} {}{} {}'.format(
-                street, zipcode, city, province, country)
+                street.decode('utf8'),
+                zipcode.decode('utf8'),
+                city.decode('utf8'),
+                province.decode('utf8'),
+                country.decode('utf8'))
             _logger.info(u'Geolocalize: {}'.format(partner_address))
         except:
             pdb.set_trace()
