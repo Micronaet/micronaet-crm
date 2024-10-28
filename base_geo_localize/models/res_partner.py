@@ -21,6 +21,8 @@
 ###############################################################################
 
 import logging
+import pdb
+
 from openerp.osv import osv, fields
 from openerp import tools
 from openerp.tools.translate import _
@@ -88,23 +90,27 @@ class ResPartner(osv.osv):
     def geo_localize(self, cr, uid, ids, context=None):
         """ Extract geo data from address
         """
+        def clean_utf8(value):
+            """ Clean UTF8
+            """
+            return (value or '').encode('utf8')
+
         geolocator = Nominatim(user_agent="ODOO Micronaet")
         partner = self.browse(cr, uid, ids, context=context)[0]
 
         partner_address = u'{} - {} {}{} {}'.format(
-            (u'{} {}'.format(
-                (partner.street or u'').encode('utf8'),
-                (partner.street2 or u'').encode('utf8'),
-            )).strip(),
-            (partner.zip or u'').encode('utf8'),
-            (partner.city or u'').encode('utf8'),
+            u'{} {}'.format(
+                clean_utf8(partner.street), clean_utf8(partner.street2)),
+            clean_utf8(partner.zip),
+            clean_utf8(partner.city),
             u' ({})'.format(partner.state_id.code) if partner.state_id else '',
-            (partner.country_id.name or '').encode('utf8'),
+            clean_utf8(partner.country_id.name),
             )
         _logger.info(u'Geolocalize: {}'.format(partner_address))
         try:
             location = geolocator.geocode(partner_address)
         except:
+            pdb.set_trace()
             raise osv.except_osv(
                 _('Errore:'),
                 _('Timeout del servizio!'),
