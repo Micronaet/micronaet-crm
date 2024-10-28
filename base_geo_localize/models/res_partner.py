@@ -91,16 +91,17 @@ class ResPartner(osv.osv):
         geolocator = Nominatim(user_agent="ODOO Micronaet")
         partner = self.browse(cr, uid, ids, context=context)[0]
 
-        partner_address = '{} - {} {}{} {}'.format(
-            ('{} {}'.format(
-                partner.street or '',
-                partner.street2 or '')).strip(),
-            partner.zip or '',
-            partner.city or '',
-            ' ({})'.format(partner.state_id.code) if partner.state_id else '',
-            partner.country_id.name or '',
+        partner_address = u'{} - {} {}{} {}'.format(
+            (u'{} {}'.format(
+                (partner.street or u'').encode('utf8'),
+                (partner.street2 or u'').encode('utf8'),
+            )).strip(),
+            (partner.zip or u'').encode('utf8'),
+            (partner.city or u'').encode('utf8'),
+            u' ({})'.format(partner.state_id.code) if partner.state_id else '',
+            (partner.country_id.name or '').encode('utf8'),
             )
-        _logger.info('Geolocalize: {}'.format(partner_address))
+        _logger.info(u'Geolocalize: {}'.format(partner_address))
         try:
             location = geolocator.geocode(partner_address)
         except:
