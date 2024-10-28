@@ -99,12 +99,13 @@ class ResPartner(osv.osv):
         partner = self.browse(cr, uid, ids, context=context)[0]
 
         try:
-            partner_address = u'{} - {} {}{} {}'.format(
-                u'{} {}'.format(
+            partner_address = '{} - {} {}{} {}'.format(
+                '{} {}'.format(
                     clean_utf8(partner.street), clean_utf8(partner.street2)),
-                clean_utf8(partner.zip),
+                clean_utf8(partner.zip).replace(' ', ''),
                 clean_utf8(partner.city),
-                u' ({})'.format(partner.state_id.code) if partner.state_id else '',
+                ' ({})'.format(partner.state_id.code) if
+                partner.state_id else '',
                 clean_utf8(partner.country_id.name),
                 )
             _logger.info(u'Geolocalize: {}'.format(partner_address))
