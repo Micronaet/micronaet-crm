@@ -117,7 +117,7 @@ def search():
     """ Hello page, log access on a file
     """
     # province_data = request.json
-    return ''
+    return render_template('search.html')
 
 
 if __name__ == '__main__':
