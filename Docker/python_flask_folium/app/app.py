@@ -189,9 +189,6 @@ def open():
 def search():
     """ Hello page, log access on a file
     """
-    wizard_obj = 'res.partner.map.geocodes'
-
-    odoo = MyFlaskSQL.get_odoo()
     # Read parameter from POST
     state_code = request.form.get('filter_province', False)
     city = request.form.get('filter_city', False)
@@ -200,17 +197,18 @@ def search():
     if not from_wizard:
         return render_template('search.html')
 
-    if wizard_obj in odoo.env:
-        pdb.set_trace()
-        wizard_pool = odoo.env[wizard_obj]
-        wizard = wizard_pool.create({
-            'customer_mode': 'yes',  # 'all'
-            'supplier_mode': 'yes',
-            # 'state_id': False,
-            'state_code': state_code,
-            'city': city,
-        })
-        result = wizard.action_done()
+    wizard_obj = 'res.partner.map.geocodes'
+    odoo = MyFlaskSQL.get_odoo()
+    pdb.set_trace()
+    wizard_pool = odoo.env[wizard_obj]
+    wizard = wizard_pool.create({
+        'customer_mode': 'yes',  # 'all'
+        'supplier_mode': 'yes',
+        # 'state_id': False,
+        'state_code': state_code,
+        'city': city,
+    })
+    result = wizard.action_done()
 
     # province_data = request.json
     url = 'Ciao'
