@@ -341,7 +341,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
             odoo_partner_url = odoo_url.format(
                 db=cr.dbname, partner_id=partner_id)
-            popup += "ODOO: <a href='{}' target='_blank'>Apri" \
+            popup += "<a href='{}' target='_blank'>Apri ODOO" \
                      "</a><br/>".format(odoo_partner_url)
 
             if popup:
