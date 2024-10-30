@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Micronaet Webserver</title>
+    </head>
+    <body>
+        <div class="about">
+            <h1>Parametri mappa:</h1>
+            <form action="{{ url_for('search') }}" method="post">
+                <h5>Filtri:</h5>
+                <p>
+                    <label for="filter_city">Paese:</label>
+                    <input type="text" id="filter_city" name="filter_city">
+
+                    <label for="filter_province">Provincia:</label>
+                    <input type="text" id="filter_province" name="filter_province">
+                </p>
+                <hr />
+
+                <h5>Tipo partner:</h5>
+                <p>
+                    <label for="check_customer">Clienti</label>
+                    <input type="checkbox" id="check_customer" name="check_customer" >
+
+                    <label for="check_customer">Fornitori</label>
+                    <input type="checkbox" id="check_supplier" name="check_supplier" >
+                </p>
+                <p align="center">
+                    <input type="submit" value="Apri mappa">
+                </p>
+            </form>
+        </div>
+    </body>
+</html>
+
+

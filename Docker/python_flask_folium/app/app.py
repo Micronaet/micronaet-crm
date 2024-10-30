@@ -112,5 +112,13 @@ def open():
         return render_template(filename)
 
 
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    """ Hello page, log access on a file
+    """
+    # province_data = request.json
+    return ''
+
+
 if __name__ == '__main__':
     MyFlaskSQL.run()
