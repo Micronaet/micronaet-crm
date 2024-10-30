@@ -12,7 +12,8 @@ import folium
 import odoorpc
 import traceback
 import configparser
-from flask import Flask, render_template, request, send_from_directory, jsonify
+from flask import Flask, render_template, request, send_from_directory, \
+    jsonify, redirect
 from datetime import datetime
 
 # import sys
@@ -203,12 +204,8 @@ def search():
         'state_code': state_code,
         'city': city,
     })
-    pdb.set_trace()
     result = wizard_pool.browse(wizard_id).action_done()
-
-    # province_data = request.json
-    url = 'Ciao'
-    return url
+    return redirect(result.url, code=302)
 
 
 if __name__ == '__main__':
