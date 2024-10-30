@@ -205,7 +205,7 @@ def search():
         'city': city,
     })
     result = wizard_pool.browse(wizard_id).action_done()
-    return redirect(result.url, code=302)
+    return redirect(result.get('url'), code=302)
 
 
 if __name__ == '__main__':
