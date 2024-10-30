@@ -35,6 +35,21 @@ class FlaskMSSQL:
         else:
             return data_folder
 
+    def get_odoo(self):
+        """ Connect to odoo
+        """
+        odoo_param = self.context.get('odoo', {})
+        odoo = odoorpc.ODOO(
+            odoo_param.get('server'), odoo_param.get('port'))
+
+        # Login
+        odoo.login(
+            odoo_param.get('database'),
+            odoo_param.get('username'),
+            odoo_param.get('password'),
+        )
+        return odoo
+
     # -------------------------------------------------------------------------
     #                              Constructor:
     # -------------------------------------------------------------------------
@@ -174,8 +189,32 @@ def open():
 def search():
     """ Hello page, log access on a file
     """
+    wizard_obj = 'res.partner.map.geocodes'
+
+    odoo = MyFlaskSQL.get_odoo()
+    # Read parameter from POST
+    state_code = request.form.get('filter_province', False)
+    city = request.form.get('filter_city', False)
+    from_wizard = request.form.get('from_wizard', False)
+
+    if not from_wizard:
+        return render_template('search.html')
+
+    if wizard_obj in odoo.env:
+        pdb.set_trace()
+        wizard_pool = odoo.env[wizard_obj]
+        wizard = wizard_pool.create({
+            'customer_mode': 'yes',  # 'all'
+            'supplier_mode': 'yes',
+            # 'state_id': False,
+            'state_code': state_code,
+            'city': city,
+        })
+        wizard.action_done()
+
     # province_data = request.json
-    return render_template('search.html')
+    url = 'Ciao'
+    return url
 
 
 if __name__ == '__main__':
