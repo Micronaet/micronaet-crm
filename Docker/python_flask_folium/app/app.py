@@ -55,7 +55,7 @@ class FlaskMSSQL:
     # -------------------------------------------------------------------------
     #                              Constructor:
     # -------------------------------------------------------------------------
-    def __init__(self, app, config_filename='flask.cfg'):
+    def __init__(self, app, config_filename='odoo.cfg'):
         """ Constructor
         """
         # Setup init parameters and save in instance context:
@@ -65,7 +65,6 @@ class FlaskMSSQL:
         # Config file:
         # ---------------------------------------------------------------------
         # Generate name:
-        config_filename = 'odoo.cfg'
         config_fullname = os.path.join(
             self.get_subfolder(),  # Root data folder
             config_filename,
@@ -78,14 +77,9 @@ class FlaskMSSQL:
 
             # Create init file:
             cfg_file = open(config_fullname, 'w')
-            cfg_file.write('''
-        [ODOO]
-            server: localhost
-            port: 8069
-            username: admin
-            password: secret
-            database: database            
-        ''')
+            cfg_file.write(
+                '[ODOO]\n server: localhost\n port: 8069\n username: admin\n '
+                'password: secret\n database: database')
             cfg_file.close()
 
         # Read config file:
