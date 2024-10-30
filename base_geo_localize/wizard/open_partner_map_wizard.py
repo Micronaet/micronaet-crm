@@ -50,6 +50,9 @@ _logger = logging.getLogger(__name__)
 flask_url = 'http://192.168.1.182:5001'
 url_open = '%s/open?filename={}' % flask_url
 
+odoo_url = 'http://192.168.1.181:18069/web?db={db}#id={partner_id}&' \
+           'view_type=form&model=res.partner&menu_id=682&action=884'
+
 
 # Utility:
 def clean_utf8(value):
@@ -286,6 +289,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 clean_ascii(partner.city),
             )
             partner_name = unidecode(partner.name.replace('\n', ' '))
+            partner_id = partner.id
 
             # Color setup:
             if partner.sql_customer_code:
@@ -330,10 +334,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             try:
                 website = (partner.website or '').strip()
                 if website:
-                    popup += "Sito: <a href='{}' target= '_blank'>{}" \
+                    popup += "Sito: <a href='{}' target='_blank'>{}" \
                              "</a><br/>".format(website, website)
             except:
                 _logger.error('Error converting phone')
+
+            odoo_partner_url = odoo_url.format(
+                db=cr.dbname, partner_id=partner_id)
+            popup += "ODOO: <a href='{}' target='_blank'>Apri" \
+                     "</a><br/>".format(odoo_partner_url)
 
             if popup:
                 record['popup'] = popup
