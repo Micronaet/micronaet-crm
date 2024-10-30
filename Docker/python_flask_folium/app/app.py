@@ -197,9 +197,9 @@ def search():
     if not from_wizard:
         return render_template('search.html')
 
+    pdb.set_trace()
     wizard_obj = 'res.partner.map.geocodes'
     odoo = MyFlaskSQL.get_odoo()
-    pdb.set_trace()
     wizard_pool = odoo.env[wizard_obj]
     wizard = wizard_pool.create({
         'customer_mode': 'yes',  # 'all'
