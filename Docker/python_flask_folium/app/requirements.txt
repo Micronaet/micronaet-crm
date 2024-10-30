@@ -2,6 +2,9 @@
 # gmplot==1.4.1
 folium==0.18.0
 
+# ODOO:
+OdooRPC==0.10.1
+
 # Utility:
 python-dateutil==2.9.0.post0
 tzdata==2024.1

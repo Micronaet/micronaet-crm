@@ -9,12 +9,13 @@
 import os
 import pdb
 import folium
+import odoorpc
 import traceback
+import configparser
 from flask import Flask, render_template, request, send_from_directory, jsonify
 from datetime import datetime
 
 # import sys
-# import configparser
 # from excel_report import Excel
 
 
@@ -24,13 +25,70 @@ from datetime import datetime
 class FlaskMSSQL:
     """ Class for manage this structure of FLASK + MS SQL Server
     """
+    # Utility:
+    def get_subfolder(self, subfolder=''):
+        """ Get folder for save data
+        """
+        data_folder = os.getenv('data_folder')  # ENV Variable
+        if subfolder:
+            return os.path.join(data_folder, subfolder)
+        else:
+            return data_folder
+
     # -------------------------------------------------------------------------
     #                              Constructor:
     # -------------------------------------------------------------------------
     def __init__(self, app, config_filename='flask.cfg'):
         """ Constructor
         """
+        # Setup init parameters and save in instance context:
+        self.context = {}
+
+        # ---------------------------------------------------------------------
+        # Config file:
+        # ---------------------------------------------------------------------
+        # Generate name:
+        config_filename = 'odoo.cfg'
+        config_fullname = os.path.join(
+            self.get_subfolder(),  # Root data folder
+            config_filename,
+        )
+
+        # Create if not present:
+        if not os.path.isfile(config_fullname):
+            print('Create init CFG file {}: Change it!'.format(
+                config_filename))
+
+            # Create init file:
+            cfg_file = open(config_fullname, 'w')
+            cfg_file.write('''
+        [ODOO]
+            server: localhost
+            port: 8069
+            username: admin
+            password: secret
+            database: database            
+        ''')
+            cfg_file.close()
+
+        # Read config file:
+        config = configparser.ConfigParser()
+        config.read([config_fullname])
+
+        # ---------------------------------------------------------------------
+        # Save MS SQL Parameters:
+        # ---------------------------------------------------------------------
+        self.context['odoo'] = {
+            'server': config.get('ODOO', 'server'),
+            'port': config.get('ODOO', 'port'),
+            'username': config.get('ODOO', 'username'),
+            'password': config.get('ODOO', 'password'),
+            'database': config.get('ODOO', 'database'),
+        }
+
+        # ---------------------------------------------------------------------
         # Save Flask App:
+        # ---------------------------------------------------------------------
         self.app = app
 
     # -------------------------------------------------------------------------
