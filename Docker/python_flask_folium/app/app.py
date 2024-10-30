@@ -40,7 +40,9 @@ class FlaskMSSQL:
         """
         odoo_param = self.context.get('odoo', {})
         odoo = odoorpc.ODOO(
-            odoo_param.get('server'), odoo_param.get('port'))
+            odoo_param.get('server'),
+            int(odoo_param.get('port')),
+        )
 
         # Login
         odoo.login(
