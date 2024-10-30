@@ -210,7 +210,7 @@ def search():
             'state_code': state_code,
             'city': city,
         })
-        wizard.action_done()
+        result = wizard.action_done()
 
     # province_data = request.json
     url = 'Ciao'
