@@ -12,12 +12,12 @@
                     <field name="newsletter_group" />
                 </field>
             </field>
-        </record>       
+        </record>
         <record model="ir.ui.view" id="view_res_partner_newsletter_search">
             <field name="name">res.partner.search</field>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <search string="Search newsletter partner" version="7.0">        
+                <search string="Search newsletter partner" version="7.0">
                     <field name="name" />
                     <field name="city" />
                     <field name="country_id" />
@@ -31,10 +31,10 @@
                     <field name="type_id" />
                     <field name="newsletter_category_id" />
                     <field name="newsletter_group" />
-                    
+
                     <filter name="has_newsletter_category" string="Newsletter category" domain="[('newsletter_category_id','!=',False)]"/>
                     <filter name="is_company_true" string="Company" domain="[('is_company','=',True)]"/>
-                    
+
                     <group expand="0" string="Group By...">
                         <filter name="group_create" string="Create date" context="{'group_by': 'create_date'}"/>
                         <filter name="group_type" string="Campaign" context="{'group_by': 'type_id'}"/>
@@ -43,7 +43,7 @@
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
                         <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
                         <filter name="group_state" string="State" context="{'group_by': 'state_id'}"/>
-                    </group>                
+                    </group>
                 </search>
             </field>
         </record>
@@ -75,25 +75,41 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_res_partner_newsletter_tree"/>
-            <field name="search_view_id" ref="view_res_partner_newsletter_search"/>            
+            <field name="search_view_id" ref="view_res_partner_newsletter_search"/>
             <field name="context">{'default_is_company': True,'default_customer': False,'default_supplier': False}</field>
             <field name="domain">[('is_company', '=', True),('parent_id','=',False),('is_address', '=', False)]</field>
         </record>
-        <menuitem 
-            parent="base.menu_sales" 
-            id="menu_res_partner_newletter" 
+        <record model="ir.actions.act_window" id="action_res_partner_newsletter_all_stree">
+            <field name="name">Lead (Tutte)</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_newsletter_tree"/>
+            <field name="search_view_id" ref="view_res_partner_newsletter_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
+        <menuitem
+            parent="base.menu_sales"
+            id="menu_res_partner_newletter"
             action="action_res_partner_newletter_tree"
             sequence="2"
-            />        
+            />
+        <menuitem
+            parent="menu_res_partner_newletter"
+            id="menu_res_partner_newsletter_all"
+            action="action_res_partner_newsletter_all_stree"
+            sequence="10"
+            />
 
         <!--crm.newsletter.category-->
         <record model="ir.ui.view" id="view_crm_newsletter_category_tree">
             <field name="name">crm.newsletter.category.form</field>
             <field name="model">crm.newsletter.category</field>
             <field name="arch" type="xml">
-                <tree string="Newsletter category">        
+                <tree string="Newsletter category">
                     <field name="name" />
-                    <field name="note" nolabel="1" colspan="4"/>                            
+                    <field name="note" nolabel="1" colspan="4"/>
                 </tree>
             </field>
         </record>
@@ -101,14 +117,14 @@
             <field name="name">crm.newsletter.category.form</field>
             <field name="model">crm.newsletter.category</field>
             <field name="arch" type="xml">
-                <form string="Newsletter category" version="7.0">        
+                <form string="Newsletter category" version="7.0">
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="name" />
                             <separator string="Note" colspan="4"/>
-                            <field name="note" nolabel="1" colspan="4"/>                            
+                            <field name="note" nolabel="1" colspan="4"/>
                         </group>
-                    </sheet>        
+                    </sheet>
                 </form>
             </field>
         </record>
@@ -121,12 +137,12 @@
             <field name="context">{}</field>
             <field name="domain">[]</field>
         </record>
-        <menuitem 
-            parent="base.menu_base_config" 
-            id="menu_crm_newsletter_category" 
+        <menuitem
+            parent="base.menu_base_config"
+            id="menu_crm_newsletter_category"
             action="action_crm_newsletter_category"
             sequence="50"
-            />    
+            />
     </data>
 </openerp>
 
