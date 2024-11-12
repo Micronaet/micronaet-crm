@@ -53,19 +53,19 @@
             <field name="name">res.partner.crm.form</field>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <form string="Partner CRM" version="7.0">        
+                <form string="Partner CRM" version="7.0">
                     <sheet>
                         <group col="4" colspan="4">
                             <field name="image" widget="image" class="oe_left oe_avatar" options="{'preview_image': 'image_medium', 'size': [90, 90]}" />
                                 <div class="oe_title oe_left">
                                     <div class="oe_edit_only">
                                         <label for="name" />
-                                            (                                                    
+                                            (
                                         <field name="is_company" on_change="onchange_type(is_company)" class="oe_inline" />
                                         <label for="is_company" string="Is company?"/>
                                         <field name="is_address" />
                                         <label for="is_address" string="Is address?"/>
-                                            )                                                
+                                            )
                                     </div>
                                     <h1>
                                         <field name="name" default_focus="1" placeholder="Name" required="1" />
@@ -127,27 +127,27 @@
             <field name="name">res.partner.crm.search</field>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <search string="Partner CRM" version="7.0">        
+                <search string="Partner CRM" version="7.0">
                     <field name="name" />
                     <field name="country_id" />
                     <field name="newsletter_category_id" />
                     <field name="type_id" />
                     <field name="crm_level" />
-                    
+
                     <filter name="crm_level_0" string="Not important" domain="[('crm_level','=', 1)]"/>
                     <filter name="crm_level_gt_0" string="Important" domain="[('crm_level', '&gt;', 1)]"/>
-                    
+
                     <filter name="is_customer" string="Customer" domain="[('sql_customer_code','!=', False)]"/>
                     <filter name="is_supplier" string="Supplier" domain="[('sql_supplier_code','!=', False)]"/>
                     <filter name="is_destination" string="Destination" domain="[('sql_destination_code','!=', False)]"/>
                     <filter name="is_agent" string="Agent" domain="[('sql_agent_code','!=', False)]"/>
-                    
+
                     <group expand="4" string="CRM Group">
                         <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
                         <filter name="group_newsletter" string="Newsletter" context="{'group_by': 'newsletter_category_id'}"/>
                         <filter name="group_type" string="Campaign" context="{'group_by': 'type_id'}"/>
                         <filter name="group_crm" string="CRM Level" context="{'group_by': 'crm_level'}"/>
-                    </group>                
+                    </group>
                 </search>
             </field>
         </record>
@@ -160,7 +160,7 @@
             <field name="search_view_id" ref="view_res_partner_crm_search"/>
             <field name="context">{}</field>
             <field name="domain">[]</field>
-        </record>        
+        </record>
         <record model="ir.actions.act_window" id="action_res_partner_insert_crm">
             <field name="name">Catalog lead</field>
             <field name="res_model">res.partner</field>
@@ -169,8 +169,19 @@
             <field name="view_id" ref="view_res_partner_crm_insert_tree"/>
             <field name="search_view_id" ref="view_res_partner_crm_search"/>
             <field name="context">{}</field>
+            <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>
             <!--<field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False)]</field>-->
-        </record>        
+        </record>
+        <record model="ir.actions.act_window" id="action_res_partner_insert_all_crm">
+            <field name="name">Lead (tutte)</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_res_partner_crm_insert_tree"/>
+            <field name="search_view_id" ref="view_res_partner_crm_search"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+        </record>
         <record model="ir.actions.act_window" id="action_res_partner_crm_lead">
             <field name="name">All lead</field>
             <field name="res_model">res.partner</field>
@@ -200,44 +211,50 @@
             <field name="search_view_id" ref="view_res_partner_crm_search"/>
             <field name="context">{}</field>
             <field name="domain">[('sql_destination_code','=',False),('sql_agent_code','=',False),('sql_supplier_code','=',False),('sql_customer_code','=',False),('crm_level','&gt;', 1)]</field>
-        </record>                              
-        <menuitem 
-            parent="base.menu_base_partner" 
-            id="menu_case1_root" 
-            sequence="0"            
+        </record>
+        <menuitem
+            parent="base.menu_base_partner"
+            id="menu_case1_root"
+            sequence="0"
             name="CRM Management"
-            />        
-            <menuitem 
+            />
+            <menuitem
                 parent="menu_case1_root"
-                id="menu_case1_all_partner" 
+                id="menu_case1_all_partner"
                 action="action_res_partner_crm"
                 sequence="10"
-                />        
-                <menuitem 
-                    parent="menu_case1_all_partner" 
-                    id="menu_case1_all_leads" 
+                />
+                <menuitem
+                    parent="menu_case1_all_partner"
+                    id="menu_case1_all_leads"
                     action="action_res_partner_crm_lead"
                     sequence="10"
                     />
-                <menuitem 
-                    parent="menu_case1_all_partner" 
-                    id="menu_case1_all_leads_level_1" 
+                <menuitem
+                    parent="menu_case1_all_partner"
+                    id="menu_case1_all_leads_level_1"
                     action="action_res_partner_crm_lead_1"
                     sequence="20"
                     />
-                <menuitem 
-                    parent="menu_case1_all_partner" 
-                    id="menu_case1_all_leads_level_gt_1" 
+                <menuitem
+                    parent="menu_case1_all_partner"
+                    id="menu_case1_all_leads_level_gt_1"
                     action="action_res_partner_crm_lead_234"
                     sequence="30"
                     />
-                
-            <menuitem 
+
+            <menuitem
                 parent="menu_case1_root"
-                id="menu_case1_catalogation_leads" 
+                id="menu_case1_catalogation_leads"
                 action="action_res_partner_insert_crm"
                 sequence="20"
-                />        
+                />
+                <menuitem
+                    parent="menu_case1_catalogation_leads"
+                    id="menu_case1_catalogation_leads_all"
+                    action="action_res_partner_insert_all_crm"
+                    sequence="10"
+                    />
     </data>
 </openerp>
 
