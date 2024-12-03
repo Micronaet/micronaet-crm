@@ -92,7 +92,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         attachment_id = attachment_pool.create(cr, uid, {
             'name': name,
-            'datas_fname': 'HTML Mappa',
+            'datas_fname': 'HTML Mappa.kml',
             'type': 'binary',
             'datas': b64,
             'partner_id': 1,
