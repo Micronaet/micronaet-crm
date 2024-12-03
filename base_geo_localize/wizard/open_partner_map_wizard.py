@@ -406,7 +406,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                         sys.exc_info(),
                     ))
                     pdb.set_trace()
-                popup = partner.get('popup', '')
 
 
             folders += folder.format(
