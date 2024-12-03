@@ -401,12 +401,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 odoo_partner = partner['partner']
                 location = partner['location']
                 partner_name = odoo_partner.name
-                description = partner.get('popup', '')
+                popup = partner.get('popup', '')
 
                 placemarks += placemark.format(
                     icon=icon,
                     name=clean_html(partner_name),
-                    description=clean_html(description),
+                    description=clean_html(popup),
                     lat=location[1],
                     lon=location[0],
                     color=color,
