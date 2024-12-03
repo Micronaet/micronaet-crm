@@ -291,12 +291,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             '{icon}-wht-blank_maps.png'.format(icon=icon)
 
         pin_colors = {
-            'Clienti': 'ff44af62',
-            'customer_contact': 'ffffc39f',
-            'Destinazioni': 'ff39dccd',
-            'destination_contact': 'ff3644db',
-            'Fornitori': 'ff969cee',
-            'supplier_contact': 'ff969cee',  # todo change
+            'Clienti': 'ff44af62',  # Green dark
+            'customer_contact': 'ff3644db',  # Green
+            'Destinazioni': 'ff44af62',  # Blue dark
+            'destination_contact': 'ffabdbb7',  # Blue
+            'Fornitori': 'ff3644db',  # Red dask
+            'supplier_contact': 'ff969cee',  # Red
         }
 
         document = '''<?xml version="1.0" encoding="UTF-8"?>
