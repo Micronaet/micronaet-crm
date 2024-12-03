@@ -409,6 +409,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                         color=color,
                     )
                 except:
+                    pdb.set_trace()
                     _logger.error('Error exporting partner {}:\n{}'.format(
                         partner_name,
                         sys.exc_info(),
