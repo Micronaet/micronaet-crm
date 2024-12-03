@@ -305,7 +305,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'Nullo': '00000000',  # Bladk
         }
 
-        document = '''<?xml version="1.0" encoding="UTF-8"?>
+        document = u'''<?xml version="1.0" encoding="UTF-8"?>
           <kml xmlns="http://www.opengis.net/kml/2.2">
            <Document>
             <name>{name}</name>
@@ -368,14 +368,14 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 icon_link=icon_link,
             )
 
-        folder = '''
+        folder = u'''
             <Folder>
               <name>{name}</name>
               {placemarks}
             </Folder>
             '''
 
-        placemark = '''
+        placemark = u'''
               <Placemark>
                 <name>{name}</name>
                 <description>{description}</description>
