@@ -276,6 +276,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             """
             try:
                 # value = unidecode(value)
+                pdb.set_trace()
+                value = (value or '').strip()
                 value = html.escape(value)
                 return value
             except:
