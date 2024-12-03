@@ -296,8 +296,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'Clienti (contatto)': 'ff3644db',  # Green
             'Destinazioni': 'ff44af62',  # Blue dark
             'Destinazioni (contatto)': 'ffabdbb7',  # Blue
-            # 'Fornitori': 'ff3644db',  # Red dask
-            # 'Fornitori (contatto)': 'ff969cee',  # Red
+            'Fornitori': 'ff3644db',  # Red dask
+            'Fornitori (contatto)': 'ff969cee',  # Red
 
             'Lead': 'ff44af62',  # Blue dark
             'Lead (contatto)': 'ffabdbb7',  # Blue
