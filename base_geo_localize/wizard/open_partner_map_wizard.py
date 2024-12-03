@@ -418,7 +418,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         kml_filename = '/tmp/{}.kml'.format(
             str(datetime.now()).replace('/', '').replace(':', '')
         )
-        kml_file = open(kml_filename)
+        kml_file = open(kml_filename, 'w')
         kml_file.write(document.format(
             name=name,
             description=description,
