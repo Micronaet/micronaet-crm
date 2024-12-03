@@ -400,13 +400,13 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             for partner in partners[mode]:
                 odoo_partner = partner['partner']
                 location = partner['location']
-                name = odoo_partner.name
+                partner_name = odoo_partner.name
                 description = partner.get('popup', '')
 
                 placemarks += placemark.format(
                     icon=icon,
-                    name=clean_html(name),
-                    description=description,
+                    name=clean_html(partner_name),
+                    description=clean_html(description),
                     lat=location[1],
                     lon=location[0],
                     color=color,
@@ -424,8 +424,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         )
         kml_file = open(kml_filename, 'w')
         kml_file.write(document.format(
-            name=name,
-            description=description,
+            name=clean_html(name),
+            description=clean_html(description),
             style=style,
             folders=folders,
         ))
