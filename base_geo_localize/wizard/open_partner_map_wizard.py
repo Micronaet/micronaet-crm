@@ -476,11 +476,11 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 # KML mode:
                 # -------------------------------------------------------------
                 if partner.sql_customer_code:
-                    color = 'Cliente'
+                    color = 'Clienti'
                 elif partner.sql_destination_code:
-                    color = 'Destinazione'
+                    color = 'Destinazioni'
                 elif partner.sql_supplier_code:
-                    color = 'Fornitore'
+                    color = 'Fornitori'
                 else:
                     color = 'Lead'
 
