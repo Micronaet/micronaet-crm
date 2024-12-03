@@ -390,9 +390,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         ctx['kml_mode'] = True
         partners = self.action_done(cr, uid, ids, context=ctx)
 
-        folders = ''
+        folders = u''
         for mode in partners:
-            placemarks = ''
+            placemarks = u''
             color = pin_colors.get(mode, pin_colors['Nullo'])
             for partner in partners[mode]:
                 odoo_partner = partner['partner']
@@ -409,7 +409,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                         color=color,
                     )
                 except:
-                    pdb.set_trace()
                     _logger.error('Error exporting partner ID {}'.format(
                         odoo_partner.id,
                         # sys.exc_info(),
@@ -426,12 +425,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             str(datetime.now()).replace('/', '').replace(':', '')
         )
         kml_file = open(kml_filename, 'w')
-        kml_file.write(document.format(
-            name=clean_html(name),
-            description=clean_html(description),
-            style=style,
-            folders=folders,
-        ))
+        try:
+            kml_file.write(document.format(
+                name=clean_html(name),
+                description=clean_html(description),
+                style=style,
+                folders=folders,
+            ))
+        except:
+            pdb.set_trace()
         kml_file.close()
 
         # Return file
