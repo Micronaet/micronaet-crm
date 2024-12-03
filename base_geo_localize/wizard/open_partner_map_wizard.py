@@ -281,6 +281,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             except:
                 return ''
 
+        if context is None:
+            context = {}
+
         # Parameters:
         name = clean_html(u'Mappa ODOO')
         description = clean_html(u'Elenco partner esportati da ODOO')
@@ -297,6 +300,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'Destinazioni (contatto)': 'ffabdbb7',  # Blue
             'Fornitori': 'ff3644db',  # Red dask
             'Fornitori (contatto)': 'ff969cee',  # Red
+
+            'Lead': 'ff44af62',  # Blue dark
+            'Lead (contatto)': 'ffabdbb7',  # Blue
         }
 
         document = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -395,30 +401,37 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 ('Destinazione 2', 10.475601, 45.410379),
                 ('Destinazione 3', 10.485601, 45.410379),
             ],
+
         }
+
+        ctx = context.copy()
+        ctx['kml_mode'] = True
+        partners = self.action_done(cr, uid, ids, context=ctx)
 
         folders = ''
         for mode in partners:
-            company = True
-            if company:  # Company
-                color = pin_colors[mode]
-            else:  # Contact
-                color = pin_colors['{} (contatto)'.format(mode)]
-
             placemarks = ''
-            for customer in partners[mode]:
+            color = pin_colors[mode]
+            for partner in partners[mode]:
+                odoo_partner = partner['partner']
+                location = partner['location']
+                popup = partner.get('popup')
+
                 placemarks += placemark.format(
                     icon=icon,
-                    name=customer[0],
-                    lat=customer[1],
-                    lon=customer[2],
+                    name=odoo_partner.name,
+                    lat=location[0],
+                    lon=location[1],
                     color=color,
+                    # todo popup
                 )
 
             folders += folder.format(
                 name=mode,
                 placemarks=placemarks
             )
+
+        # Write file:
         kml_filename = '/tmp/{}.kml'.format(
             str(datetime.now()).replace('/', '').replace(':', '')
         )
@@ -431,17 +444,21 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         ))
         kml_file.close()
 
+        # Return file
         return self.return_attachment(
             cr, uid, 'KML Partner file', kml_filename, context=context)
 
     def action_done(self, cr, uid, ids, context=None):
         """ Event for button done
         """
+        if context is None:
+            context = {}
+        kml_mode = context.get('kml_mode')
+
         partner_pool = self.pool.get('res.partner')
-
         domain = self.get_domain(cr, uid, ids, context=context)
-
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
+
         partner_data = {}
         _logger.info('Found {} partner'.format(len(partner_ids)))
         for partner in partner_pool.browse(
@@ -452,26 +469,50 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 clean_ascii(partner.city),
             )
             partner_name = unidecode(partner.name.replace('\n', ' '))
-            partner_id = partner.id
+            partner_id = partner.id  # for ODOO URL
 
-            # Color setup:
-            if partner.sql_customer_code:
-                color = 'green'
-            elif partner.sql_destination_code:
-                color = 'blue'
-            elif partner.sql_supplier_code:
-                color = 'red'
-            elif partner.is_company:
-                color = 'orange'
+            if kml_mode:
+                # -------------------------------------------------------------
+                # KML mode:
+                # -------------------------------------------------------------
+                if partner.sql_customer_code:
+                    color = 'Cliente'
+                elif partner.sql_destination_code:
+                    color = 'Destinazione'
+                elif partner.sql_supplier_code:
+                    color = 'Fornitore'
+                else:
+                    color = 'Lead'
+
+                if not partner.is_company:
+                    color += ' (contatto)'
+                record = {
+                    'partner': partner,
+                    'location': [partner.geo_latitude, partner.geo_longitude],
+                    # popup
+                }
             else:
-                color = 'yellow'
+                # -------------------------------------------------------------
+                # Maps mode:
+                # -------------------------------------------------------------
+                # Color setup:
+                if partner.sql_customer_code:
+                    color = 'green'
+                elif partner.sql_destination_code:
+                    color = 'blue'
+                elif partner.sql_supplier_code:
+                    color = 'red'
+                elif partner.is_company:
+                    color = 'orange'
+                else:
+                    color = 'yellow'
 
-            record = {
-                'location': [partner.geo_latitude, partner.geo_longitude],
-                'color': color,
-                'tooltip': partner_name,
-                # popup
-            }
+                record = {
+                    'tooltip': partner_name,
+                    'location': [partner.geo_latitude, partner.geo_longitude],
+                    'color': color,  # Mode in KML file
+                    # popup
+                }
 
             # -----------------------------------------------------------------
             # Info Window:
@@ -510,7 +551,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             if popup:
                 record['popup'] = popup
 
-            partner_data[partner_ref] = record
+            if kml_mode:
+                if color not in partner_data:
+                    partner_data[color] = []
+                partner_data[color].append(record)
+            else:  # Map mode
+                partner_data[partner_ref] = record
+
+        if kml_mode:
+            return partner_data
 
         # ---------------------------------------------------------------------
         #                         Call MAPS Flask:
