@@ -381,6 +381,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         placemark = '''
               <Placemark>
                 <name>{name}</name>
+                <description>{descrition}</description>
                 <styleUrl>#icon-{icon}-{color}</styleUrl>
                 <Point>
                   <coordinates>{lat},{lon},0</coordinates>
@@ -399,11 +400,13 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             for partner in partners[mode]:
                 odoo_partner = partner['partner']
                 location = partner['location']
-                popup = partner.get('popup')
+                name = odoo_partner.name
+                description = partner.get('popup', '')
 
                 placemarks += placemark.format(
                     icon=icon,
-                    name=clean_html(odoo_partner.name),
+                    name=clean_html(name),
+                    description=description,
                     lat=location[1],
                     lon=location[0],
                     color=color,
