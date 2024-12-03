@@ -29,6 +29,9 @@ import logging
 import requests
 import json
 import openerp
+import html
+
+from unidecode import unidecode
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
@@ -36,11 +39,11 @@ from dateutil.relativedelta import relativedelta
 from openerp import SUPERUSER_ID
 from openerp import tools
 from openerp.tools.translate import _
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+from openerp.tools import (
+    DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DATETIME_FORMATS_MAP,
     float_compare)
-from unidecode import unidecode
 
 
 _logger = logging.getLogger(__name__)
@@ -269,6 +272,158 @@ class ResPartnerMapGeocodes(orm.TransientModel):
     def action_download(self, cr, uid, ids, context=None):
         """ Download instead of open directly
         """
+        def clean_html(value=u''):
+            """ Clean for HTML
+            """
+            try:
+                # value = unidecode(value)
+                value = html.escape(value)
+                return value
+            except:
+                return ''
+
+        # Parameters:
+        name = clean_html(u'Mappa ODOO')
+        description = clean_html(u'Elenco partner esportati da ODOO')
+
+        icon = '503'
+        icon_link = \
+            'https://www.gstatic.com/mapspro/images/stock/' \
+            '{icon}-wht-blank_maps.png'.format(icon=icon)
+
+        pin_colors = {
+            'Clienti': 'ff44af62',
+            'customer_contact': 'ffffc39f',
+            'Destinazioni': 'ff39dccd',
+            'destination_contact': 'ff3644db',
+            'Fornitori': 'ff969cee',
+            'supplier_contact': 'ff969cee',  # todo change
+        }
+
+        document = '''<?xml version="1.0" encoding="UTF-8"?>
+          <kml xmlns="http://www.opengis.net/kml/2.2">
+           <Document>
+            <name>{name}</name>
+            <description>{description}</description>    
+            {style}    
+            {folders}
+           </Document>
+         </kml>    
+        '''
+
+        style = ''
+        for color in pin_colors.values():
+            style += u'''
+            <Style id="icon-{icon}-{color}-normal">
+              <IconStyle>
+                <color>{color}</color>
+                <scale>1.1</scale>
+                <Icon>
+                  <href>{icon_link}-wht-blank_maps.png</href>
+                </Icon>
+                <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+              </IconStyle>
+              <LabelStyle>
+                <scale>0</scale>
+              </LabelStyle>
+              <BalloonStyle>
+                <text><![CDATA[<h3>$[name]</h3>]]></text>
+              </BalloonStyle>
+            </Style>
+            <Style id="icon-{icon}-{color}-highlight">
+              <IconStyle>
+                <color>{color}</color>
+                <scale>1.1</scale>
+                <Icon>
+                  <href>{icon_link}</href>
+                </Icon>
+                <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+              </IconStyle>
+              <LabelStyle>
+                <scale>1.1</scale>
+              </LabelStyle>
+              <BalloonStyle>
+                <text><![CDATA[<h3>$[name]</h3>]]></text>
+              </BalloonStyle>
+            </Style>
+
+            <StyleMap id="icon-{icon}-{color}">
+              <Pair>
+                <key>normal</key>
+                <styleUrl>#icon-{icon}-{color}-normal</styleUrl>
+              </Pair>
+              <Pair>
+                <key>highlight</key>
+                <styleUrl>#icon-{icon}-{color}-highlight</styleUrl>
+              </Pair>
+            </StyleMap>
+            '''.format(
+                color=color,
+                icon=icon,
+                icon_line=icon_link,
+            )
+
+        folder = '''
+            <Folder>
+              <name>{name}</name>
+              {placemarks}
+            </Folder>
+            '''
+
+        placemark = '''
+              <Placemark>
+                <name>{name}</name>
+                <styleUrl>#icon-{icon}-{color}</styleUrl>
+                <Point>
+                  <coordinates>{lat},{lon},0</coordinates>
+                </Point>
+              </Placemark>
+              '''
+
+        partners = {
+            'Clienti': [
+                ('Micronaet', 10.365601, 45.400379),
+                ('Fiam', 10.375601, 45.410379),
+            ],
+
+            'Fornitori': [
+                ('Fornitore 1', 10.565601, 45.400379),
+                ('Fornitore 2', 10.575601, 45.410379),
+            ],
+
+            'Destinazioni': [
+                ('Destinazione 1', 10.465601, 45.400379),
+                ('Destinazione 2', 10.475601, 45.410379),
+                ('Destinazione 3', 10.485601, 45.410379),
+            ],
+        }
+
+        folders = ''
+        for mode in partners:
+            color = pin_colors[mode]
+            placemarks = ''
+            for customer in partners[mode]:
+                placemarks += placemark.format(
+                    icon=icon,
+                    name=customer[0],
+                    lat=customer[1],
+                    lon=customer[2],
+                    color=color,
+                )
+
+            folders += folder.format(
+                name=mode,
+                placemarks=placemarks
+            )
+        kml_file = open('/tmp/{}.kml'.format(
+            str(datetime.now()).replace('/').replace(':')
+        ))
+        kml_file.write(document.format(
+            name=name,
+            description=description,
+            style=style,
+            folders=folders,
+        ))
         return True
 
     def action_done(self, cr, uid, ids, context=None):
