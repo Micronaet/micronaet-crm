@@ -135,9 +135,11 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         only_geo = context.get('only_geo', True)
 
         wizard = self.browse(cr, uid, ids, context=context)[0]
-        state_code = wizard.state_code
         city = wizard.city
+        state_code = wizard.state_code
         state = wizard.state_id
+        country_code = wizard.country_code
+        country = wizard.country_id
 
         # Only partner with geocodes:
         if only_geo:
@@ -151,17 +153,23 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
-        if state_code:
-            common_domain.append(
-                ('state_id.code', '=', state_code))
-
         if city:
             common_domain.append(
                 ('city', '=', city))
 
+        if state_code:
+            common_domain.append(
+                ('state_id.code', '=', state_code))
         if state:
             common_domain.append(
                 ('state_id', '=', state.id))
+
+        if country_code:
+            common_domain.append(
+                ('country_id.code', '=', country_code))
+        if country:
+            common_domain.append(
+                ('country_id', '=', country.id))
 
         # ---------------------------------------------------------------------
         # MODE: Set operation
@@ -565,14 +573,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
-        # 'country_id': fields.many2one(
-        #    'res.country', 'Nazione',
-        #    help='Seleziona nazione'),
-        'state_id': fields.many2one(
-            'res.country.state', 'Provincia',
-            help='Seleziona provincia'),
         'city': fields.char('Città', size=60),
-        'state_code': fields.char('Provincia', size=4),
+        'state_id': fields.many2one(
+            'res.country.state', 'Provincia (lista)',
+            help='Seleziona provincia'),
+        'state_code': fields.char('Provincia (sigla)', size=4),
+        'country_id': fields.many2one(
+            'res.country', 'Nazione (lista)',
+            help='Seleziona nazione'),
+        'country_code': fields.char('Nazione (sigla)', size=4),
 
         # ---------------------------------------------------------------------
         # Select mode:

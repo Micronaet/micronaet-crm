@@ -23,10 +23,14 @@
                        <field name="lead" />
 
                        <separator string="Filtri:" colspan="4"/>
+                       <field name="city" />
+                       <newsline />
+
                        <field name="state_id" />
                        <field name="state_code" />
 
-                       <field name="city" />
+                       <field name="country_id" />
+                       <field name="country_code" />
                    </group>
                 </form>
             </field>
