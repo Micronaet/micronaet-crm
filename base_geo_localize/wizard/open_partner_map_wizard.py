@@ -360,7 +360,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             '''.format(
                 color=color,
                 icon=icon,
-                icon_line=icon_link,
+                icon_link=icon_link,
             )
 
         folder = '''
@@ -415,16 +415,20 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 name=mode,
                 placemarks=placemarks
             )
-        kml_file = open('/tmp/{}.kml'.format(
-            str(datetime.now()).replace('/').replace(':')
-        ))
+        kml_filename = '/tmp/{}.kml'.format(
+            str(datetime.now()).replace('/', '').replace(':', '')
+        )
+        kml_file = open(kml_filename)
         kml_file.write(document.format(
             name=name,
             description=description,
             style=style,
             folders=folders,
         ))
-        return True
+        kml_file.close()
+
+        return self.return_attachment(
+            cr, uid, 'KML Partner file', kml_filename, context=context)
 
     def action_done(self, cr, uid, ids, context=None):
         """ Event for button done
