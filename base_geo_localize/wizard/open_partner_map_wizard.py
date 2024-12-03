@@ -63,7 +63,8 @@ odoo_url = 'http://192.168.1.181:18069/web?db={db}#id={partner_id}&' \
 def clean_utf8(value):
     """ Clean UTF8
     """
-    return (value or '').encode('utf8').decode('utf8')
+    value = (value or '').encode('utf8').decode('utf8')
+    value.replace(u'\xe0', '?')
     # a.encode('utf-8')
 
 
