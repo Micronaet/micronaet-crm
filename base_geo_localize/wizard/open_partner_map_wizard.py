@@ -64,9 +64,9 @@ def clean_utf8(value):
     """ Clean UTF8
     """
     value = (value or '').strip()
-    value.replace(u'\xe0', '?')
+    value = value.replace(u'\xe0', '?')
     value = value.encode('utf8').decode('utf8')
-    # a.encode('utf-8')
+    return value
 
 
 def clean_ascii(value):
