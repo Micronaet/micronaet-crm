@@ -279,6 +279,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 value = html.escape(value)
                 return value
             except:
+                _logger.error('Error convert{}\n{}'.format(
+                    value, sys.exc_info()))
                 return ''
 
         if context is None:
