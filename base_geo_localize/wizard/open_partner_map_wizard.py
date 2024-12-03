@@ -64,6 +64,7 @@ def clean_utf8(value):
     """ Clean UTF8
     """
     return (value or '').encode('utf8').decode('utf8')
+    # a.encode('utf-8')
 
 
 def clean_ascii(value):
@@ -78,6 +79,7 @@ def clean_html(value):
     try:
         # value = unidecode(value)
         value = (value or '').strip()
+        value = clean_utf8(value)
         value = cgi.escape(value)  # ex html
         return value
     except:
