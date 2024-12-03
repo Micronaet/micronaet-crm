@@ -402,6 +402,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                         color=color,
                     )
                 except:
+                    _logger.error('Error: {}'.format(
+                        sys.exc_info(),
+                    ))
                     pdb.set_trace()
                 popup = partner.get('popup', '')
 
