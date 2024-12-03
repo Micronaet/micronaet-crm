@@ -391,22 +391,14 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 location = partner['location']
                 partner_name = odoo_partner.name
                 popup = partner.get('popup', '')
-
-                try:
-                    placemarks += placemark.format(
-                        icon=icon,
-                        name=clean_html(partner_name),
-                        description=clean_html(popup),
-                        lat=location[1],
-                        lon=location[0],
-                        color=color,
-                    )
-                except:
-                    _logger.error('Error: {}'.format(
-                        sys.exc_info(),
-                    ))
-                    pdb.set_trace()
-
+                placemarks += placemark.format(
+                    icon=icon,
+                    name=clean_html(partner_name),
+                    description=clean_html(popup),
+                    lat=location[1],
+                    lon=location[0],
+                    color=color,
+                )
 
             folders += folder.format(
                 name=mode,
