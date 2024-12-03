@@ -291,7 +291,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         icon = '503'
         icon_link = \
             'https://www.gstatic.com/mapspro/images/stock/' \
-            '{icon}.png'.format(icon=icon)
+            '{icon}-wht-blank_maps.png'.format(icon=icon)
 
         pin_colors = {
             'Clienti': 'ff44af62',  # Green dark
@@ -324,7 +324,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 <color>{color}</color>
                 <scale>1.1</scale>
                 <Icon>
-                  <href>{icon_link}-wht-blank_maps.png</href>
+                  <href>{icon_link}</href>
                 </Icon>
                 <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
               </IconStyle>
