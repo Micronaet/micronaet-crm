@@ -385,25 +385,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
               </Placemark>
               '''
 
-        partners = {
-            'Clienti': [
-                ('Micronaet', 10.365601, 45.400379),
-                ('Fiam', 10.375601, 45.410379),
-            ],
-
-            'Fornitori': [
-                ('Fornitore 1', 10.565601, 45.400379),
-                ('Fornitore 2', 10.575601, 45.410379),
-            ],
-
-            'Destinazioni': [
-                ('Destinazione 1', 10.465601, 45.400379),
-                ('Destinazione 2', 10.475601, 45.410379),
-                ('Destinazione 3', 10.485601, 45.410379),
-            ],
-
-        }
-
         ctx = context.copy()
         ctx['kml_mode'] = True
         partners = self.action_done(cr, uid, ids, context=ctx)
@@ -419,7 +400,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
                 placemarks += placemark.format(
                     icon=icon,
-                    name=odoo_partner.name,
+                    name=clean_html(odoo_partner.name),
                     lat=location[0],
                     lon=location[1],
                     color=color,
