@@ -399,7 +399,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         folders = ''
         for mode in partners:
-            color = pin_colors[mode]
+            company = True
+            if company:  # Company
+                color = pin_colors[mode]
+            else:  # Contact
+                color = pin_colors['{} (contatto)'.format(mode)]
+
             placemarks = ''
             for customer in partners[mode]:
                 placemarks += placemark.format(
