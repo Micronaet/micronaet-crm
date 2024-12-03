@@ -292,11 +292,11 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         pin_colors = {
             'Clienti': 'ff44af62',  # Green dark
-            'customer_contact': 'ff3644db',  # Green
+            'Clienti (contatto)': 'ff3644db',  # Green
             'Destinazioni': 'ff44af62',  # Blue dark
-            'destination_contact': 'ffabdbb7',  # Blue
+            'Destinazioni (contatto)': 'ffabdbb7',  # Blue
             'Fornitori': 'ff3644db',  # Red dask
-            'supplier_contact': 'ff969cee',  # Red
+            'Fornitori (contatto)': 'ff969cee',  # Red
         }
 
         document = '''<?xml version="1.0" encoding="UTF-8"?>
