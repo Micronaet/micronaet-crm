@@ -29,7 +29,7 @@ import logging
 import requests
 import json
 import openerp
-import html
+import cgi
 
 from unidecode import unidecode
 import openerp.addons.decimal_precision as dp
@@ -278,7 +278,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 # value = unidecode(value)
                 pdb.set_trace()
                 value = (value or '').strip()
-                value = html.escape(value)
+                value = cgi.escape(value)
                 return value
             except:
                 _logger.error('Error convert{}\n{}'.format(
