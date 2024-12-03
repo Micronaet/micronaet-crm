@@ -398,7 +398,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         folders = ''
         for mode in partners:
             placemarks = ''
-            color = pin_colors[mode]
+            color = pin_colors.get(mode, pin_colors['Nullo'])
             for partner in partners[mode]:
                 odoo_partner = partner['partner']
                 location = partner['location']
