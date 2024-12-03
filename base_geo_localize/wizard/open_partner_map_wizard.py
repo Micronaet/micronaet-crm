@@ -306,6 +306,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
             'Lead': 'ff44af62',  # Blue dark
             'Lead (contatto)': 'ffabdbb7',  # Blue
+
+            'Nullo': '00000000',  # Bladk
         }
 
         document = '''<?xml version="1.0" encoding="UTF-8"?>
