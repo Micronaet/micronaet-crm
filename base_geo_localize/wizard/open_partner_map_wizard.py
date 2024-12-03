@@ -410,9 +410,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                     )
                 except:
                     pdb.set_trace()
-                    _logger.error('Error exporting partner ID {}:\n{}'.format(
+                    _logger.error('Error exporting partner ID {}'.format(
                         odoo_partner.id,
-                        sys.exc_info(),
+                        # sys.exc_info(),
                     ))
                     continue
 
