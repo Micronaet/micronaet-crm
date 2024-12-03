@@ -416,6 +416,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                     )
                 except:
                     pdb.set_trace()
+                popup = partner.get('popup', '')
+
 
             folders += folder.format(
                 name=mode,
