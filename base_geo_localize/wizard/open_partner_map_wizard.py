@@ -92,7 +92,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         attachment_id = attachment_pool.create(cr, uid, {
             'name': name,
-            'datas_fname': 'HTML Mappa.kmz',
+            'datas_fname': 'HTML Mappa.kml',
             'type': 'binary',
             'datas': b64,
             'partner_id': 1,
@@ -419,20 +419,20 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 name=mode,
                 placemarks=placemarks
             )
-        kmz_filename = '/tmp/{}.kmz'.format(
+        kml_filename = '/tmp/{}.kml'.format(
             str(datetime.now()).replace('/', '').replace(':', '')
         )
-        kmz_file = open(kmz_filename, 'w')
-        kmz_file.write(document.format(
+        kml_file = open(kml_filename, 'w')
+        kml_file.write(document.format(
             name=name,
             description=description,
             style=style,
             folders=folders,
         ))
-        kmz_file.close()
+        kml_file.close()
 
         return self.return_attachment(
-            cr, uid, 'KML Partner file', kmz_filename, context=context)
+            cr, uid, 'KML Partner file', kml_filename, context=context)
 
     def action_done(self, cr, uid, ids, context=None):
         """ Event for button done
