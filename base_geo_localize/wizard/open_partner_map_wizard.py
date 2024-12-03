@@ -404,8 +404,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 placemarks += placemark.format(
                     icon=icon,
                     name=clean_html(odoo_partner.name),
-                    lat=location[0],
-                    lon=location[1],
+                    lat=location[1],
+                    lon=location[0],
                     color=color,
                     # todo popup
                 )
