@@ -24,7 +24,7 @@
 
                        <separator string="Filtri:" colspan="4"/>
                        <field name="city" />
-                       <newsline />
+                       <newline />
 
                        <field name="state_id" />
                        <field name="state_code" />
