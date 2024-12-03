@@ -396,25 +396,24 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         folders = ''
         for mode in partners:
             placemarks = ''
-            try:
-                color = pin_colors[mode]
-            except:
-                pdb.set_trace()
+            color = pin_colors[mode]
             for partner in partners[mode]:
                 odoo_partner = partner['partner']
                 location = partner['location']
                 partner_name = odoo_partner.name
                 popup = partner.get('popup', '')
 
-                placemarks += placemark.format(
-                    icon=icon,
-                    name=clean_html(partner_name),
-                    description=clean_html(popup),
-                    lat=location[1],
-                    lon=location[0],
-                    color=color,
-                    # todo popup
-                )
+                try:
+                    placemarks += placemark.format(
+                        icon=icon,
+                        name=clean_html(partner_name),
+                        description=clean_html(popup),
+                        lat=location[1],
+                        lon=location[0],
+                        color=color,
+                    )
+                except:
+                    pdb.set_trace()
 
             folders += folder.format(
                 name=mode,
