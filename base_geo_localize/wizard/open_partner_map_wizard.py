@@ -381,7 +381,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         placemark = '''
               <Placemark>
                 <name>{name}</name>
-                <description>{descrition}</description>
+                <description>{description}</description>
                 <styleUrl>#icon-{icon}-{color}</styleUrl>
                 <Point>
                   <coordinates>{lat},{lon},0</coordinates>
