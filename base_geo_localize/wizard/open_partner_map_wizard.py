@@ -81,14 +81,13 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         """
         # Pool used:
         attachment_pool = self.pool.get('ir.attachment')
-        origin = '/tmp/{}'.format(filename)
 
         try:
-            b64 = open(origin, 'rb').read().encode('base64')
+            b64 = open(filename, 'rb').read().encode('base64')
         except:
             raise osv.except_osv(
                 _('Report error'),
-                _('Cannot return file: %s') % origin,
+                _('Cannot return file: %s') % filename,
                 )
 
         attachment_id = attachment_pool.create(cr, uid, {
