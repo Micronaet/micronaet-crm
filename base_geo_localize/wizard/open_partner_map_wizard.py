@@ -81,7 +81,7 @@ def clean_html(value):
     try:
         # value = unidecode(value)
         value = (value or '').strip()
-        value = clean_utf8(value)
+        value = clean_ascii(value)
         value = cgi.escape(value)  # ex html
         return value
     except:
