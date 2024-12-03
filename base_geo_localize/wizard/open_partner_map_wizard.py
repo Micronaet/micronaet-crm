@@ -57,7 +57,9 @@ odoo_url = 'http://192.168.1.181:18069/web?db={db}#id={partner_id}&' \
            'view_type=form&model=res.partner&menu_id=682&action=884'
 
 
+# -----------------------------------------------------------------------------
 # Utility:
+# -----------------------------------------------------------------------------
 def clean_utf8(value):
     """ Clean UTF8
     """
@@ -70,12 +72,25 @@ def clean_ascii(value):
     return (value or '').encode('ascii', 'replace').decode('ascii')
 
 
+def clean_html(value):
+    """ Clean for HTML
+    """
+    try:
+        # value = unidecode(value)
+        value = (value or '').strip()
+        value = cgi.escape(value)  # ex html
+        return value
+    except:
+        _logger.error('Error convert{}\n{}'.format(
+            value, sys.exc_info()))
+        return ''
+
+
 class ResPartnerMapGeocodes(orm.TransientModel):
     """ Wizard for Geocode partner
     """
     _name = 'res.partner.map.geocodes'
 
-    # todo
     def return_attachment(self, cr, uid, name, filename, context=None):
         """ Return HTML page
         """
@@ -93,7 +108,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         attachment_id = attachment_pool.create(cr, uid, {
             'name': name,
             'datas_fname': 'HTML Mappa.kml',
-            'type': 'binary',
+            'type': 'binary',  # is text
             'datas': b64,
             'partner_id': 1,
             'res_model': 'res.partner',
@@ -126,44 +141,38 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         # Only partner with geocodes:
         if only_geo:
-            domain = [
+            common_domain = [
                 ('geo_latitude', '!=', 0),
                 ('geo_longitude', '!=', 0),
             ]
         else:
-            domain = []
+            common_domain = []
 
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
         if state_code:
-            domain.append(
+            common_domain.append(
                 ('state_id.code', '=', state_code))
 
         if city:
-            domain.append(
+            common_domain.append(
                 ('city', '=', city))
 
         if state:
-            domain.append(
+            common_domain.append(
                 ('state_id', '=', state.id))
 
         # ---------------------------------------------------------------------
-        # Set operation:
+        # MODE: Set operation
         # ---------------------------------------------------------------------
         # Customer:
         # ---------------------------------------------------------------------
-        customer_mode = wizard.customer_mode
-        this_domain = domain[:]
-        if customer_mode == 'yes':
+        customer = wizard.customer
+        this_domain = common_domain[:]  # Start with filtered menu
+        if customer:
             this_domain.append(
                 ('sql_customer_code', '!=', False),
-            )
-            customer_ids = set(partner_pool.search(
-                cr, uid, this_domain, context=context))
-        elif customer_mode == 'no':
-            this_domain.append(
-                ('sql_customer_code', '=', False),
             )
             customer_ids = set(partner_pool.search(
                 cr, uid, this_domain, context=context))
@@ -171,43 +180,29 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             customer_ids = False
 
         # ---------------------------------------------------------------------
-        # Supplier:
+        # Destination:
         # ---------------------------------------------------------------------
-        supplier_mode = wizard.supplier_mode
-        this_domain = domain[:]
-        if supplier_mode == 'yes':
-            this_domain.append(
-                ('sql_supplier_code', '!=', False),
-            )
-            supplier_ids = set(partner_pool.search(
-                cr, uid, this_domain, context=context))
-        elif supplier_mode == 'no':
-            this_domain.append(
-                ('sql_supplier_code', '=', False),
-            )
-            supplier_ids = set(partner_pool.search(
+        destination = wizard.destination
+        this_domain = common_domain[:]
+        if destination:  # of customer!
+            this_domain.extend([
+                ('sql_destination_code', '!=', False),
+                ('parent_id.sql_customer_code', '!=', False),
+                ])
+            destination_ids = set(partner_pool.search(
                 cr, uid, this_domain, context=context))
         else:
-            supplier_ids = False
+            destination_ids = False
 
         # ---------------------------------------------------------------------
         # Lead:
         # ---------------------------------------------------------------------
-        lead_mode = wizard.lead_mode
-        this_domain = domain[:]
-        if lead_mode == 'yes':
+        lead = wizard.lead
+        this_domain = common_domain[:]
+        if lead:
             this_domain.extend([
                 ('sql_customer_code', '=', False),
                 ('sql_supplier_code', '=', False),
-            ])
-            lead_ids = set(partner_pool.search(
-                cr, uid, this_domain, context=context))
-        elif lead_mode == 'no':
-            # todo work with mode filter?
-            this_domain.extend([
-                '|',
-                ('sql_customer_code', '!=', False),
-                ('sql_supplier_code', '!=', False),
             ])
             lead_ids = set(partner_pool.search(
                 cr, uid, this_domain, context=context))
@@ -217,16 +212,21 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         partner_ids = set()
         if customer_ids:
             partner_ids = partner_ids.union(customer_ids)
-        if supplier_ids:
-            partner_ids = partner_ids.union(supplier_ids)
+        if destination_ids:
+            partner_ids = partner_ids.union(destination_ids)
         if lead_ids:
             partner_ids = partner_ids.union(lead_ids)
 
         if partner_ids:
-            domain.append(
+            return [
                 ('id', 'in', tuple(partner_ids)),
+            ]
+        else:
+            raise osv.except_osv(
+                _('Errore selezione'),
+                _('Nessun partner con la seleziona attuale, '
+                  'provare a cambiare'),
             )
-        return domain
 
     def action_open_partner_all(self, cr, uid, ids, context=None):
         """ Event for button done
@@ -271,19 +271,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
     def action_download(self, cr, uid, ids, context=None):
         """ Download instead of open directly
         """
-        def clean_html(value=u''):
-            """ Clean for HTML
-            """
-            try:
-                # value = unidecode(value)
-                value = (value or '').strip()
-                value = cgi.escape(value)  # ex html
-                return value
-            except:
-                _logger.error('Error convert{}\n{}'.format(
-                    value, sys.exc_info()))
-                return ''
-
         if context is None:
             context = {}
 
@@ -301,8 +288,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'Clienti (contatto)': 'ff3644db',  # Green
             'Destinazioni': 'ff44af62',  # Blue dark
             'Destinazioni (contatto)': 'ffabdbb7',  # Blue
-            'Fornitori': 'ff3644db',  # Red dask
-            'Fornitori (contatto)': 'ff969cee',  # Red
+            # 'Fornitori': 'ff3644db',  # Red dask
+            # 'Fornitori (contatto)': 'ff969cee',  # Red
 
             'Lead': 'ff44af62',  # Blue dark
             'Lead (contatto)': 'ffabdbb7',  # Blue
@@ -581,6 +568,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         )
 
     _columns = {
+        # ---------------------------------------------------------------------
+        # Filter:
+        # ---------------------------------------------------------------------
         # 'country_id': fields.many2one(
         #    'res.country', 'Nazione',
         #    help='Seleziona nazione'),
@@ -590,31 +580,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         'city': fields.char('Città', size=60),
         'state_code': fields.char('Provincia', size=4),
 
-        'customer_mode': fields.selection([
-            ('yes', 'Sì'),
-            ('no', 'No'),
-            ('all', 'Indifferente'),
-        ], 'Cliente', required=True),
-        'supplier_mode': fields.selection([
-            ('yes', 'Sì'),
-            ('no', 'No'),
-            ('all', 'Indifferente'),
-        ], 'Fornitore', required=True),
-        'contact_mode': fields.selection([
-            ('yes', 'Sì'),
-            ('no', 'No'),
-            ('all', 'Indifferente'),
-        ], 'Contatto', required=True),
-        'lead_mode': fields.selection([
-            ('yes', 'Sì'),
-            ('no', 'No'),
-            ('all', 'Indifferente'),
-        ], 'Lead', required=True),
+        # ---------------------------------------------------------------------
+        # Select mode:
+        # ---------------------------------------------------------------------
+        'customer': fields.boolean('Cliente'),
+        'lead': fields.boolean('Lead'),
+        'destination': fields.boolean('Destinazioni (cliente)'),
+        # 'contact': fields.boolean('Contatti'),
     }
 
     _defaults = {
-        'customer_mode': lambda *x: 'yes',
-        'supplier_mode': lambda *x: 'no',
-        'lead_mode': lambda *x: 'all',
-        'contact_mode': lambda *x: 'all',
+        'customer': lambda *x: True,
     }
