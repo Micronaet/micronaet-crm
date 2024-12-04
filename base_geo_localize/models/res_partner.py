@@ -48,6 +48,11 @@ class ResPartner(osv.osv):
         'geo_longitude': fields.float('Geo Longitudine', digits=(16, 5)),
         'geo_date': fields.date('Geo Data'),
         'geo_altitude': fields.float('Geo Altitudine', digits=(16, 5)),
+        'geo_optout': fields.boolean(
+            'Opt out geolocalizzazione',
+            help='Se ha la spunta di opt out non viene esportato nelle mappe '
+                 'utilizzate dai commerciali'
+            )
     }
 
     '''

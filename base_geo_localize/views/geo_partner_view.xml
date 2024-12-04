@@ -19,6 +19,7 @@
 
                             <field name="geo_altitude"/>
                             <field name="geo_date"/>
+                            <field name="geo_optout"/>
                         </group>
                     </page>
                 </xpath>
