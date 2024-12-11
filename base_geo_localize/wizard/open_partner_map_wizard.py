@@ -148,7 +148,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # Only partner with geocodes:
         if only_geo:
             common_domain = [
-                ('get_optout', '=', False),
+                ('geo_optout', '=', False),
                 ('geo_latitude', '!=', 0),
                 ('geo_longitude', '!=', 0),
             ]
