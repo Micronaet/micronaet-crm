@@ -218,6 +218,7 @@ class ModuleWizard(orm.TransientModel):
             'address': [],
             'name': [],
             'mail': [],
+            'phone': [],
         }
 
         for partner in sorted(partner_pool.browse(
@@ -226,7 +227,10 @@ class ModuleWizard(orm.TransientModel):
             row += 1
 
             name = (partner.name or '').strip()
-            address = (partner.address or '').strip()
+            address = '%s%s' % (
+                (partner.street or '').strip(),
+                (partner.city or '').strip(),
+            )
             data_email = [
                 partner.email or '',
                 partner.email_pricelist_address or '',
@@ -242,7 +246,7 @@ class ModuleWizard(orm.TransientModel):
             ]
 
             data = [
-                partner.name,
+                name,
 
                 # Address:
                 partner.street or '',
