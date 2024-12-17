@@ -153,7 +153,7 @@ class ModuleWizard(orm.TransientModel):
              40, 30, 10, 25,
              20, 20, 20, 20, 20,
              # Accounting:
-             5, 5, 6,
+             5, 5, 6, 18, 10,
              # Email:
              35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
              ]
@@ -178,6 +178,9 @@ class ModuleWizard(orm.TransientModel):
             _('Cli.'),
             _('Forn.'),
             _('Dest.'),
+
+            _('Categoria'),
+            _('Opt out'),
 
             # Email:
             _('Email'),
@@ -272,6 +275,9 @@ class ModuleWizard(orm.TransientModel):
                 'X' if partner.sql_customer_code else '',
                 'X' if partner.sql_supplier_code else '',
                 'X' if partner.sql_destination_code else '',
+
+                partner.newsletter_category_id.name or '',
+                'X' if partner.geo_optout else '',
                 ]
             account_data = any(data[-3:])  # No X
             data.extend(data_email)
