@@ -153,7 +153,7 @@ class ModuleWizard(orm.TransientModel):
             # Address:
             40, 30, 10, 25,
             20, 20, 20, 20, 20,
-            18, 10,
+            24, 10,
             # Accounting:
             5, 5, 6,
             # Email:
