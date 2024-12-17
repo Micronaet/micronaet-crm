@@ -225,9 +225,9 @@ class ModuleWizard(orm.TransientModel):
         for partner in sorted(partner_pool.browse(
                 cr, uid, partner_ids, context=context),
                 key=lambda p: (
-                        1 if p.sql_customer_code else 0,
-                        1 if p.sql_supplier_code else 0,
-                        1 if p.sql_destination_code else 0,
+                        0 if p.sql_customer_code else 1,
+                        0 if p.sql_supplier_code else 1,
+                        0 if p.sql_destination_code else 1,
                         p.name)):
             row += 1
 
