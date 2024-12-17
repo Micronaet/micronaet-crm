@@ -149,12 +149,11 @@ class ModuleWizard(orm.TransientModel):
              40,
              # Address:
              40, 30, 10, 25,
-             # Email:
-             35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
              20, 20, 20, 20, 20,
-
              # Accounting:
              5, 5, 6,
+             # Email:
+             35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
              ]
 
         header = [
