@@ -267,7 +267,7 @@ class ModuleWizard(orm.TransientModel):
                 'X' if partner.sql_supplier_code else '',
                 'X' if partner.sql_destination_code else '',
                 ]
-            account_data = not any(data[-3:])  # No X
+            account_data = any(data[-3:])  # No X
             data.extend(data_email)
 
             # -----------------------------------------------------------------
