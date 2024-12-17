@@ -233,17 +233,17 @@ class ModuleWizard(orm.TransientModel):
                 (partner.city or '').strip(),
             )
             data_email = [
-                partner.email or '',
-                partner.email_pricelist_address or '',
-                partner.email_quotation_address or '',
-                partner.email_confirmation_address or '',
-                partner.email_ddt_address or '',
-                partner.email_invoice_address or '',
-                partner.email_promotional_address or '',
-                partner.email_order_address or '',
-                partner.email_picking_address or '',
-                partner.email_payment_address or '',
-                partner.email_pec_address or '',
+                (partner.email or '').strip(),
+                (partner.email_pricelist_address or '').strip(),
+                (partner.email_quotation_address or '').strip(),
+                (partner.email_confirmation_address or '').strip(),
+                (partner.email_ddt_address or '').strip(),
+                (partner.email_invoice_address or '').strip(),
+                (partner.email_promotional_address or '').strip(),
+                (partner.email_order_address or '').strip(),
+                (partner.email_picking_address or '').strip(),
+                (partner.email_payment_address or '').strip(),
+                (partner.email_pec_address or '').strip(),
             ]
 
             data = [
