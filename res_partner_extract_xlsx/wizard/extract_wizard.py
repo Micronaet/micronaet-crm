@@ -331,7 +331,7 @@ class ModuleWizard(orm.TransientModel):
                     else:
                         double['email'].append(this_email)
 
-                if comment:
+                if comment and not_account:
                     color_text = f_text_red
                 else:
                     comment = '[LEAD] '
