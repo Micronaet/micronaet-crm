@@ -149,15 +149,16 @@ class ModuleWizard(orm.TransientModel):
 
         # Layout:
         width = [
-             40,
-             # Address:
-             40, 30, 10, 25,
-             20, 20, 20, 20, 20,
-             # Accounting:
-             5, 5, 6, 18, 10,
-             # Email:
-             35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
-             ]
+            40,
+            # Address:
+            40, 30, 10, 25,
+            20, 20, 20, 20, 20,
+            18, 10,
+            # Accounting:
+            5, 5, 6,
+            # Email:
+            35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
+            ]
 
         header = [
             _('Nome'),
@@ -175,13 +176,13 @@ class ModuleWizard(orm.TransientModel):
             _('Cellulare'),
             _('Agente'),
 
+            _('Categoria'),
+            _('Opt out'),
+
             # Accounting:
             _('Cli.'),
             _('Forn.'),
             _('Dest.'),
-
-            _('Categoria'),
-            _('Opt out'),
 
             # Email:
             _('Email'),
@@ -272,13 +273,13 @@ class ModuleWizard(orm.TransientModel):
                 partner.mobile or '',
                 partner.agent_id.name or '',
 
+                partner.newsletter_category_id.name or '',
+                'X' if partner.geo_optout else '',
+
                 # Accounting:
                 'X' if partner.sql_customer_code else '',
                 'X' if partner.sql_supplier_code else '',
                 'X' if partner.sql_destination_code else '',
-
-                partner.newsletter_category_id.name or '',
-                'X' if partner.geo_optout else '',
                 ]
             account_data = any(data[-3:])  # No X
             data.extend(data_email)
