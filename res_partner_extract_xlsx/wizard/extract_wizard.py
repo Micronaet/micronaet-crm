@@ -123,7 +123,6 @@ class ModuleWizard(orm.TransientModel):
             domain.append(('country_id', '=', wiz_browse.country_id.id))
             domain_text += _('Nazione: %s; ') % wiz_browse.country_id.name
 
-
         # todo Region
 
         # Search
@@ -225,7 +224,11 @@ class ModuleWizard(orm.TransientModel):
 
         for partner in sorted(partner_pool.browse(
                 cr, uid, partner_ids, context=context),
-                key=lambda p: p.name):
+                key=lambda p: (
+                        1 if partner.sql_customer_code else 0,
+                        1 if partner.sql_supplier_code else 0,
+                        1 if partner.sql_destination_code else 0,
+                        p.name)):
             row += 1
 
             name = (partner.name or '').strip()
@@ -279,9 +282,15 @@ class ModuleWizard(orm.TransientModel):
                 # Check double
                 comment = ''
 
+                # -------------------------------------------------------------
+                # Account partner:
+                # -------------------------------------------------------------
+                not_account = True
                 if account_data:
                     comment = 'Gestionale (non controllato)'
                     color_text = f_text_green
+                    not_account = False
+
                 elif (name.endswith('[pec]') or
                         name.endswith('[payment]') or
                         name.endswith('[order]') or
@@ -290,33 +299,42 @@ class ModuleWizard(orm.TransientModel):
                         name.endswith('[confirmation]')):
                     comment = 'Mail Gestionale (non controllato)'
                     color_text = f_text_yellow
-                else:
-                    # Partner name:
-                    if not name:
+                    not_account = False
+
+                # -------------------------------------------------------------
+                # Common part:
+                # -------------------------------------------------------------
+                # Partner name:
+                if not name:
+                    if not_account:
                         comment += '[Nome non presente] '
-                    elif name in double['name']:
+                elif name in double['name']:
+                    if not_account:
                         comment += '[Nome doppio] '
-                    else:
-                        double['name'].append(name)
+                else:
+                    double['name'].append(name)
 
-                    # Partner address:
-                    if address and address in double['address']:
+                # Partner address:
+                if address and address in double['address']:
+                    if not_account:
                         comment += '[Indirizzo doppio] '
-                    else:
-                        double['address'].append(address)
+                else:
+                    double['address'].append(address)
 
-                    # Partner email (multi)
-                    for this_email in data_email:
-                        if not this_email:
-                            continue
-                        elif this_email in double['email']:
+                # Partner email (multi)
+                for this_email in data_email:
+                    if not this_email:
+                        continue
+                    elif this_email in double['email']:
+                        if not_account:
                             comment += '[Email doppia] '
-                        else:
-                            double['email'].append(this_email)
-                    if comment:
-                        color_text = f_text_red
                     else:
-                        comment = '[LEAD] '
+                        double['email'].append(this_email)
+
+                if comment:
+                    color_text = f_text_red
+                else:
+                    comment = '[LEAD] '
 
                 # Add extra data:
                 data.insert(0, partner.id)
