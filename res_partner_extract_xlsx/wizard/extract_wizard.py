@@ -143,6 +143,8 @@ class ModuleWizard(orm.TransientModel):
         f_title = excel_pool.get_format('title')
         f_header = excel_pool.get_format('header')
         f_text = excel_pool.get_format('text')
+        f_text_green = excel_pool.get_format('bg_green')
+        f_text_red = excel_pool.get_format('bg_red')
 
         # Layout:
         width = [
@@ -271,12 +273,14 @@ class ModuleWizard(orm.TransientModel):
             # -----------------------------------------------------------------
             # Check mode:
             # -----------------------------------------------------------------
+            color_text = f_text
             if check_mode:
                 # Check double
                 comment = ''
 
                 if account_data:
                     comment = 'Gestionale (non controllato)'
+                    color_text = f_text_green
                 else:
                     # Partner name:
                     if not name:
@@ -300,13 +304,15 @@ class ModuleWizard(orm.TransientModel):
                             comment += '[Email doppia] '
                         else:
                             double['email'].append(this_email)
+                    if comment:
+                        color_text = f_text_red
 
                 # Add extra data:
                 data.insert(0, partner.id)
                 data.append(comment)
 
             excel_pool.write_xls_line(
-                ws_name, row, data, default_format=f_text)
+                ws_name, row, data, default_format=color_text)
 
         return excel_pool.return_attachment(
             cr, uid, ws_name,
