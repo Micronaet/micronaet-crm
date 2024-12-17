@@ -315,6 +315,8 @@ class ModuleWizard(orm.TransientModel):
                             double['email'].append(this_email)
                     if comment:
                         color_text = f_text_red
+                    else:
+                        comment = '[LEAD] '
 
                 # Add extra data:
                 data.insert(0, partner.id)
