@@ -145,6 +145,7 @@ class ModuleWizard(orm.TransientModel):
         f_text = excel_pool.get_format('text')
         f_text_green = excel_pool.get_format('bg_green')
         f_text_red = excel_pool.get_format('bg_red')
+        f_text_yellow = excel_pool.get_format('bg_yellow')
 
         # Layout:
         width = [
@@ -281,6 +282,14 @@ class ModuleWizard(orm.TransientModel):
                 if account_data:
                     comment = 'Gestionale (non controllato)'
                     color_text = f_text_green
+                elif (name.endswith('[pec]') or
+                        name.endswith('[payment]') or
+                        name.endswith('[order]') or
+                        name.endswith('[invoice]') or
+                        name.endswith('[ddt]') or
+                        name.endswith('[confirmation]')):
+                    comment = 'Mail Gestionale (non controllato)'
+                    color_text = f_text_yellow
                 else:
                     # Partner name:
                     if not name:
