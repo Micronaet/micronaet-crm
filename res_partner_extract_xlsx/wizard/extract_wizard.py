@@ -145,6 +145,7 @@ class ModuleWizard(orm.TransientModel):
         f_text_green = excel_pool.get_format('bg_green')
         f_text_red = excel_pool.get_format('bg_red')
         f_text_yellow = excel_pool.get_format('bg_yellow')
+        f_text_grey = excel_pool.get_format('bg_grey')
 
         # Layout:
         width = [
@@ -343,7 +344,8 @@ class ModuleWizard(orm.TransientModel):
                 if comment and not_account:
                     color_text = f_text_red
                 else:
-                    comment = '[LEAD] '
+                    if not_account:
+                        comment = '[LEAD] '
 
                 # Add extra data:
                 data.insert(0, partner.id)
