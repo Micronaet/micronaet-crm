@@ -296,6 +296,7 @@ class ModuleWizard(orm.TransientModel):
                         name.endswith('[order]') or
                         name.endswith('[invoice]') or
                         name.endswith('[ddt]') or
+                        name.endswith('[promotional]') or
                         name.endswith('[confirmation]')):
                     comment = 'Mail Gestionale (non controllato)'
                     color_text = f_text_yellow
