@@ -233,8 +233,8 @@ class ModuleWizard(orm.TransientModel):
 
             name = (partner.name or '').strip()
             address = '%s%s' % (
-                (partner.street or '').strip(),
-                (partner.city or '').strip(),
+                (partner.street or 'No street {}'.format(partner.id)).strip(),
+                (partner.city or 'No city {}'.format(partner.id)).strip(),
             )
             data_email = [
                 (partner.email or '').strip(),
