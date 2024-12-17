@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# ODOO (ex OpenERP) 
+# ODOO (ex OpenERP)
 # Open Source Management Solution
 # Copyright (C) 2001-2015 Micronaet S.r.l. (<http://www.micronaet.it>)
 # Developer: Nicola Riolini @thebrush (<https://it.linkedin.com/in/thebrush>)
@@ -12,7 +12,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
@@ -32,9 +32,9 @@ from dateutil.relativedelta import relativedelta
 from openerp import SUPERUSER_ID
 from openerp import tools
 from openerp.tools.translate import _
-from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT, 
-    DEFAULT_SERVER_DATETIME_FORMAT, 
-    DATETIME_FORMATS_MAP, 
+from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
+    DEFAULT_SERVER_DATETIME_FORMAT,
+    DATETIME_FORMATS_MAP,
     float_compare)
 
 
@@ -42,32 +42,34 @@ _logger = logging.getLogger(__name__)
 
 
 class ModuleWizard(orm.TransientModel):
-    ''' Wizard for
-    '''
+    """ Wizard for
+    """
     _name = 'res.partner.extract.report.xlsx.wizard'
 
     # --------------------
     # Wizard button event:
     # --------------------
     def action_print(self, cr, uid, ids, context=None):
-        ''' Event for button done
-        '''
-        if context is None: 
-            context = {}        
-        
+        """ Event for button done
+        """
+        if context is None:
+            context = {}
+
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
-        
+
         partner_pool = self.pool.get('res.partner')
         excel_pool = self.pool.get('excel.writer')
-        
+
         # ---------------------------------------------------------------------
         # Domain creation:
         # ---------------------------------------------------------------------
         domain = []
         domain_text = ''
 
+        check_mode = wiz_browse.check
+
         # -----------------
-        # Filter selection: 
+        # Filter selection:
         # -----------------
         if wiz_browse.mode == 'all':
             domain_text += _('Tutti i partner; ')
@@ -82,9 +84,9 @@ class ModuleWizard(orm.TransientModel):
             domain_text += _('Solo destinazioni; ')
 
         # ------------
-        # Filter char:        
+        # Filter char:
         # ------------
-        # Filter name:        
+        # Filter name:
         if wiz_browse.name:
             domain.append(('name', '=', wiz_browse.name))
             domain_text += _('Nome: %s; ') % wiz_browse.name
@@ -92,7 +94,7 @@ class ModuleWizard(orm.TransientModel):
         # From name:
         if wiz_browse.from_name:
             domain.append(('name', '>=', wiz_browse.from_name))
-            domain_text += _('Dal nome: %s; ') % wiz_browse.from_name                                   
+            domain_text += _('Dal nome: %s; ') % wiz_browse.from_name
         # To name:
         if wiz_browse.to_name:
             domain.append(('name', '<=', wiz_browse.to_name))
@@ -101,15 +103,15 @@ class ModuleWizard(orm.TransientModel):
         # Zip:
         if wiz_browse.zip:
             domain.append(('zip', '=', wiz_browse.zip))
-            domain_text += _('CAP: %s; ') % wiz_browse.zip           
-            
+            domain_text += _('CAP: %s; ') % wiz_browse.zip
+
         # City:
         if wiz_browse.city:
             domain.append(('city', '=', wiz_browse.city))
-            domain_text += _('Citta\': %s; ') % wiz_browse.city             
+            domain_text += _('Citta\': %s; ') % wiz_browse.city
 
         # ----------------
-        # Filter MO field:        
+        # Filter MO field:
         # ----------------
         # Agent:
         if wiz_browse.agent_id:
@@ -120,13 +122,13 @@ class ModuleWizard(orm.TransientModel):
         if wiz_browse.country_id:
             domain.append(('country_id', '=', wiz_browse.country_id.id))
             domain_text += _('Nazione: %s; ') % wiz_browse.country_id.name
-        
-            
-        # TODO Region
-        
-        # Search 
+
+
+        # todo Region
+
+        # Search
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
-        
+
         # ---------------------------------------------------------------------
         # Excel export:
         # ---------------------------------------------------------------------
@@ -134,45 +136,48 @@ class ModuleWizard(orm.TransientModel):
         ws_name = _('Partner')
         excel_pool.create_worksheet(ws_name)
         row = 0
-        
+
         # Format:
         excel_pool.set_format()
-        
+
         f_title = excel_pool.get_format('title')
         f_header = excel_pool.get_format('header')
         f_text = excel_pool.get_format('text')
-        
+
         # Layout:
-        excel_pool.column_width(ws_name, [
-             40,             
-             # Address: 
-             40, 30, 10, 25,             
+        width = [
+             40,
+             # Address:
+             40, 30, 10, 25,
              # Email:
-             35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,                   
+             35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35,
              20, 20, 20, 20, 20,
-             
-             # Accounting:                          
-             5, 5, 6,              
-             ])
-        
-        # Title:
-        excel_pool.write_xls_line(ws_name, row, [
-            'Estrazione partner, filtro utilizzato:',            
-            domain_text,
-            ], default_format=f_title)
-        row += 2    
-        
-        
-        # Header:
-        excel_pool.write_xls_line(ws_name, row, [
-            _('Nome'),            
-            
+
+             # Accounting:
+             5, 5, 6,
+             ]
+
+        header = [
+            _('Nome'),
+
             # Address:
             _('Indirizzo'),
             _('Città'),
             _('Cap'),
             _('Paese'),
-            
+
+            # Contact:
+            _('Web'),
+            _('Telefono'),
+            _('Fax'),
+            _('Cellulare'),
+            _('Agente'),
+
+            # Accounting:
+            _('Cli.'),
+            _('Forn.'),
+            _('Dest.'),
+
             # Email:
             _('Email'),
             _('Email Listini'),
@@ -185,36 +190,44 @@ class ModuleWizard(orm.TransientModel):
             _('Email Magazzino'),
             _('Email Pagamenti'),
             _('Email PEC'),
-            
-            # Contact:
-            _('Web'),            
-            _('Telefono'),
-            _('Fax'),
-            _('Cellulare'),
-            _('Agente'),
-            
-            # Accounting:
-            _('Cli.'),
-            _('Forn.'),
-            _('Dest.'),
-            ], default_format=f_header)
-        # XXX no row += 1    
-        
+        ]
+        if check_mode:
+            # Add first extra column
+            width.insert(0, 0)
+            width.append(40)
+
+            header.insert(0, 'ID')
+            header.append('Controllo duplicati')
+
+        excel_pool.column_width(ws_name, width)
+
+        # Title:
+        excel_pool.write_xls_line(ws_name, row, [
+            'Estrazione partner, filtro utilizzato:',
+            domain_text,
+            ], default_format=f_title)
+        row += 2
+
+        # Header:
+        excel_pool.write_xls_line(
+            ws_name, row, header, default_format=f_header)
+        # XXX no row += 1
+
         # Loop for every partner:
+        double = {
+            'address': [],
+            'name': [],
+            'mail': [],
+        }
+
         for partner in sorted(partner_pool.browse(
-                cr, uid, partner_ids, context=context), 
+                cr, uid, partner_ids, context=context),
                 key=lambda p: p.name):
-            row += 1            
-            excel_pool.write_xls_line(ws_name, row, [
-                partner.name,
-                
-                # Address:
-                partner.street or '',
-                partner.city or '',
-                partner.zip or '',
-                partner.country_id.name or '', 
-                
-                # Email:
+            row += 1
+
+            name = (partner.name or '').strip()
+            address = (partner.address or '').strip()
+            data_email = [
                 partner.email or '',
                 partner.email_pricelist_address or '',
                 partner.email_quotation_address or '',
@@ -226,25 +239,82 @@ class ModuleWizard(orm.TransientModel):
                 partner.email_picking_address or '',
                 partner.email_payment_address or '',
                 partner.email_pec_address or '',
-                
+            ]
+
+            data = [
+                partner.name,
+
+                # Address:
+                partner.street or '',
+                partner.city or '',
+                partner.zip or '',
+                partner.country_id.name or '',
+
                 # Contact:
                 partner.website or '',
                 partner.phone or '',
                 partner.fax or '',
                 partner.mobile or '',
-                partner.agent_id.name or '', 
-                
+                partner.agent_id.name or '',
+
                 # Accounting:
                 'X' if partner.sql_customer_code else '',
                 'X' if partner.sql_supplier_code else '',
-                'X' if partner.sql_destination_code else '',                
-                ], default_format=f_text)
-        
-        return excel_pool.return_attachment(cr, uid, ws_name, 
-             name_of_file='partner_wizard.xlsx', context=context)
+                'X' if partner.sql_destination_code else '',
+                ]
+            account_data = not any(data[-3:])  # No X
+            data.extend(data_email)
+
+            # -----------------------------------------------------------------
+            # Check mode:
+            # -----------------------------------------------------------------
+            if check_mode:
+                # Check double
+                comment = ''
+
+                if account_data:
+                    comment = 'Gestionale (non controllato)'
+                else:
+                    # Partner name:
+                    if not name:
+                        comment += '[Nome non presente] '
+                    elif name in double['name']:
+                        comment += '[Nome doppio] '
+                    else:
+                        double['name'].append(name)
+
+                    # Partner address:
+                    if address and address in double['address']:
+                        comment += '[Indirizzo doppio] '
+                    else:
+                        double['address'].append(address)
+
+                    # Partner email (multi)
+                    for email in data_email:
+                        if not email:
+                            continue
+                        elif email in double['email']:
+                            comment += '[Email doppia] '
+                        else:
+                            double['email'].append(email)
+
+                # Add extra data:
+                data.insert(0, partner.id)
+                data.append(comment)
+
+            excel_pool.write_xls_line(
+                ws_name, row, data, default_format=f_text)
+
+        return excel_pool.return_attachment(
+            cr, uid, ws_name,
+            name_of_file='partner_wizard.xlsx', context=context)
 
     _columns = {
         # Char filter:
+        'check': fields.boolean(
+            'Controllo',
+            help='Esporta anche ID partner e aggiunge una casella di '
+                 'controllo per segnalare duplicati'),
         'name': fields.char('Name', size=64),
         'from_name': fields.char('From Name', size=64),
         'to_name': fields.char('To Name', size=64),
@@ -261,11 +331,10 @@ class ModuleWizard(orm.TransientModel):
             ('all', 'All'),
             ('customer', 'Customer'),
             ('supplier', 'Supplier'),
-            ('destination', 'Destination'),            
+            ('destination', 'Destination'),
             ], 'Mode', required=True),
         }
-     
+
     _defaults = {
         'mode': lambda *x: 'customer',
         }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

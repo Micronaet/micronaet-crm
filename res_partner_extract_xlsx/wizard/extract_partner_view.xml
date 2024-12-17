@@ -10,9 +10,9 @@
                    <header>
                        <button string="Cancel" special="cancel" />
                        <button name="action_print" string="Print" type="object" icon="gtk-print" class="oe_highlight" />
-                   </header>                   
+                   </header>
                    <group colspan="4" col="4">
-                        <field name="mode" />                       
+                        <field name="mode" />
                         <field name="name" />
 
                         <field name="from_name" />
@@ -20,9 +20,11 @@
 
                         <field name="zip" />
                         <field name="city" />
-                        
+
                         <field name="agent_id" domain="[('is_agent', '=', True)]"/>
                         <field name="country_id" />
+
+                        <field name="chek" />
                    </group>
                 </form>
             </field>
@@ -35,14 +37,14 @@
           <field name="view_mode">form</field>
           <field name="target">new</field>
           <field name="view_id" ref="res_partner_extract_report_xlsx_wizard_view"/>
-      </record>      
-      
-      <menuitem 
-          parent="base.menu_partner_form" 
-          id="menu_res_partner_extract_report_xlsx_wizard" 
+      </record>
+
+      <menuitem
+          parent="base.menu_partner_form"
+          id="menu_res_partner_extract_report_xlsx_wizard"
           action="action_res_partner_extract_report_xlsx_wizard"
           sequence="40"
           />
-      
+
     </data>
 </openerp>
