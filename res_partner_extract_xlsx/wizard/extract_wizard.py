@@ -216,7 +216,7 @@ class ModuleWizard(orm.TransientModel):
         double = {
             'address': [],
             'name': [],
-            'mail': [],
+            'email': [],
             'phone': [],
         }
 
@@ -293,13 +293,13 @@ class ModuleWizard(orm.TransientModel):
                         double['address'].append(address)
 
                     # Partner email (multi)
-                    for email in data_email:
-                        if not email:
+                    for this_email in data_email:
+                        if not this_email:
                             continue
-                        elif email in double['email']:
+                        elif this_email in double['email']:
                             comment += '[Email doppia] '
                         else:
-                            double['email'].append(email)
+                            double['email'].append(this_email)
 
                 # Add extra data:
                 data.insert(0, partner.id)
