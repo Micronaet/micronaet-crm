@@ -320,8 +320,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'Clienti (contatto)': 'ff3644db',  # Green
             'Destinazioni': 'ff44af62',  # Blue dark
             'Destinazioni (contatto)': 'ffabdbb7',  # Blue
-            'Fornitori': 'ff3644db',  # Red dask
-            'Fornitori (contatto)': 'ff969cee',  # Red
+            # 'Fornitori': 'ff3644db',  # Red dask
+            # 'Fornitori (contatto)': 'ff969cee',  # Red
 
             'Lead': 'ff44af62',  # Blue dark
             'Lead (contatto)': 'ffabdbb7',  # Blue
@@ -491,12 +491,14 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 # -------------------------------------------------------------
                 # KML mode:
                 # -------------------------------------------------------------
-                if partner.sql_customer_code:
-                    color = 'Clienti'
-                elif partner.sql_destination_code:
+                if partner.sql_destination_code:
                     color = 'Destinazioni'
-                elif partner.sql_supplier_code:
-                    color = 'Fornitori'
+                elif partner.sql_customer_code or \
+                        partner.parent_id.sql_customer_code:
+                    color = 'Clienti'  # Or customer contact
+                elif partner.sql_supplier_code or \
+                        partner.parent_id.sql_supplier_code:
+                    color = 'Fornitori'  # Or supplier contact
                 else:
                     color = 'Lead'
 
@@ -512,12 +514,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 # Maps mode:
                 # -------------------------------------------------------------
                 # Color setup:
-                if partner.sql_customer_code:
-                    color = 'green'
-                elif partner.sql_destination_code:
+                if partner.sql_destination_code:
                     color = 'blue'
-                elif partner.sql_supplier_code:
+                elif partner.sql_customer_code or \
+                        partner.parent_id.sql_customer_code:
+                    color = 'green'
+                elif partner.sql_supplier_code or \
+                        partner.parent_id.sql_supplier_code:
                     color = 'red'
+
                 elif partner.is_company:
                     color = 'orange'
                 else:
