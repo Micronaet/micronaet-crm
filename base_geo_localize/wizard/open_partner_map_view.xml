@@ -23,10 +23,13 @@
                     <field name="newsletter_category_id" />
                     <field name="type" invisible="1" />
 
-                    <field name="geo_optout" />
-                    <field name="geo_latitude" readonly="1"/>
-                    <field name="geo_longitude" readonly="1"/>
-                    <field name="geo_date" readonly="1"/>
+                    <field name="sql_customer_code" />
+                    <field name="sql_destination_code" />
+
+                    <field name="geo_optout" string="Optout" />
+                    <field name="geo_latitude" readonly="1" string="Lat."/>
+                    <field name="geo_longitude" readonly="1" string="Lon."/>
+                    <field name="geo_date" readonly="1" invisible="1"/>
                     <button string="Geo Localize" name="geo_localize" colspan="1" icon="gtk-refresh" type="object"/>
                     <button string="Apri in Maps" name="open_geo_localize" colspan="1" icon="gtk-open" type="object"/>
                 </tree>
