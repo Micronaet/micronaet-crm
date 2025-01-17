@@ -623,6 +623,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'res.country', 'Nazione (lista)',
             help='Seleziona nazione'),
         'country_code': fields.char('Nazione (sigla)', size=4),
+        'newsletter_category_id': fields.many2one(
+            'crm.newsletter.category', 'Categoria'),
 
         # ---------------------------------------------------------------------
         # Select mode:

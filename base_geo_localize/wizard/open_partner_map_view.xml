@@ -80,6 +80,8 @@
 
                        <field name="country_id" />
                        <field name="country_code" />
+
+                       <field name="newsletter_category_id" />
                    </group>
                 </form>
             </field>
