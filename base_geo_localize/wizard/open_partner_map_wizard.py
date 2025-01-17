@@ -220,7 +220,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if lead:
             this_domain.extend([
                 ('sql_customer_code', '=', False),
-                ('sql_supplier_code', '=', False),
+                ('sql_destination_code', '=', False),
             ])
             lead_ids = set(partner_pool.search(
                 cr, uid, this_domain, context=context))
