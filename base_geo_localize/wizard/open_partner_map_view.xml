@@ -11,7 +11,7 @@
                     <field name="display_name" />
                     <field name="type" />
                     <field name="is_company" string="Az."/>
-                    <field name="is_address" string="Ind."/>
+                    <!--<field name="is_address" string="Ind."/>-->
                     <field name="street" />
                     <field name="city" />
                     <field name="zip" />
