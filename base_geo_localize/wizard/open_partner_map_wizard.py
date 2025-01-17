@@ -180,7 +180,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if newsletter:
             common_domain.append(
                 ('newsletter_category_id', '=', newsletter.id))
-
+        _logger.info('Common domain: {}'.format(common_domain))
         # ---------------------------------------------------------------------
         # MODE: Set operation
         # ---------------------------------------------------------------------
