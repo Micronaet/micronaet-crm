@@ -4,7 +4,7 @@
         <!--res.partner-->
         <record id="res_partner_map_geocodes_view" model="ir.ui.view">
             <field name="name">Partner Maps open</field>
-            <field name="model">res.partner.map.geocodes</field>
+            <field name="model">res.partner</field>
             <field name="priority" eval="40"/>
             <field name="arch" type="xml">
                 <tree string="Partner con Geocodes" colors="red:not geo_date">
@@ -14,7 +14,7 @@
                     <field name="is_address" string="Ind."/>
                     <field name="street" />
                     <field name="city" />
-                    <!--<field name="zip" />-->
+                    <field name="zip" />
                     <field name="state_id" />
                     <field name="country_id" />
                     <field name="user_id" invisible="1" />
