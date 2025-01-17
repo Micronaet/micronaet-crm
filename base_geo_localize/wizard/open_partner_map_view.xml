@@ -15,7 +15,7 @@
                     <field name="street" />
                     <field name="city" />
                     <field name="zip" />
-                    <field name="state_id" />
+                    <field name="state_id" on_change="onchange_state(state_id)" />
                     <field name="country_id" />
                     <field name="user_id" invisible="1" />
                     <field name="parent_id" readonly="1"/>
