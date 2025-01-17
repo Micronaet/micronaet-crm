@@ -139,12 +139,12 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         only_geo = context.get('only_geo', True)
 
         wizard = self.browse(cr, uid, ids, context=context)[0]
+        agent = wizard.agent_id
         city = wizard.city
         state_code = wizard.state_code
         state = wizard.state_id
         country_code = wizard.country_code
         country = wizard.country_id
-        agent = wizard.agent_id
 
         # Only partner with geocodes:
         if only_geo:
@@ -264,9 +264,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         domain = self.get_domain(cr, uid, ids, context=context)
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
 
-        tree_id = False
-        # tree_id = model_pool.get_object_reference(
-        #    cr, uid, 'base', 'view_res_partner_form')[1]
+        tree_id = model_pool.get_object_reference(
+            cr, uid, 'base_geo_localize', 'res_partner_map_geocodes_view')[1]
 
         return {
             'type': 'ir.actions.act_window',

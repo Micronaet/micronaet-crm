@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <!--res.partner-->
+        <record id="res_partner_map_geocodes_view" model="ir.ui.view">
+            <field name="name">Partner Maps open</field>
+            <field name="model">res.partner.map.geocodes</field>
+            <field name="priority" eval="40"/>
+            <field name="arch" type="xml">
+                <tree string="Partner con Geocodes" colors="red:not geo_date">
+                    <field name="display_name" />
+                    <field name="type" />
+                    <field name="is_company" string="Az."/>
+                    <field name="is_address" string="Ind."/>
+                    <field name="street" />
+                    <field name="city" />
+                    <field name="zip" />
+                    <field name="state_id" />
+                    <field name="country_id" />
+                    <field name="user_id" invisible="1" />
+                    <field name="agent_id" />
+                    <field name="type_id" />
+                    <field name="zone_id" />
+                    <field name="parent_id" />
+                    <field name="newsletter_category_id" />
+                    <field name="type" invisible="1" />
+
+                    <field name="geo_latitude"/>
+                    <field name="geo_longitude"/>
+                    <field name="geo_date"/>
+                    <button string="Geo Localize" name="geo_localize" colspan="1" icon="gtk-refresh" type="object"/>
+                    <button string="Apri in Maps" name="open_geo_localize" colspan="1" icon="gtk-open" type="object"/>
+                </tree>
+            </field>
+        </record>
+
         <!-- res.partner.map.geocodes -->
         <record id="res_partner_map_geocodes_wizard_view" model="ir.ui.view">
             <field name="name">Partner Maps open</field>
