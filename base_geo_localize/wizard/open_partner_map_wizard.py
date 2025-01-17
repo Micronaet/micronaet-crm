@@ -145,6 +145,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         state = wizard.state_id
         country_code = wizard.country_code
         country = wizard.country_id
+        newsletter = wizard.newsletter_category_id
 
         # Only partner with geocodes:
         if only_geo:
@@ -176,6 +177,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if country:
             common_domain.append(
                 ('country_id', '=', country.id))
+        if newsletter:
+            common_domain.append(
+                ('newsletter_category_id', '=', newsletter.id))
 
         # ---------------------------------------------------------------------
         # MODE: Set operation
