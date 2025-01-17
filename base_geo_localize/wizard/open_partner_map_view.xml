@@ -42,6 +42,8 @@
             <field name="arch" type="xml">
                 <filter name="has_newsletter_category" position="before">
                     <filter name="geo_date_off" string="Senza Geocode" domain="[('geo_date','=',False)]"/>
+                    <filter name="sql_customer_code" string="Cliente" domain="[('sql_customer_code','!=',False)]"/>
+                    <filter name="sql_destination_code" string="Destinazione" domain="[('sql_destination_code','!=',False)]"/>
                 </filter>
             </field>
         </record>
