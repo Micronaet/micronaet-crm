@@ -159,10 +159,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
-        if agent:
-            common_domain.append(
-                ('agent_id', '=', agent.id))
-
         if city:
             common_domain.append(
                 ('city', '=', city))
@@ -188,6 +184,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         customer = wizard.customer
         this_domain = common_domain[:]  # Start with filtered menu
+        if agent:
+            common_domain.append(
+                ('agent_id', '=', agent.id))
         if customer:
             this_domain.append(
                 ('sql_customer_code', '!=', False),
@@ -202,6 +201,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         destination = wizard.destination
         this_domain = common_domain[:]
+        if agent:
+            common_domain.append(
+                ('parent_id.agent_id', '=', agent.id))
         if destination:  # of customer!
             this_domain.extend([
                 ('sql_destination_code', '!=', False),
