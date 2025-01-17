@@ -144,6 +144,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         state = wizard.state_id
         country_code = wizard.country_code
         country = wizard.country_id
+        agent = wizard.agent_id
 
         # Only partner with geocodes:
         if only_geo:
@@ -158,6 +159,10 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
+        if agent:
+            common_domain.append(
+                ('agent_id', '=', agent.id))
+
         if city:
             common_domain.append(
                 ('city', '=', city))
