@@ -275,13 +275,11 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         tree_id = model_pool.get_object_reference(
             cr, uid,
             'base_geo_localize',
-            'res_partner_geocodes_view',
-            context=context)[1]
+            'res_partner_geocodes_view',)[1]
         search_view_id = model_pool.get_object_reference(
             cr, uid,
             'crm_newsletter_category',
-            'view_res_partner_newsletter_search',
-            context=context)[1]
+            'view_res_partner_newsletter_search')[1]
 
         return {
             'type': 'ir.actions.act_window',
