@@ -146,6 +146,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         country_code = wizard.country_code
         country = wizard.country_id
         newsletter = wizard.newsletter_category_id
+        from_letter = wizard.from_letter
+        to_letter = wizard.to_letter
 
         # Only partner with geocodes:
         if only_geo:
@@ -160,6 +162,13 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
+        if from_letter:
+            common_domain.append(
+                ('name', '<', from_letter))
+        if to_letter:
+            common_domain.append(
+                ('name', '>=', to_letter))
+
         if city:
             common_domain.append(
                 ('city', '=', city))
@@ -616,6 +625,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
+        'from_letter': fields.char('Dalla lettera >=', size=1),
+        'to_letter': fields.char('Alla lettera <', size=1),
         'agent_id': fields.many2one(
             'res.partner', 'Agente', domain="[('is_agent', '=', True)]"),
         'city': fields.char('Città', size=60),

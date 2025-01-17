@@ -72,6 +72,9 @@
                        <field name="lead" />
 
                        <separator string="Filtri:" colspan="4"/>
+                       <field name="from_letter" />
+                       <field name="to_letter" />
+
                        <field name="agent_id" />
                        <field name="city" />
 
