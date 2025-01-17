@@ -588,6 +588,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         # ---------------------------------------------------------------------
         # Filter:
         # ---------------------------------------------------------------------
+        'agent_id': fields.many2one(
+            'res.partner', 'Agente', domain="[('is_agent', '=', True)]"),
         'city': fields.char('Città', size=60),
         'state_id': fields.many2one(
             'res.country.state', 'Provincia (lista)',

@@ -23,8 +23,8 @@
                        <field name="lead" />
 
                        <separator string="Filtri:" colspan="4"/>
+                       <field name="agent_id" />
                        <field name="city" />
-                       <newline />
 
                        <field name="state_id" />
                        <field name="state_code" />
