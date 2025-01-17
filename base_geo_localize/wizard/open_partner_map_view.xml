@@ -25,6 +25,7 @@
 
                     <field name="sql_customer_code" readonly="1" />
                     <field name="sql_destination_code" readonly="1"/>
+                    <field name="sql_supplier_code" readonly="1"/>
 
                     <field name="geo_optout" string="Optout" />
                     <field name="geo_latitude" readonly="1" string="Lat."/>
