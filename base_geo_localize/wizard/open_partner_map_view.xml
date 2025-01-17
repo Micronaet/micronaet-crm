@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <!--res.partner-->
-        <record id="res_partner_map_geocodes_view" model="ir.ui.view">
+        <record id="res_partner_geocodes_view" model="ir.ui.view">
             <field name="name">Partner Maps open</field>
             <field name="model">res.partner</field>
             <field name="priority" eval="40"/>
