@@ -19,8 +19,8 @@
                     <field name="country_id" />
                     <field name="user_id" invisible="1" />
                     <field name="parent_id" readonly="1"/>
-                    <!--<field name="agent_id" />
-                    <field name="newsletter_category_id" />-->
+                    <!--<field name="agent_id" />-->
+                    <field name="newsletter_category_id" />
                     <field name="type" invisible="1" />
 
                     <field name="geo_optout" />
@@ -32,6 +32,17 @@
                 </tree>
             </field>
         </record>
+        <record model="ir.ui.view" id="view_res_partner_newsletter_search">
+            <field name="name">res.partner.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="crm_newlletter_category.view_res_partner_newsletter_search"/>
+            <field name="arch" type="xml">
+                <filter name="has_newsletter_category" position="before">
+                    <filter name="geo_date_off" string="Senza Geocode" domain="[('geo_date','=',False)]"/>
+                </filter>
+            </field>
+        </record>
+
 
         <!-- res.partner.map.geocodes -->
         <record id="res_partner_map_geocodes_wizard_view" model="ir.ui.view">
