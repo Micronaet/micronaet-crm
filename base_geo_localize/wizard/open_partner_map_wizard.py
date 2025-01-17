@@ -269,7 +269,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         search_id = model_pool.get_object_reference(
             cr, uid,
             'crm_newsletter_category', 'view_res_partner_newsletter_search')[1]
-            'crm_newsletter_category', 'view_res_partner_newsletter_search')[1]
 
         return {
             'type': 'ir.actions.act_window',
