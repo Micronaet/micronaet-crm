@@ -280,7 +280,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             cr, uid,
             'crm_newsletter_category',
             'view_res_partner_newsletter_search')[1]
-
+        pdb.set_trace()
         return {
             'type': 'ir.actions.act_window',
             'name': _('Partner'),
@@ -292,7 +292,6 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             'views': [
                 (tree_id, 'tree'),
                 (False, 'form'),
-                (search_view_id, 'search'),
             ],
             'domain': [('id', 'in', partner_ids)],
             'context': context,
