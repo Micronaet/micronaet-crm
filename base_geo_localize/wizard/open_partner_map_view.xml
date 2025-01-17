@@ -35,7 +35,7 @@
         <record model="ir.ui.view" id="view_res_partner_newsletter_search">
             <field name="name">res.partner.search</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="crm_newlletter_category.view_res_partner_newsletter_search"/>
+            <field name="inherit_id" ref="crm_newsletter_category.view_res_partner_newsletter_search"/>
             <field name="arch" type="xml">
                 <filter name="has_newsletter_category" position="before">
                     <filter name="geo_date_off" string="Senza Geocode" domain="[('geo_date','=',False)]"/>
