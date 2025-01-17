@@ -20,7 +20,7 @@
                     <field name="user_id" invisible="1" />
                     <field name="agent_id" />
                     <field name="parent_id" />
-                    <field name="newsletter_category_id" />
+                    <!--<field name="newsletter_category_id" />-->
                     <field name="type" invisible="1" />
 
                     <field name="geo_latitude"/>
