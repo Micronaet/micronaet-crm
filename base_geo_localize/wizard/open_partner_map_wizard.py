@@ -140,6 +140,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
         wizard = self.browse(cr, uid, ids, context=context)[0]
         agent = wizard.agent_id
+        no_agent = wizard.no_agent_id
         city = wizard.city
         state_code = wizard.state_code
         state = wizard.state_id
@@ -200,6 +201,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if agent:
             this_domain.append(
                 ('agent_id', '=', agent.id))
+        if no_agent:
+            this_domain.append(
+                ('no_agent_id', '=', no_agent.id))
         if customer:
             this_domain.append(
                 ('sql_customer_code', '!=', False),
@@ -217,6 +221,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         if agent:
             this_domain.append(
                 ('parent_id.agent_id', '=', agent.id))
+        if no_agent:
+            this_domain.append(
+                ('no_agent_id', '=', no_agent.id))
         if destination:  # of customer!
             this_domain.extend([
                 ('sql_destination_code', '!=', False),
@@ -629,6 +636,9 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         'to_letter': fields.char('Alla lettera <', size=1),
         'agent_id': fields.many2one(
             'res.partner', 'Agente', domain="[('is_agent', '=', True)]"),
+        'no_agent_id': fields.many2one(
+            'res.partner', 'Agente (escludi)',
+            domain="[('is_agent', '=', True)]"),
         'city': fields.char('Città', size=60),
         'state_id': fields.many2one(
             'res.country.state', 'Provincia (lista)',

@@ -75,7 +75,10 @@
                        <field name="to_letter" />
 
                        <field name="agent_id" />
+                       <field name="no_agent_id" />
+
                        <field name="city" />
+                       <field name="newsletter_category_id" />
 
                        <field name="state_id" />
                        <field name="state_code" />
@@ -83,7 +86,6 @@
                        <field name="country_id" />
                        <field name="country_code" />
 
-                       <field name="newsletter_category_id" />
                    </group>
                 </form>
             </field>
