@@ -203,7 +203,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 ('agent_id', '=', agent.id))
         if no_agent:
             this_domain.append(
-                ('no_agent_id', '=', no_agent.id))
+                ('no_agent_id', '!=', no_agent.id))
         if customer:
             this_domain.append(
                 ('sql_customer_code', '!=', False),
@@ -223,7 +223,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 ('parent_id.agent_id', '=', agent.id))
         if no_agent:
             this_domain.append(
-                ('no_agent_id', '=', no_agent.id))
+                ('no_agent_id', '!=', no_agent.id))
         if destination:  # of customer!
             this_domain.extend([
                 ('sql_destination_code', '!=', False),
