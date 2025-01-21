@@ -19,7 +19,7 @@
                     <field name="country_id" />
                     <field name="user_id" invisible="1" />
                     <field name="parent_id" readonly="1"/>
-                    <field name="agent_id" />
+                    <field name="agent_id" readonly="1"/>
                     <field name="newsletter_category_id" />
                     <field name="type" invisible="1" />
 
