@@ -343,8 +343,8 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             # 'Fornitori': 'ff3644db',  # Red dask
             # 'Fornitori (contatto)': 'ff969cee',  # Red
 
-            'Lead': 'ff44af62',  # Blue dark
-            'Lead (contatto)': 'ffabdbb7',  # Blue
+            'Lead': 'ff3644db',  # Blue dark
+            'Lead (contatto)': 'ff969cee',  # Blue
 
             'Nullo': '00000000',  # Bladk
         }
