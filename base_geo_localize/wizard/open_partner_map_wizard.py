@@ -536,7 +536,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 _('Impostare il pagametro per l\'optout!'),
             )
         parameter = param_pool.browse(cr, uid, param_ids, context=context)[0]
-        optout_url = '%s/geo/optout/{}' % parameter.value
+        optout_url = '%s/geo/optout/' % parameter.value
 
         partner_data = {}
         _logger.info('Found {} partner'.format(len(partner_ids)))
