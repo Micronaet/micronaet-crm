@@ -242,17 +242,27 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         this_domain = common_domain[:]
         # agent?
         if lead:
+            # Lead Company
             this_domain.extend([
-                ('sql_customer_code', '=', False),
-                ('sql_destination_code', '=', False),
-                ('sql_supplier_code', '=', False),
-
+                ('parent_id', '!=', False),
                 ('parent_id.sql_customer_code', '=', False),
                 ('parent_id.sql_destination_code', '=', False),
                 ('parent_id.sql_supplier_code', '=', False),
             ])
-            lead_ids = set(partner_pool.search(
+            company_lead_ids = set(partner_pool.search(
                 cr, uid, this_domain, context=context))
+
+            # Lead Contact:
+            this_domain.extend([
+                ('parent_id', '=', False),
+                ('sql_customer_code', '=', False),
+                ('sql_destination_code', '=', False),
+                ('sql_supplier_code', '=', False),
+            ])
+            contact_lead_ids = set(partner_pool.search(
+                cr, uid, this_domain, context=context))
+
+            lead_ids = company_lead_ids.union(contact_lead_ids)
         else:
             lead_ids = False
 
