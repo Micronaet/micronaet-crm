@@ -519,9 +519,24 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             context = {}
         kml_mode = context.get('kml_mode')
 
+        param_pool = self.pool.get('ir.config_parameters')
         partner_pool = self.pool.get('res.partner')
         domain = self.get_domain(cr, uid, ids, context=context)
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
+
+        # ---------------------------------------------------------------------
+        # Read Address for Optout URL
+        # ---------------------------------------------------------------------
+        param_ids = param_pool.search(cr, uid, [
+            ('key', '=', 'web.base.url'),
+        ], context=context)
+        if not param_ids:
+            raise osv.except_osv(
+                _('Errore:'),
+                _('Impostare il pagametro per l\'optout!'),
+            )
+        parameter = param_pool.browse(cr, uid, param_ids, context=context)[0]
+        optout_url = '%s/geo/optout/{}' % parameter.value
 
         partner_data = {}
         _logger.info('Found {} partner'.format(len(partner_ids)))
@@ -614,8 +629,13 @@ class ResPartnerMapGeocodes(orm.TransientModel):
 
             odoo_partner_url = odoo_url.format(
                 db=cr.dbname, partner_id=partner_id)
-            popup += "<a href='{}' target='_blank'>Apri ODOO" \
-                     "</a><br/>".format(odoo_partner_url)
+            popup += \
+                "<a href='{}' target='_blank'>Apri ODOO</a><br/><br/>" \
+                "<a href='{}{}' target='_blank'>OPTPUT</a><br/>".format(
+                    odoo_partner_url,
+                    optout_url,
+                    partner.id,
+                )
 
             if popup:
                 record['popup'] = popup
