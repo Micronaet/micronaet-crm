@@ -519,7 +519,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             context = {}
         kml_mode = context.get('kml_mode')
 
-        param_pool = self.pool.get('ir.config_parameters')
+        param_pool = self.pool.get('ir.config_parameter')
         partner_pool = self.pool.get('res.partner')
         domain = self.get_domain(cr, uid, ids, context=context)
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
