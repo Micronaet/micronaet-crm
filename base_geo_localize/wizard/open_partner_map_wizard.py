@@ -33,6 +33,8 @@ import cgi
 
 from unidecode import unidecode
 import openerp.addons.decimal_precision as dp
+from openerp import http
+from openerp.http import request
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -55,6 +57,21 @@ url_open = '%s/open?filename={}' % flask_url
 
 odoo_url = 'http://192.168.1.181:18069/web?db={db}#id={partner_id}&' \
            'view_type=form&model=res.partner&menu_id=682&action=884'
+
+
+class GeoOptout(http.Controller):
+    @http.route(['/geo/optout/<int:partner_id>'], type='http',
+                auth='public', website=True, methods=['GET'])
+    def geo_optout(self, partner_id, **post):
+        """ Opt out command
+        """
+        # if not request.session.uid:
+        #    return login_redirect()
+        cr, uid, context = request.cr, request.uid, request.context
+        request.registry['res.partner'].write(cr, uid, [partner_id], {
+            'geo_optout': True,
+        }, context=context)
+        return '<b>Disattivato partner da Mappa (prossima export)</b>'
 
 
 # -----------------------------------------------------------------------------
