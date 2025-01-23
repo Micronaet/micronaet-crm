@@ -349,15 +349,15 @@ class ResPartnerMapGeocodes(orm.TransientModel):
         pin_colors = {
             'Clienti': 'ff44af62',  # Green dark
             'Clienti (contatto)': 'ff3644db',  # Green
-            'Destinazioni': 'ff44af62',  # Blue dark
-            'Destinazioni (contatto)': 'ffabdbb7',  # Blue
+            'Destinazioni': 'ffffd83b',  # Orange
+            'Destinazioni (contatto)': 'ffffd83b',  # Orange
             # 'Fornitori': 'ff3644db',  # Red dask
             # 'Fornitori (contatto)': 'ff969cee',  # Red
 
             'Lead': 'ff3644db',  # Blue dark
             'Lead (contatto)': 'ff969cee',  # Blue
 
-            'Nullo': '00000000',  # Bladk
+            'Nullo': '00000000',  # Black
         }
 
         document = u'''<?xml version="1.0" encoding="UTF-8"?>
