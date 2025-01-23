@@ -191,6 +191,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
             common_domain.append(
                 ('newsletter_category_id', '=', newsletter.id))
         _logger.info('Common domain: {}'.format(common_domain))
+
         # ---------------------------------------------------------------------
         # MODE: Set operation
         # ---------------------------------------------------------------------
@@ -223,7 +224,7 @@ class ResPartnerMapGeocodes(orm.TransientModel):
                 ('parent_id.agent_id', '=', agent.id))
         if no_agent:
             this_domain.append(
-                ('agent_id', '!=', no_agent.id))
+                ('parent_id.agent_id', '!=', no_agent.id))
         if destination:  # of customer!
             this_domain.extend([
                 ('sql_destination_code', '!=', False),
