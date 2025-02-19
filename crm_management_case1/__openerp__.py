@@ -35,7 +35,7 @@
         'crm_newsletter_category', # newsletter_category_id
         'campaign_base', # type_id
         'partner_addresses',
-        
+
         # Field for sql code:
         'sql_partner_agent',
         'sql_partner',
