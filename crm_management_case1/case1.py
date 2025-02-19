@@ -78,7 +78,7 @@ class ResPartner(orm.Model):
                     ))
 
             # -----------------------------------------------------------------
-            # Account partner:
+            # Account partner: Sales
             # -----------------------------------------------------------------
             if account_partner:
                 # Check last order:
@@ -98,6 +98,9 @@ class ResPartner(orm.Model):
                         # Inactive
                         assign_data[3].append(partner.id)
             else:
+                # -------------------------------------------------------------
+                # Lead partner: Mail Chimp
+                # -------------------------------------------------------------
                 # Lead
                 assign_data[4].append(partner.id)
 
