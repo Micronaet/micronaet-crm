@@ -97,16 +97,13 @@ class ResPartner(orm.Model):
                 if sale_ids:
                     order = sale_pool.browse(cr, uid, sale_ids, context=context)[0]
                     order_date = order.date_order
-                    if order_date <= year_1:
-                        # Regular
+                    if order_date >= year_1:  # Regular
                         assign_data[1].append(partner.id)
-                    elif order_date >= year_2:
-                        # Occasional
+                    elif order_date >= year_2:  # Occasional
                         assign_data[2].append(partner.id)
-                    else: # < year_2
-                        # Inactive
+                    else: # < year_2  # Inactive
                         assign_data[3].append(partner.id)
-                else:  # No sale
+                else:  # No sale  # Inactive
                     assign_data[3].append(partner.id)
             else:
                 # -------------------------------------------------------------
