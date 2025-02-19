@@ -21,7 +21,7 @@
     'name': 'CRM Management',
     'version': '0.1',
     'category': 'CRM',
-    'description': '''        
+    'description': '''
         Manage case 1
         Add management for company 1 (particular case study used)
         ''',
@@ -31,19 +31,21 @@
     'depends': [
         'base',
         'crm',
+        'sale',
         'crm_newsletter_category', # newsletter_category_id
         'campaign_base', # type_id
         'partner_addresses',
         
-        # Field for sql code:        
-        'sql_partner_agent',        
+        # Field for sql code:
+        'sql_partner_agent',
         'sql_partner',
         ],
     'init_xml': [],
     'demo': [],
     'data': [
-        #'security/ir.model.access.csv',    
+        #'security/ir.model.access.csv',
         'case1_view.xml',
+        'scheduler.xml',
         ],
     'active': False,
     'installable': True,

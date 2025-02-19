@@ -41,12 +41,79 @@ _logger = logging.getLogger(__name__)
 class ResPartner(orm.Model):
     """ Model name: ResPartner
     """
-    
     _inherit = 'res.partner'
-    
+
+    def scheduled_autoassign_crm_level(self, cr, uid, context=None):
+        """ Auto-assign partner CRM category
+        """
+        sale_pool = self.pool.get('sale.order')
+        now = datetime.now()
+        year_1 = (now - timedelta(days=365)).strftime(
+            DEFAULT_SERVER_DATE_FORMAT)
+        year_2 = (now - timedelta(days=365 * 2)).strftime(
+            DEFAULT_SERVER_DATE_FORMAT)
+
+        partner_ids = self.search(cr, uid, [], context=context)
+        assign_data = {
+            1: [],
+            2: [],
+            3: [],
+            4: [],
+            5: [],
+        }
+        for partner in self.browse(cr, uid, partner_ids, context=context):
+            account_partner = any((
+                partner.sql_customer_code,
+                partner.sql_supplier_code,
+                partner.sql_destination_code,
+            ))
+
+            # Check also parent:
+            parent = partner.parent_id
+            if not account_partner and parent:
+                account_partner = any((
+                    parent.sql_customer_code,
+                    parent.sql_supplier_code,
+                    parent.sql_destination_code,
+                    ))
+
+            # -----------------------------------------------------------------
+            # Account partner:
+            # -----------------------------------------------------------------
+            if account_partner:
+                # Check last order:
+                sale_ids = sale_pool.search([
+                    ('partner_id', '=', partner.id),
+                ], order='date_order desc', limit=1)
+                if sale_ids:
+                    order = sale_pool.bowse(cr, uid, sale_ids, context=context)[0]
+                    order_date = order.order_date
+                    if order_date <= year_1:
+                        # Regular
+                        assign_data[1].append(partner.id)
+                    elif order_date >= year_2:
+                        # Occasional
+                        assign_data[2].append(partner.id)
+                    else: # < year_2
+                        # Inactive
+                        assign_data[3].append(partner.id)
+            else:
+                # Lead
+                assign_data[4].append(partner.id)
+
+                # Contact
+                # todo Contact: assign_data[partner.id] = 4
+
+        for crm_level in assign_data:
+            selected_ids = assign_data[level]
+            self.write(cr, uid ,selected_ids, {
+                'crm_level': crm_level,
+            }, context=context)
+        return True
+
     def open_original_form_partner(self, cr, uid, ids, context=None):
-        '''
-        '''
+        """
+        """
         model_pool = self.pool.get('ir.model.data')
         tree_id = model_pool.get_object_reference(
             cr, uid, 
@@ -73,14 +140,16 @@ class ResPartner(orm.Model):
     
     _columns = {
         'crm_level': fields.selection([
-            (1, 'No important'),
-            (2, 'Low important'),
-            (3, 'Medium important'),
-            (4, 'Important'),
+            (1, 'Regular client'),  # OC < 1 year
+            (2, 'Occasional client'),  # 1 year < OC < 2 year
+            (3, 'Inactive client'),  # OC < 2 year
+
+            # todo Integrate with MailChimp:
+            (4, 'Lead'),  # No buy, but comunication
+            (5, 'Contact'),  # No buy, no comunication
             ], 'CRM')
         }
     
     _defaults = {
-        'crm_level': lambda *x: 1,
+        # 'crm_level': lambda *x: 1,
         }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
