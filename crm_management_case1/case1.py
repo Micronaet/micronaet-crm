@@ -119,7 +119,7 @@ class ResPartner(orm.Model):
         _logger.info('Update partner operation')
         for crm_level in assign_data:
             _logger.info('Update level: {}'.format(crm_level))
-            selected_ids = assign_data[level]
+            selected_ids = assign_data[crm_level]
             self.write(cr, uid ,selected_ids, {
                 'crm_level': crm_level,
             }, context=context)
