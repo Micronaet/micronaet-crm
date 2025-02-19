@@ -106,6 +106,8 @@ class ResPartner(orm.Model):
                     else: # < year_2
                         # Inactive
                         assign_data[3].append(partner.id)
+                else:  # No sale
+                    assign_data[3].append(partner.id)
             else:
                 # -------------------------------------------------------------
                 # Lead partner: Mail Chimp
