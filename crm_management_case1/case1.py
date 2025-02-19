@@ -95,7 +95,7 @@ class ResPartner(orm.Model):
                     ('partner_id', '=', partner.id),
                 ], order='date_order desc', limit=1, context=context)
                 if sale_ids:
-                    order = sale_pool.bowse(cr, uid, sale_ids, context=context)[0]
+                    order = sale_pool.browse(cr, uid, sale_ids, context=context)[0]
                     order_date = order.date_order
                     if order_date <= year_1:
                         # Regular
