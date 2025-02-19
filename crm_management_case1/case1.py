@@ -61,14 +61,23 @@ class ResPartner(orm.Model):
             4: [],
             5: [],
         }
+        total = len(partner_ids)
+        _logger.info('Partner found: {}'.format(total))
+        counter = 0
         for partner in self.browse(cr, uid, partner_ids, context=context):
+            counter += 1
+            if not counter % 50:
+                _logger.info('Reading {} / {} partner'.format(
+                    counter, total))
+
+            # Account Partner code:
             account_partner = any((
                 partner.sql_customer_code,
                 partner.sql_supplier_code,
                 partner.sql_destination_code,
             ))
 
-            # Check also parent:
+            # Check also parent partner:
             parent = partner.parent_id
             if not account_partner and parent:
                 account_partner = any((
@@ -82,12 +91,12 @@ class ResPartner(orm.Model):
             # -----------------------------------------------------------------
             if account_partner:
                 # Check last order:
-                sale_ids = sale_pool.search([
+                sale_ids = sale_pool.search(cr, uid, [
                     ('partner_id', '=', partner.id),
-                ], order='date_order desc', limit=1)
+                ], order='date_order desc', limit=1, context=context)
                 if sale_ids:
                     order = sale_pool.bowse(cr, uid, sale_ids, context=context)[0]
-                    order_date = order.order_date
+                    order_date = order.date_order
                     if order_date <= year_1:
                         # Regular
                         assign_data[1].append(partner.id)
@@ -107,11 +116,14 @@ class ResPartner(orm.Model):
                 # Contact
                 # todo Contact: assign_data[partner.id] = 4
 
+        _logger.info('Update partner operation')
         for crm_level in assign_data:
+            _logger.info('Update level: {}'.format(crm_level))
             selected_ids = assign_data[level]
             self.write(cr, uid ,selected_ids, {
                 'crm_level': crm_level,
             }, context=context)
+        _logger.info('End Update partner operation')
         return True
 
     def open_original_form_partner(self, cr, uid, ids, context=None):
