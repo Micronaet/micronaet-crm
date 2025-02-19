@@ -92,6 +92,7 @@ class ResPartner(orm.Model):
             if account_partner:
                 # Check last order:
                 sale_ids = sale_pool.search(cr, uid, [
+                    ('state', 'not in', ('cancel', 'sent', 'draft'))
                     ('partner_id', '=', partner.id),
                 ], order='date_order desc', limit=1, context=context)
                 if sale_ids:
