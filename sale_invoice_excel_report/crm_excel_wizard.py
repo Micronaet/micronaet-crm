@@ -474,18 +474,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         if from_date:
             domain_sale.append(
                 ('date_order', '>=', from_date))
-            domain_ddt.append(
-                ('date', '>=', from_date))
-            domain_invoice.append(
-                ('date_invoice', '>=', from_date))
 
         if to_date:
             domain_sale.append(
                 ('date_order', '<=', to_date))
-            domain_ddt.append(
-                ('date', '<=', to_date))
-            domain_invoice.append(
-                ('date_invoice', '<=', to_date))
 
         ws_name = 'Dettaglio ordini'
         excel_pool.create_worksheet(ws_name)
