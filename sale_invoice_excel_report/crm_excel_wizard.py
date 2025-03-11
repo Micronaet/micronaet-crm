@@ -485,7 +485,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('order_id.date_order', '>=', from_date))
 
         if to_date:
-            filter_text += ', Dalla aata: {}'.format(to_date)
+            filter_text += ', Dalla data: {}'.format(to_date)
             domain_sale.append(
                 ('order_id.date_order', '<=', to_date))
         line_ids = line_pool.search(cr, uid, domain_sale, context=context)
@@ -526,7 +526,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.write_xls_line(
             ws_name, row, [filter_text],
             default_format=excel_format['title'])
-        row += 1
 
         # -----------------------------------------------------------------
         # Header:
@@ -539,6 +538,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Q.', 'Prezzo', 'Netto', 'Totale',
             'Usato',
         ]
+        row += 1
         excel_pool.write_xls_line(
             ws_name, row, header, default_format=excel_format['header'])
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
@@ -613,8 +613,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         row = 0
         excel_pool.write_xls_line(
             ws_name, row, [filter_text], default_format=excel_format['title'])
-        row += 1
-        for season in summary_db:
+        for season in sorted(summary_db):
             row += 1
             total = summary_db[season]
             excel_pool.write_xls_line(
