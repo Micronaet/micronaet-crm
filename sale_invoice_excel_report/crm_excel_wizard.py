@@ -475,6 +475,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Collect data:
         # ---------------------------------------------------------------------
         domain_sale = [
+            ('previsional', '=', False),
             ('order_id.state', 'not in', ('draft', 'sent', 'cancel')),
         ]
 
