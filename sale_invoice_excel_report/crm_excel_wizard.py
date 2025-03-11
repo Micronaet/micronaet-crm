@@ -451,12 +451,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             context = {}
 
         order_pool = self.pool.get('sale.order.line')
-
-        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
+        excel_pool = self.pool.get('excel.writer')
 
         # ---------------------------------------------------------------------
         # Parameters:
         # ---------------------------------------------------------------------
+        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         from_date = wiz_browse.from_date
         to_date = wiz_browse.to_date
         reference_date = (
