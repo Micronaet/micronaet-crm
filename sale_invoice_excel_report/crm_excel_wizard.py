@@ -488,6 +488,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             filter_text += ', Dalla data: {}'.format(to_date)
             domain_sale.append(
                 ('order_id.date_order', '<=', to_date))
+
+        filter_text += ', Data di rif.: {}'.format(reference_date)
+
         line_ids = line_pool.search(cr, uid, domain_sale, context=context)
 
         # =====================================================================
