@@ -475,12 +475,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         if from_date:
             filter_text += ', Dalla data: {}'.format(from_date)
             domain_sale.append(
-                ('date_order', '>=', from_date))
+                ('order_id.date_order', '>=', from_date))
 
         if to_date:
             filter_text += ', Dalla aata: {}'.format(to_date)
             domain_sale.append(
-                ('date_order', '<=', to_date))
+                ('order_id.date_order', '<=', to_date))
         line_ids = line_pool.search(cr, uid, domain_sale, context=context)
 
         # ---------------------------------------------------------------------
