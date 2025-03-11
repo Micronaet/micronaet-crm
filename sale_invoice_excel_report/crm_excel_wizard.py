@@ -527,7 +527,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Partner', 'Pos. fiscale', 'Regione', 'Nazione', 'Cat. Stat.',
             'Famiglia', 'Prodotto',
             'Scala', 'Sconto',
-            'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
+            'Q.', 'Prezzo', 'Netto', 'Totale',
             'Usato',
         ]
         excel_pool.write_xls_line(
@@ -585,7 +585,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 line.price_unit,
                 (subtotal / qty) if qty else 0.0,
                 subtotal,
-                product,
                 'X' if used else '',
                 ), default_format=format_color['text'])
 
