@@ -589,7 +589,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 'X' if used else '',
                 ), default_format=format_color['text'])
 
-        return excel_pool.return_attachment(cr, uid, 'CRM Report all')
+        return excel_pool.return_attachment(cr, uid, 'CRM OC compare status')
 
     def action_extract_all(self, cr, uid, ids, context=None):
         """ All in one report:
