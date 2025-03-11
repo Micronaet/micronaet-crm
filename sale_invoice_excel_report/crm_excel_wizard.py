@@ -468,7 +468,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Collect data:
         # ---------------------------------------------------------------------
         domain_sale = [
-            ('state', 'not in', ('draft', 'sent', 'cancel')),
+            ('order_id.state', 'not in', ('draft', 'sent', 'cancel')),
         ]
 
         if from_date:
