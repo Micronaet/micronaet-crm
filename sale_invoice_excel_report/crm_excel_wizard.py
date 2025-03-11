@@ -483,10 +483,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('order_id.date_order', '<=', to_date))
         line_ids = line_pool.search(cr, uid, domain_sale, context=context)
 
-        # ---------------------------------------------------------------------
+        # =====================================================================
         # Excel file:
-        # ---------------------------------------------------------------------
+        # =====================================================================
         ws_name = 'Dettaglio ordini'
+        # =====================================================================
         excel_pool.create_worksheet(ws_name)
 
         excel_pool.set_format()
@@ -588,6 +589,26 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 'X' if used else '',
                 ), default_format=format_color['text'])
 
+        # =====================================================================
+        ws_name = 'Totali'
+        excel_pool.create_worksheet(ws_name)
+        excel_pool.column_width(ws_name, [15, 10])
+
+        # ---------------------------------------------------------------------
+        # Title:
+        # ---------------------------------------------------------------------
+        row = 0
+        excel_pool.write_xls_line(
+            ws_name, row, [filter_text], default_format=excel_format['title'])
+        row += 1
+        for season in summary_db:
+            row += 1
+            total = summary_db[season]
+            excel_pool.write_xls_line(
+                ws_name, row, [
+                    season,
+                    (total, excel_format['white']['number']),
+                ], default_format=excel_format['white']['text'])
         return excel_pool.return_attachment(cr, uid, 'CRM OC compare status')
 
     def action_extract_all(self, cr, uid, ids, context=None):
