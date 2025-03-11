@@ -539,13 +539,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # Readability:
             product = line.product_id
             order = line.order_id
-            order_date = order.date_order[:10]
+            date_order = order.date_order[:10]
             order_date_reference = '{}{}'.format(  # Moved to this year
                 reference_year,
                 order_date[4:],
             )
 
-            season = self.get_season_period(order.date_order)
+            season = self.get_season_period(date_order)
             if season not in summary_db:
                 summary_db[season] = 0.0
 
