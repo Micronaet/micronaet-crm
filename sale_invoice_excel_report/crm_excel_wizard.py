@@ -145,7 +145,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         from_date = wiz_browse.from_date
         to_date = wiz_browse.to_date
 
-        # Browseable:
+        # Browsable:
         partner = wiz_browse.partner_id
         fiscal = wiz_browse.fiscal_position_id
         agent = wiz_browse.agent_id
@@ -443,6 +443,155 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         return True
+
+    def action_extract_oc_comparative(self, cr, uid, ids, context=None):
+        """ OC for comparative operation
+        """
+        if context is None:
+            context = {}
+
+        order_pool = self.pool.get('sale.order.line')
+
+        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
+
+        # ---------------------------------------------------------------------
+        # Parameters:
+        # ---------------------------------------------------------------------
+        from_date = wiz_browse.from_date
+        to_date = wiz_browse.to_date
+        reference_date = (
+            wiz_browse.reference_date or
+            datetime.now().strftime(DATE_FORMAT))
+        reference_year = reference_date[:4]
+
+        # ---------------------------------------------------------------------
+        # Collect data:
+        # ---------------------------------------------------------------------
+        domain_sale = [
+            ('state', 'not in', ('draft', 'sent', 'cancel')),
+        ]
+
+        if from_date:
+            domain_sale.append(
+                ('date_order', '>=', from_date))
+            domain_ddt.append(
+                ('date', '>=', from_date))
+            domain_invoice.append(
+                ('date_invoice', '>=', from_date))
+
+        if to_date:
+            domain_sale.append(
+                ('date_order', '<=', to_date))
+            domain_ddt.append(
+                ('date', '<=', to_date))
+            domain_invoice.append(
+                ('date_invoice', '<=', to_date))
+
+        ws_name = 'Dettaglio ordini'
+        excel_pool.create_worksheet(ws_name)
+
+        excel_pool.set_format()
+        excel_format = {
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
+            'white': {
+                'text': excel_pool.get_format('text'),
+                'number': excel_pool.get_format('number'),
+            },
+            'red': {
+                'text': excel_pool.get_format('bg_red'),
+                'number': excel_pool.get_format('bg_red_number'),
+            },
+
+        }
+
+        excel_pool.column_width(ws_name, [
+            8, 10, 8, 15,
+            35, 20, 20, 20, 15,
+            15, 10,
+            10, 10,
+            10, 10, 10, 15, 3, 5
+        ])
+
+        # -----------------------------------------------------------------
+        # Title:
+        # -----------------------------------------------------------------
+        row = 0
+        excel_pool.write_xls_line(
+            ws_name, row, [filter_text], default_format=excel_format['title'])
+        row += 1
+
+        # -----------------------------------------------------------------
+        # Header:
+        # -----------------------------------------------------------------
+        header = [
+            'Documento', 'Stagione', 'Data', 'Origine',
+            'Partner', 'Pos. fiscale', 'Regione', 'Nazione', 'Cat. Stat.',
+            'Famiglia', 'Prodotto',
+            'Scala', 'Sconto',
+            'Q.', 'Prezzo', 'Netto', 'Totale', 'Rif.',
+            'Usato',
+        ]
+        excel_pool.write_xls_line(
+            ws_name, row, header, default_format=excel_format['header'])
+        excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+
+        summary_db = {}
+        for line in order_pool.browse(cr, uid, order_ids, context=context):
+            # Readability:
+            product = line.product_id
+            order = line.order_id
+            order_date = order.date_order[:10]
+            order_date_reference = '{}{}'.format(  # Moved to this year
+                reference_year,
+                order_date[4:],
+            )
+
+            season = self.get_season_period(order.date_order)
+            if season not in summary_db:
+                summary_db[season] = 0.0
+
+            # -------------------------------------------------------------
+            # Data for partial / full order:
+            # -------------------------------------------------------------
+            qty = line.product_uom_qty
+            subtotal = line.price_subtotal
+            if order_date_reference <= reference_date:
+                used = True
+                summary_db[season] += subtotal
+                format_color = excel_format['white']
+
+            else:
+                used = False
+                format_color = excel_format['red']
+
+            row += 1
+            excel_pool.write_xls_line(
+                ws_name, row, (
+                _('OC'),
+                season,
+                date_order,
+                order.name,
+                order.partner_id.name,
+                order.partner_id.property_account_position.name,
+                order.partner_id.state_id.region_id.name or '',
+                order.partner_id.country_id.name or '',
+                order.partner_id.statistic_category_id.name or '',
+
+                product.family_id.name or '',
+                product.default_code or '',
+
+                line.multi_discount_rates,
+                line.discount,
+                qty,
+                line.price_unit,
+                (subtotal / qty) if qty else 0.0,
+                subtotal,
+                product,
+                'X' if used else '',
+                ), default_format=format_color['text'])
+
+        return excel_pool.return_attachment(cr, uid, 'CRM Report all')
 
     def action_extract_all(self, cr, uid, ids, context=None):
         """ All in one report:
