@@ -462,7 +462,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         reference_date = (
             wiz_browse.reference_date or
             datetime.now().strftime(DATE_FORMAT))
-        reference_year = reference_date[:4]
+        reference_year = int(reference_date[:4])
+
+        if int(reference_date[5:7]) < 9:  # Second part of year
+            year_1 = reference_year - 1
+            year_2 = reference_year
+        else:   # First part of year
+            year_1 = reference_year
+            year_2 = reference_year + 1
 
         # ---------------------------------------------------------------------
         # Collect data:
@@ -517,7 +524,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # -----------------------------------------------------------------
         row = 0
         excel_pool.write_xls_line(
-            ws_name, row, [filter_text], default_format=excel_format['title'])
+            ws_name, row, [filter_text],
+            default_format=excel_format['title'])
         row += 1
 
         # -----------------------------------------------------------------
@@ -541,8 +549,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             product = line.product_id
             order = line.order_id
             date_order = order.date_order[:10]
+            if int(date_order[5:7]) < 9:  # Second part of year
+                use_year = year_2
+            else:
+                use_year = year_1
             order_date_reference = '{}{}'.format(  # Moved to this year
-                reference_year,
+                use_year,
                 date_order[4:],
             )
 
@@ -555,6 +567,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # -------------------------------------------------------------
             qty = line.product_uom_qty
             subtotal = line.price_subtotal
+
             if order_date_reference <= reference_date:
                 used = True
                 summary_db[season] += subtotal
