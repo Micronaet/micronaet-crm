@@ -450,7 +450,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         if context is None:
             context = {}
 
-        order_pool = self.pool.get('sale.order.line')
+        line_pool = self.pool.get('sale.order.line')
         excel_pool = self.pool.get('excel.writer')
 
         # ---------------------------------------------------------------------
@@ -481,7 +481,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             filter_text += ', Dalla aata: {}'.format(to_date)
             domain_sale.append(
                 ('date_order', '<=', to_date))
+        line_ids = line_pool.search(cr, uid, domain_sale, context=context)
 
+        # ---------------------------------------------------------------------
+        # Excel file:
+        # ---------------------------------------------------------------------
         ws_name = 'Dettaglio ordini'
         excel_pool.create_worksheet(ws_name)
 
@@ -531,7 +535,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         summary_db = {}
-        for line in order_pool.browse(cr, uid, order_ids, context=context):
+        for line in line_pool.browse(cr, uid, line_ids, context=context):
             # Readability:
             product = line.product_id
             order = line.order_id
