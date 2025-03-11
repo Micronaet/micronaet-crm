@@ -497,7 +497,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 'text': excel_pool.get_format('bg_red'),
                 'number': excel_pool.get_format('bg_red_number'),
             },
-
         }
 
         excel_pool.column_width(ws_name, [
