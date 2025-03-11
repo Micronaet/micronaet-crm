@@ -542,7 +542,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             date_order = order.date_order[:10]
             order_date_reference = '{}{}'.format(  # Moved to this year
                 reference_year,
-                order_date[4:],
+                date_order[4:],
             )
 
             season = self.get_season_period(date_order)
