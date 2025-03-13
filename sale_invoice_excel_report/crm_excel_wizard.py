@@ -692,8 +692,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         }
 
         excel_pool.column_width(ws_name, [
-            12, 15, 10, 10, 15, 15, 15, 40,
-            30, 10, 5, 40,
+            12, 15, 10, 10,
+            15, 15, 20, 40,
+            30, 10, 5, 5, 40,
         ])
 
         # -----------------------------------------------------------------
@@ -708,7 +709,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Header:
         # -----------------------------------------------------------------
         header = [
-            'Stagione', 'Consegna', 'Data', 'Scadenza', 'Fattura', 'DDT', 'Ordine', 'Partner',
+            'Stagione', 'Consegna', 'Data', 'Scadenza',
+            'Fattura', 'DDT', 'Ordine', 'Partner',
             'Prodotto', 'Q.', 'Sollecitato', 'Ritardo', 'Commento',
              ]
         row += 1
@@ -737,6 +739,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 qty = line.product_uom_qty
                 delay = 0
                 if delivery_date and date_deadline:
+                    delivery_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
+                    deadline_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
+                    delay = (delivery_dt - deadline_dt).days
                     if delivery_date > date_deadline:
                         format_color = excel_format['red']
                         comment = '[Ritardo] '
