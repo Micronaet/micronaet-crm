@@ -681,6 +681,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 'text': excel_pool.get_format('text'),
                 'number': excel_pool.get_format('number'),
             },
+            'green': {
+                'text': excel_pool.get_format('bg_green'),
+                'number': excel_pool.get_format('bg_green_number'),
+            },
             'red': {
                 'text': excel_pool.get_format('bg_red'),
                 'number': excel_pool.get_format('bg_red_number'),
@@ -745,6 +749,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     if delivery_date > date_deadline:
                         format_color = excel_format['red']
                         comment = '[Ritardo] '
+                    elif delivery_date < date_deadline:
+                        format_color = excel_format['green']
+                        comment = '[Giusto] '
                     else:
                         format_color = excel_format['white']
                         comment = '[Anticipo] '
