@@ -742,6 +742,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # -------------------------------------------------------------
                 qty = line.product_uom_qty
                 delay = 0
+                pdb.set_trace()
                 if delivery_date and date_deadline:
                     delivery_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
                     deadline_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
