@@ -36,7 +36,8 @@
         'sale',
         'stock',
         'account',
-        'excel_export',        
+        'excel_export',
+        'mx_sale',  # For relay claims
         ],
     'init_xml': [],
     'demo': [],

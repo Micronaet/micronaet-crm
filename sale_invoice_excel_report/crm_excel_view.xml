@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <record model="ir.ui.view" id="view_sale_order_pickout_delivery_claim_form">
+            <field name="name">sale.order.pick.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="mx_sale.view_sale_order_pickout_form" />
+            <field name="arch" type="xml">
+                 <field name="date_delivery" attrs="{'required': [('date_delivery_confirmed','=',True)]}" position="after">
+                       <button name="button_claim_delivery" string="Sollecito consegna!" type="object" icon="gtk-print" class="oe_highlight" />
+                 </field>
+            </field>
+        </record>
+
        <!-- crm.excel.extract.report.wizard -->
        <record id="crm_excel_extract_report_wizard_view" model="ir.ui.view">
             <field name="name">CRM Extract wizard</field>
