@@ -737,6 +737,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             line_type = 'Picking'
             row += 1
             header_row = row
+            format_color = excel_format['white']
             for line in picking.move_lines:
                 line_type = 'Detail'
                 comment = ''
