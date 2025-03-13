@@ -47,7 +47,7 @@ class SaleOrderInherit(orm.Model):
     """
     _inherit = 'sale.order'
 
-    def button_claim_delivery(self, cr, uid, ids, context=context):
+    def button_claim_delivery(self, cr, uid, ids, context=None):
         """ Claim
         """
         order = self.browse(cr, uid, ids[0], context=context)
