@@ -699,7 +699,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             12, 10,
             15, 15, 20, 40,
             15, 10,
-            10, 40, 10, 10,
+            10, 40, 20, 10,
             30, 5,
         ])
 
@@ -718,7 +718,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Stagione', 'Tipo',
             'Fattura', 'DDT', 'Ordine', 'Partner',
             'Consegna', 'Data',
-            'Ritardo', 'Commento', 'Sollecitato', 'Scadenza',
+            'Ritardo', 'Commento', 'Solleciti', 'Scadenza',
             'Prodotto', 'Q.',
              ]
         row += 1
@@ -785,7 +785,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
                         delay,
                         comment,
-                        '',  # Data sollecito
+                        order.claim_date_log or '',  # Data sollecito
                         date_deadline,
 
                         product.default_code or '',
