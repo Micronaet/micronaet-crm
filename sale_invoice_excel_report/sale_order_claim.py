@@ -52,9 +52,10 @@ class SaleOrderInherit(orm.Model):
         """
         order = self.browse(cr, uid, ids[0], context=context)
         now = str(datetime.now())[:10]
+        claim_date_log = order.claim_date_log or ''
         self.write(cr, uid, ids, {
             'claim_date_last': now,
-            'claim_date_log': '{}[{}] '.format(order.claim_date_log, now),
+            'claim_date_log': '{}[{}] '.format(claim_date_log, now),
         }, context=context)
 
         return self.message_post(
