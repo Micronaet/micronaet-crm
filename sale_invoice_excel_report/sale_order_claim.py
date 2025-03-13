@@ -58,7 +58,8 @@ class SaleOrderInherit(orm.Model):
         }, context=context)
 
         return self.message_post(
-            cr, uid, ids, body='Sollecitata consegna da parte del cliente',
+            cr, uid, ids, body='{}: Sollecitata consegna da parte del cliente'.format(
+                now),
             context=context)
 
     _columns = {
