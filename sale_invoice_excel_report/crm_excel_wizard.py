@@ -685,11 +685,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 'text': excel_pool.get_format('bg_red'),
                 'number': excel_pool.get_format('bg_red_number'),
             },
+            'grey': {
+                'text': excel_pool.get_format('bg_grey'),
+                'number': excel_pool.get_format('bg_grey_number'),
+            },
         }
 
         excel_pool.column_width(ws_name, [
-            12, 15, 10, 15, 15, 15, 40,
-            30, 10, 5,
+            12, 15, 10, 10, 15, 15, 15, 40,
+            30, 10, 5, 40,
         ])
 
         # -----------------------------------------------------------------
@@ -704,8 +708,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Header:
         # -----------------------------------------------------------------
         header = [
-            'Stagione', 'Consegna', 'Data', 'Fattura', 'DDT', 'Ordine', 'Partner',
-            'Prodotto', 'Q.', 'Sollecitato', 'Ritardo',
+            'Stagione', 'Consegna', 'Data', 'Scadenza', 'Fattura', 'DDT', 'Ordine', 'Partner',
+            'Prodotto', 'Q.', 'Sollecitato', 'Ritardo', 'Commento',
              ]
         row += 1
         excel_pool.write_xls_line(
@@ -715,30 +719,38 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
+            delivery_date = picking.min_date
             ddt = picking.ddt_id
             invoice = ddt.invoice_id
             date_order = order.date_order[:10]
             partner = picking.partner_id
 
             for line in picking.move_lines:
+                comment = ''
                 product = line.product_id
                 season = self.get_season_period(date_order)
+                deadline = line.sale_line_id.deadline or '?'
 
                 # -------------------------------------------------------------
                 # Data for partial / full order:
                 # -------------------------------------------------------------
                 qty = line.product_uom_qty
                 delay = 0
-                if delay > 0:
-                    format_color = excel_format['red']
+                if delivery_date and deadline:
+                    if delivery_date > deadline:
+                        format_color = excel_format['red']
+                    else:
+                        format_color = excel_format['white']
                 else:
-                    format_color = excel_format['white']
+                    format_color = excel_format['grey']
+
                 row += 1
                 excel_pool.write_xls_line(
                     ws_name, row, (
                         season,
                         picking.name,
-                        picking.min_date,
+                        delivery_date,
+                        deadline,
                         invoice.number or '/',
                         ddt.name or '/',
                         '{} del {}'.format(order.name or '/', date_order),
