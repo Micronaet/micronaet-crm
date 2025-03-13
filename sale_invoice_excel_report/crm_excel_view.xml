@@ -10,6 +10,7 @@
                      <newline/>
                      <field name="claim_date_last" readonly="1"/>
                      <field name="claim_date_log" invisible="1"/>  <!--placeholder-->
+                     <newline/>
                      <button name="button_claim_delivery" string="Sollecito consegna!" type="object" icon="gtk-print" class="oe_highlight" />
                  </field>
             </field>
