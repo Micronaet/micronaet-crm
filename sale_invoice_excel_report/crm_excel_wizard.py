@@ -736,25 +736,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             partner = picking.partner_id
             line_type = 'Picking'
             row += 1
-            excel_pool.write_xls_line(
-                ws_name, row, (
-                    season,
-                    line_type,
-                    invoice.number or '/',
-                    ddt.name or '/',
-                    '{} del {}'.format(order.name or '/', date_order),
-                    partner.name,
-                    picking.name,
-                    delivery_date,
-
-                    # date_deadline,
-                    # delay,
-                    # comment,
-                    # product.default_code or '',
-                    # qty,
-                    # '',  # Data sollecito
-                ), default_format=format_color['text'])
-
+            header_row = row
             for line in picking.move_lines:
                 line_type = 'Detail'
                 comment = ''
@@ -801,6 +783,27 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         qty,
                         '',  # Data sollecito
                     ), default_format=format_color['text'])
+
+            excel_pool.write_xls_line(
+                ws_name, header_row, (
+                    season,
+                    line_type,
+                    invoice.number or '/',
+                    ddt.name or '/',
+                    '{} del {}'.format(order.name or '/', date_order),
+                    partner.name,
+                    picking.name,
+                    delivery_date,
+
+                    # date_deadline,
+                    # delay,
+                    # comment,
+                    # product.default_code or '',
+                    # qty,
+                    # '',  # Data sollecito
+                ), default_format=format_color['text'])
+
+
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
     def action_extract_all(self, cr, uid, ids, context=None):
