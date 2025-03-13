@@ -732,6 +732,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ddt = picking.ddt_id
             invoice = ddt.invoice_id
             date_order = order.date_order[:10]
+            season = self.get_season_period(date_order)
             partner = picking.partner_id
             line_type = 'Picking'
             row += 1
@@ -758,7 +759,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 line_type = 'Detail'
                 comment = ''
                 product = line.product_id
-                season = self.get_season_period(date_order)
                 date_deadline = line.sale_line_id.date_deadline or ''
 
                 # -------------------------------------------------------------
