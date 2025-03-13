@@ -9,7 +9,7 @@
                  <field name="date_delivery" attrs="{'required': [('date_delivery_confirmed','=',True)]}" position="after">
                      <newline/>
                      <field name="claim_date_last" readonly="1"/>
-                     <field name="claim_date_last" invisible="1"/>  <!--placeholder-->
+                     <field name="claim_date_log" invisible="1"/>  <!--placeholder-->
                      <button name="button_claim_delivery" string="Sollecito consegna!" type="object" icon="gtk-print" class="oe_highlight" />
                  </field>
             </field>
