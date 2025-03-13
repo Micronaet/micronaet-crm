@@ -736,8 +736,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # -------------------------------------------------------------
                 qty = line.product_uom_qty
                 delay = 0
-                if delivery_date and deadline:
-                    if delivery_date > deadline:
+                if delivery_date and date_deadline:
+                    if delivery_date > date_deadline:
                         format_color = excel_format['red']
                         comment = '[Ritardo] '
                     else:
@@ -753,7 +753,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         season,
                         picking.name,
                         delivery_date,
-                        deadline,
+                        date_deadline,
                         invoice.number or '/',
                         ddt.name or '/',
                         '{} del {}'.format(order.name or '/', date_order),
