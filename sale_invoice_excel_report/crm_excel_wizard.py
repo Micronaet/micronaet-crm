@@ -704,7 +704,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # -----------------------------------------------------------------
         header = [
             'Stagione', 'Consegna', 'Data', 'Fattura', 'DDT', 'Ordine', 'Partner',
-            'Prodotto', 'Q.', 'Ritardo',
+            'Prodotto', 'Q.', 'Sollecitato', 'Ritardo',
              ]
         row += 1
         excel_pool.write_xls_line(
@@ -745,6 +745,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
                         product.default_code or '',
                         qty,
+                        '',  # Data sollecito
                         0,
                     ), default_format=format_color['text'])
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
