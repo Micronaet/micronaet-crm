@@ -11,7 +11,7 @@
                  </field>
              </field>
          </record>
-         <record model="ir.ui.view" id="view_sale.view_order_tree_claim">
+         <record model="ir.ui.view" id="view_order_tree_claim">
              <field name="name">sale.order.claim</field>
              <field name="model">sale.order</field>
              <field name="inherit_id" ref="sale.view_order_tree"/>
