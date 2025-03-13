@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+         <record model="ir.ui.view" id="view_sales_order_claim_search">
+             <field name="name">sale.order.claim.search</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+             <field name="arch" type="xml">
+                 <field name="partner_id" position="after">
+                     <filter name="claim_date_last_on" string="Sollecitato" domain="[('claim_date_last', '!=', False)]"/>
+                 </field>
+             </field>
+         </record>
+         <record model="ir.ui.view" id="view_sale.view_order_tree_claim">
+             <field name="name">sale.order.claim</field>
+             <field name="model">sale.order</field>
+             <field name="inherit_id" ref="sale.view_order_tree"/>
+             <field name="arch" type="xml">
+                 <field name="state" position="before">
+                     <field name="claim_date_last_on" invisible="1"/>
+                 </field>
+             </field>
+         </record>
+
         <record model="ir.ui.view" id="view_sale_order_pickout_delivery_claim_form">
             <field name="name">sale.order.pick.form</field>
             <field name="model">sale.order</field>
