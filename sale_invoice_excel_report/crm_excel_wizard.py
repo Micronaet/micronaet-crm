@@ -767,8 +767,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 else:
                     format_color = excel_format['grey']
                     comment += '[Data mancante] '
+
                 if delay:
                     delays.append(delay)
+
                 row += 1
                 excel_pool.write_xls_line(
                     ws_name, row, (
@@ -791,7 +793,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ), default_format=format_color['text'])
 
             line_type = 'Picking'
-            medium_delay = sum(delays) / len(delays) if delays else ''
+            medium_delay = sum(delays) / len(delays) if delays else 0
             if medium_delay > 0:
                 format_color = excel_format['red']
                 comment = '[Ritardo] '
