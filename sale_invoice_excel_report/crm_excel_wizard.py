@@ -720,7 +720,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             date_order = order.date_order[:10]
             partner = picking.partner_id
 
-            for line in picking.order_lines:
+            for line in picking.move_lines:
                 product = line.product_id
                 season = self.get_season_period(date_order)
 
