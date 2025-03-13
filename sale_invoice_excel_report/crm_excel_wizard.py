@@ -746,8 +746,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     partner.name,
                     picking.name,
                     delivery_date,
-                    date_deadline,
 
+                    # date_deadline,
                     # delay,
                     # comment,
                     # product.default_code or '',
