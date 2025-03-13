@@ -7,7 +7,10 @@
             <field name="inherit_id" ref="mx_sale.view_sale_order_pickout_form" />
             <field name="arch" type="xml">
                  <field name="date_delivery" attrs="{'required': [('date_delivery_confirmed','=',True)]}" position="after">
-                       <button name="button_claim_delivery" string="Sollecito consegna!" type="object" icon="gtk-print" class="oe_highlight" />
+                     <newline/>
+                     <field name="claim_date_last" readonly="1"/>
+                     <field name="claim_date_last" invisible="1"/>  <!--placeholder-->
+                     <button name="button_claim_delivery" string="Sollecito consegna!" type="object" icon="gtk-print" class="oe_highlight" />
                  </field>
             </field>
         </record>
