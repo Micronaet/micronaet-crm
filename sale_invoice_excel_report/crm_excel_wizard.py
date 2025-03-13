@@ -26,6 +26,7 @@ import os
 import sys
 import logging
 import openerp
+import pdb
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
@@ -712,6 +713,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
+        pdb.set_trace()
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = pickings.sale_id
             ddt = picking.ddt_id
