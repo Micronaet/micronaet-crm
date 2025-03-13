@@ -794,13 +794,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             medium_delay = sum(delays) / len(delays) if delays else ''
             if medium_delay > 0:
                 format_color = excel_format['red']
-                comment += '[Ritardo] '
+                comment = '[Ritardo] '
             elif medium_delay < 0:
                 format_color = excel_format['white']
-                comment += '[Anticipo] '
+                comment = '[Anticipo] '
             else:
                 format_color = excel_format['green']
-                comment += '[Giusto] '
+                comment = '[Giusto] '
 
             excel_pool.write_xls_line(
                 ws_name, header_row, (
