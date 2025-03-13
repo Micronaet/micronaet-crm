@@ -713,9 +713,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
-        pdb.set_trace()
         for picking in sorted(pickings, key=lambda p: p.min_date):
-            order = pickings.sale_id
+            order = picking.sale_id
             ddt = picking.ddt_id
             invoice = ddt.invoice_id
             date_order = order.date_order[:10]
