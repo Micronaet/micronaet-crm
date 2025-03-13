@@ -734,7 +734,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             date_order = order.date_order[:10]
             season = self.get_season_period(date_order)
             partner = picking.partner_id
-            line_type = 'Picking'
+
             row += 1
             header_row = row
             format_color = excel_format['white']
@@ -785,6 +785,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         '',  # Data sollecito
                     ), default_format=format_color['text'])
 
+            line_type = 'Picking'
             excel_pool.write_xls_line(
                 ws_name, header_row, (
                     season,
