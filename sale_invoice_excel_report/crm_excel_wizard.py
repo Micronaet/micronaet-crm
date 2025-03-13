@@ -751,10 +751,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         comment += '[Ritardo] '
                     elif delivery_date < date_deadline:
                         format_color = excel_format['green']
-                        comment += '[Giusto] '
+                        comment += '[Anticipo] '
                     else:
                         format_color = excel_format['white']
-                        comment += '[Anticipo] '
+                        comment += '[Giusto] '
                 else:
                     format_color = excel_format['grey']
                     comment += '[Data mancante] '
