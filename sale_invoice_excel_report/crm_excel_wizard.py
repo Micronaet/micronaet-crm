@@ -767,7 +767,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         product.default_code or '',
                         qty,
                         '',  # Data sollecito
-                        0,
+                        delay,
                         comment,
                     ), default_format=format_color['text'])
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
