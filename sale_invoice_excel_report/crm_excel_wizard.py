@@ -748,16 +748,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     delay = (delivery_dt - deadline_dt).days
                     if delivery_date > date_deadline:
                         format_color = excel_format['red']
-                        comment = '[Ritardo] '
+                        comment += '[Ritardo] '
                     elif delivery_date < date_deadline:
                         format_color = excel_format['green']
-                        comment = '[Giusto] '
+                        comment += '[Giusto] '
                     else:
                         format_color = excel_format['white']
-                        comment = '[Anticipo] '
+                        comment += '[Anticipo] '
                 else:
                     format_color = excel_format['grey']
-                    comment = '[Data mancante] '
+                    comment += '[Data mancante] '
 
                 row += 1
                 excel_pool.write_xls_line(
