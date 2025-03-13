@@ -729,7 +729,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 comment = ''
                 product = line.product_id
                 season = self.get_season_period(date_order)
-                deadline = line.sale_line_id.deadline or '?'
+                date_deadline = line.sale_line_id.date_deadline or '?'
 
                 # -------------------------------------------------------------
                 # Data for partial / full order:
@@ -739,10 +739,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 if delivery_date and deadline:
                     if delivery_date > deadline:
                         format_color = excel_format['red']
+                        comment = '[Ritardo] '
                     else:
                         format_color = excel_format['white']
+                        comment = '[Anticipo] '
                 else:
                     format_color = excel_format['grey']
+                    comment = '[Data mancante] '
 
                 row += 1
                 excel_pool.write_xls_line(
@@ -760,6 +763,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         qty,
                         '',  # Data sollecito
                         0,
+                        comment,
                     ), default_format=format_color['text'])
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
