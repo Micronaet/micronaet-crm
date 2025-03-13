@@ -699,8 +699,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             12, 10,
             15, 15, 20, 40,
             15, 10, 10,
-            5, 5, 40,
-            30, 10,
+            5, 40, 10,
+            30, 5,
         ])
 
         # -----------------------------------------------------------------
@@ -717,8 +717,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         header = [
             'Stagione', 'Tipo',
             'Fattura', 'DDT', 'Ordine', 'Partner',
-            'Consegna', 'Data', 'Scadenza',
-            'Prodotto', 'Q.', 'Sollecitato', 'Ritardo', 'Commento',
+            'Consegna', 'Data',
+            'Ritardo', 'Commento', 'Sollecitato', 'Scadenza',
+            'Prodotto', 'Q.',
              ]
         row += 1
         excel_pool.write_xls_line(
@@ -738,6 +739,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             row += 1
             header_row = row
             format_color = excel_format['white']
+            delays = []
             for line in picking.move_lines:
                 line_type = 'Detail'
                 comment = ''
@@ -765,7 +767,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 else:
                     format_color = excel_format['grey']
                     comment += '[Data mancante] '
-
+                if delay:
+                    delays.append(delay)
                 row += 1
                 excel_pool.write_xls_line(
                     ws_name, row, (
@@ -777,15 +780,28 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         partner.name,
                         picking.name,
                         delivery_date,
-                        date_deadline,
+
                         delay,
                         comment,
+                        '',  # Data sollecito
+                        date_deadline,
+
                         product.default_code or '',
                         qty,
-                        '',  # Data sollecito
                     ), default_format=format_color['text'])
 
             line_type = 'Picking'
+            medium_delay = sum(delays) / len(delays) if delays else ''
+            if medium_delay > 0:
+                format_color = excel_format['red']
+                comment += '[Ritardo] '
+            elif medium_delay < 0:
+                format_color = excel_format['white']
+                comment += '[Anticipo] '
+            else:
+                format_color = excel_format['green']
+                comment += '[Giusto] '
+
             excel_pool.write_xls_line(
                 ws_name, header_row, (
                     season,
@@ -797,12 +813,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     picking.name,
                     delivery_date,
 
+                    medium_delay,
+                    comment,
+                    # '',  # Data sollecito
                     # date_deadline,
-                    # delay,
-                    # comment,
+
                     # product.default_code or '',
                     # qty,
-                    # '',  # Data sollecito
                 ), default_format=format_color['text'])
 
 
