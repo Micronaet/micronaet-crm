@@ -719,7 +719,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
-            delivery_date = picking.min_date
+            delivery_date = (picking.min_date or '')[:10]
             ddt = picking.ddt_id
             invoice = ddt.invoice_id
             date_order = order.date_order[:10]
@@ -729,7 +729,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 comment = ''
                 product = line.product_id
                 season = self.get_season_period(date_order)
-                date_deadline = line.sale_line_id.date_deadline or '?'
+                date_deadline = line.sale_line_id.date_deadline or ''
 
                 # -------------------------------------------------------------
                 # Data for partial / full order:
