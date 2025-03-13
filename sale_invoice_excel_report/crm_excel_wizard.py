@@ -742,10 +742,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 # -------------------------------------------------------------
                 qty = line.product_uom_qty
                 delay = 0
-                pdb.set_trace()
                 if delivery_date and date_deadline:
                     delivery_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
-                    deadline_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
+                    deadline_dt = datetime.strptime(date_deadline, DEFAULT_SERVER_DATE_FORMAT)
                     delay = (delivery_dt - deadline_dt).days
                     if delivery_date > date_deadline:
                         format_color = excel_format['red']
