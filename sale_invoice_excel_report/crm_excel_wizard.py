@@ -696,9 +696,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         }
 
         excel_pool.column_width(ws_name, [
-            12, 15, 10, 10,
+            12, 10,
             15, 15, 20, 40,
-            30, 10, 5, 5, 40,
+            15, 10, 10,
+            5, 5, 40,
+            30, 10,
         ])
 
         # -----------------------------------------------------------------
@@ -713,8 +715,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Header:
         # -----------------------------------------------------------------
         header = [
-            'Stagione', 'Consegna', 'Data', 'Scadenza',
+            'Stagione', 'Tipo',
             'Fattura', 'DDT', 'Ordine', 'Partner',
+            'Consegna', 'Data', 'Scadenza',
             'Prodotto', 'Q.', 'Sollecitato', 'Ritardo', 'Commento',
              ]
         row += 1
@@ -730,8 +733,29 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             invoice = ddt.invoice_id
             date_order = order.date_order[:10]
             partner = picking.partner_id
+            line_type = 'Picking'
+            row += 1
+            excel_pool.write_xls_line(
+                ws_name, row, (
+                    season,
+                    line_type,
+                    invoice.number or '/',
+                    ddt.name or '/',
+                    '{} del {}'.format(order.name or '/', date_order),
+                    partner.name,
+                    picking.name,
+                    delivery_date,
+                    date_deadline,
+
+                    # delay,
+                    # comment,
+                    # product.default_code or '',
+                    # qty,
+                    # '',  # Data sollecito
+                ), default_format=format_color['text'])
 
             for line in picking.move_lines:
+                line_type = 'Detail'
                 comment = ''
                 product = line.product_id
                 season = self.get_season_period(date_order)
@@ -763,19 +787,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 excel_pool.write_xls_line(
                     ws_name, row, (
                         season,
-                        picking.name,
-                        delivery_date,
-                        date_deadline,
+                        line_type,
                         invoice.number or '/',
                         ddt.name or '/',
                         '{} del {}'.format(order.name or '/', date_order),
                         partner.name,
-
+                        picking.name,
+                        delivery_date,
+                        date_deadline,
+                        delay,
+                        comment,
                         product.default_code or '',
                         qty,
                         '',  # Data sollecito
-                        delay,
-                        comment,
                     ), default_format=format_color['text'])
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
