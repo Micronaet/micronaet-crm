@@ -64,7 +64,8 @@
                        <field name="to_date" />
 
                        <field name="reference_date" />
-                       <button name="action_extract_oc_comparative" string="Report comparativo OC" type="object" icon="gtk-print" class="oe_highlight" colspan="2"/>
+                       <button name="action_extract_oc_comparative" string="Report comparativo OC" type="object" icon="gtk-print" class="oe_highlight" colspan="1"/>
+                       <button name="action_extract_oc_delay" string="Report ritardi consegna" type="object" icon="gtk-print" class="oe_highlight" colspan="1"/>
 
                        <field name="with_previsional" />
 

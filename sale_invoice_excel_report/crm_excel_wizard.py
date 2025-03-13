@@ -627,6 +627,128 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ], default_format=excel_format['white']['text'])
         return excel_pool.return_attachment(cr, uid, 'CRM OC compare status')
 
+    def action_extract_oc_delay(self, cr, uid, ids, context=None):
+        """ OC delay in delivery
+        """
+        if context is None:
+            context = {}
+
+        picking_pool = self.pool.get('stock.picking')
+        # line_pool = self.pool.get('sale.order.line')
+        excel_pool = self.pool.get('excel.writer')
+
+        # ---------------------------------------------------------------------
+        # Parameters:
+        # ---------------------------------------------------------------------
+        wiz_browse = self.browse(cr, uid, ids, context=context)[0]
+        from_date = wiz_browse.from_date
+        to_date = wiz_browse.to_date
+
+        # ---------------------------------------------------------------------
+        # Collect data:
+        # ---------------------------------------------------------------------
+        domain = [
+            ('sale_id.previsional', '=', False),
+            ('sale_id.state', 'not in', ('draft', 'sent', 'cancel')),
+        ]
+
+        filter_text = 'Dettaglio ritardi'
+        if from_date:
+            filter_text += ', Dalla data: {}'.format(from_date)
+            domain.append(
+                ('sale_id.date_order', '>=', from_date))
+
+        if to_date:
+            filter_text += ', Dalla data: {}'.format(to_date)
+            domain.append(
+                ('sale_id.date_order', '<=', to_date))
+
+        picking_ids = picking_pool.search(cr, uid, domain, context=context)
+
+        # =====================================================================
+        # Excel file:
+        # =====================================================================
+        ws_name = 'Dettaglio ritardi'
+        # =====================================================================
+        excel_pool.create_worksheet(ws_name)
+
+        excel_pool.set_format()
+        excel_format = {
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
+            'white': {
+                'text': excel_pool.get_format('text'),
+                'number': excel_pool.get_format('number'),
+            },
+            'red': {
+                'text': excel_pool.get_format('bg_red'),
+                'number': excel_pool.get_format('bg_red_number'),
+            },
+        }
+
+        excel_pool.column_width(ws_name, [
+            12, 15, 10, 15, 15, 15, 40,
+            30, 10, 5,
+        ])
+
+        # -----------------------------------------------------------------
+        # Title:
+        # -----------------------------------------------------------------
+        row = 0
+        excel_pool.write_xls_line(
+            ws_name, row, [filter_text],
+            default_format=excel_format['title'])
+
+        # -----------------------------------------------------------------
+        # Header:
+        # -----------------------------------------------------------------
+        header = [
+            'Stagione', 'Consegna', 'Data', 'Fattura', 'DDT', 'Ordine', 'Partner',
+            'Prodotto', 'Q.', 'Ritardo',
+             ]
+        row += 1
+        excel_pool.write_xls_line(
+            ws_name, row, header, default_format=excel_format['header'])
+        excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+
+        pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
+        for picking in sorted(pickings, key=lambda p: p.min_date):
+            order = pickings.sale_id
+            ddt = picking.ddt_id
+            invoice = ddt.invoice_id
+            date_order = order.date_order[:10]
+            partner = picking.partner_id
+
+            for line in picking.order_lines:
+                product = line.product_id
+                season = self.get_season_period(date_order)
+
+                # -------------------------------------------------------------
+                # Data for partial / full order:
+                # -------------------------------------------------------------
+                qty = line.product_uom_qty
+                delay = 0
+                if delay > 0:
+                    format_color = excel_format['red']
+                else:
+                    format_color = excel_format['white']
+                row += 1
+                excel_pool.write_xls_line(
+                    ws_name, row, (
+                        season,
+                        picking.name,
+                        picking.min_date,
+                        invoice.number or '/',
+                        ddt.name or '/',
+                        '{} del {}'.format(order.name or '/', date_order),
+                        partner.name,
+
+                        product.default_code or '',
+                        qty,
+                        0,
+                    ), default_format=format_color['text'])
+        return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
+
     def action_extract_all(self, cr, uid, ids, context=None):
         """ All in one report:
         """

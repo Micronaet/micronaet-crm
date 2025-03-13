@@ -34,6 +34,7 @@
     'depends': [
         'base',
         'sale',
+        'stock',
         'account',
         'excel_export',        
         ],
