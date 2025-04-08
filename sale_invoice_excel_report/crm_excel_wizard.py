@@ -849,12 +849,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # --------------------------------------------------------------------------------------------------------------
         header = [
             'Stagione', 'Tipo', 'Ordine', 'Partner',
-            'Commento', 'Solleciti', 'Scadenza',
+            'Solleciti', 'Scadenza',
             'Prodotto', 'Residuo',
              ]
         width = [
-            12, 10, 20, 40,
-            10, 40, 20,
+            12, 10, 30, 40,
+            40, 20,
             30, 5,
         ]
 
@@ -894,7 +894,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         # Fixed:
         format_color = excel_format['red']
-        comment = '[Ritardo] '
         _logger.warning('OC lines found: {}'.format(len(line_ids)))
         last_order = False
         order_delay = []
@@ -924,7 +923,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         'Testata',
                         '{} del {}'.format(order.name or '/', date_order),
                         partner.name,
-                        comment,
                         order.claim_date_log or '',
                     ), default_format=format_color['text'])
                 order_delay = []
