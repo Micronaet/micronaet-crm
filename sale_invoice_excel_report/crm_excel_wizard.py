@@ -844,12 +844,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Collect data OC:
         # --------------------------------------------------------------------------------------------------------------
         header = [
-            'Stagione', 'Ordine', 'Partner',
+            'Stagione', 'Tipo', 'Ordine', 'Partner',
             'Commento', 'Solleciti', 'Scadenza',
             'Prodotto', 'Residuo',
              ]
         width = [
-            12, 20, 40,
+            12, 10, 20, 40,
             10, 40, 20,
             30, 5,
         ]
@@ -890,6 +890,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         format_color = excel_format['red']
         comment = '[Ritardo] '
         _logger.warning('OC lines found: {}'.format(len(line_ids)))
+        last_order = False
         for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
             oc_qty = line.product_uom_qty
             delivered_qty = line.delivered_qty
@@ -903,10 +904,24 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             product = line.product_id
             date_deadline = line.date_deadline or ''
 
+            if last_order != order:
+                last_order = order
+                row += 1
+                excel_pool.write_xls_line(
+                    ws_name, row, (
+                        season,
+                        'Testata',
+                        '{} del {}'.format(order.name or '/', date_order),
+                        partner.name,
+                        comment,
+                        order.claim_date_log or '',
+                    ), default_format=format_color['text'])
+
             row += 1
             excel_pool.write_xls_line(
                 ws_name, row, (
                     season,
+                    'Dettaglio',
                     '{} del {}'.format(order.name or '/', date_order),
                     partner.name,
                     comment,
