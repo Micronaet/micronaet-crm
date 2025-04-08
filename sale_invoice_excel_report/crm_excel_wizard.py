@@ -639,8 +639,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool = self.pool.get('excel.writer')
 
         delay_days = 7
-        from_delivery_date = (datetime.now() - timedelta(days=delay_days)).strftime(
+        now_dt = datetime.now()
+        from_delivery_date = (now_dt - timedelta(days=delay_days)).strftime(
             DEFAULT_SERVER_DATE_FORMAT)
+        date_list =  []
+        for day in range(delay_days):
+            date_list.append(now_dt - timedelta(days=day)).strftime(DEFAULT_SERVER_DATE_FORMAT)
 
         # ---------------------------------------------------------------------
         # Parameters:
@@ -733,7 +737,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
         # excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
-        excel_pool.filter_column_list(ws_name, 'H', ['2025-04-02', '2025-04-03', '2025-04-04', '2025-04-05', '2025-04-06', '2025-04-07', '2025-04-08'])
+        excel_pool.filter_column_list(ws_name, 'H', date_list)
         # filter_column_list(self, ws_name, column, filter_list)
         excel_pool.preset_filter_column(ws_name, 'B', 'x == "Picking"')
         excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
