@@ -638,7 +638,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # line_pool = self.pool.get('sale.order.line')
         excel_pool = self.pool.get('excel.writer')
 
-        from_delivery_date = (datetime.now() - timedelta(days=7)).strftime(
+        delay_days = 7
+        from_delivery_date = (datetime.now() - timedelta(days=delay_days)).strftime(
             DEFAULT_SERVER_DATE_FORMAT)
 
         # ---------------------------------------------------------------------
@@ -732,6 +733,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
         excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
+        # filter_column_list(self, ws_name, column, filter_list)
         excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
