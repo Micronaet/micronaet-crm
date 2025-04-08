@@ -732,7 +732,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
         excel_pool.preset_filter_column(ws_name, 'H', 'x < {}'.format(from_delivery_date))
-        pdb.set_trace()
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
@@ -836,7 +835,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ), default_format=format_color['text'])
 
         # Hide row old that 7 days:
-        pdb.set_trace()
         excel_pool.row_hidden(ws_name, hidden_row)
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
