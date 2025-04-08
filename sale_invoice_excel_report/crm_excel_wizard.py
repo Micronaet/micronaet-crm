@@ -732,6 +732,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
         excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
+        excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
@@ -778,7 +779,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     delays.append(delay)
 
                 row += 1
-                if delivery_date < from_delivery_date:
+                if delivery_date < from_delivery_date or '[Ritardo] ' not in comment :
                     hidden_row.append(row)
                 excel_pool.write_xls_line(
                     ws_name, row, (
