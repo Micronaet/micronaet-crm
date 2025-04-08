@@ -813,7 +813,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 format_color = excel_format['green']
                 comment = '[Giusto] '
 
-            if delivery_date < from_delivery_date:
+            if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:
                 hidden_row.append(row)
             excel_pool.write_xls_line(
                 ws_name, header_row, (
