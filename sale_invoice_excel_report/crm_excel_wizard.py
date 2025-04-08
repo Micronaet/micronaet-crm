@@ -887,6 +887,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         format_color = excel_format['red']
         line_type = 'Detail'
         comment = '[Ritardo] '
+        _logger.warning('OC lines found: {}'.format(len(line_ids)))
         for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
             oc_qty = line.product_uom_qty
             delivered_qty = line.delivered_qty
