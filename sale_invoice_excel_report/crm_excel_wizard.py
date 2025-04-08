@@ -944,7 +944,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 excel_pool.write_xls_line(
                     ws_name, order_row, (
                         '-'.join(order_delay),
-                    ), col=7, default_format=format_color['text'])
+                    ), col=6, default_format=format_color['text'])
 
 
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
