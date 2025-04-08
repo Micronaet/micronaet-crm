@@ -731,8 +731,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
-        excel_pool.preset_filter_column(
-            ws_name, 'H', 'x < {}'.format(from_delivery_date))
+        excel_pool.preset_filter_column(ws_name, 'H', 'x < {}'.format(from_delivery_date))
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
