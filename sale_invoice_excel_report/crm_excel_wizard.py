@@ -898,6 +898,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         _logger.warning('OC lines found: {}'.format(len(line_ids)))
         last_order = False
         order_delay = []
+        hidden_row = []
+        excel_pool.preset_filter_column(ws_name, 'B', 'x == "Testata"')
+
         for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
             oc_qty = line.product_uom_qty
             delivered_qty = line.delivered_qty
@@ -927,6 +930,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 order_delay = []
 
             row += 1
+            hidden_row.append(row)
             excel_pool.write_xls_line(
                 ws_name, row, (
                     season,
@@ -945,6 +949,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ws_name, order_row, (
                         '-'.join(order_delay),
                     ), col=6, default_format=format_color['text'])
+        # Hide row old that 7 days:
+        excel_pool.row_hidden(ws_name, hidden_row)
 
 
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
