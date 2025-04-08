@@ -635,20 +635,19 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             context = {}
 
         picking_pool = self.pool.get('stock.picking')
-        # line_pool = self.pool.get('sale.order.line')
+        line_pool = self.pool.get('sale.order.line')
         excel_pool = self.pool.get('excel.writer')
 
         delay_days = 7
         now_dt = datetime.now()
-        from_delivery_date = (now_dt - timedelta(days=delay_days)).strftime(
-            DEFAULT_SERVER_DATE_FORMAT)
+        from_delivery_date = (now_dt - timedelta(days=delay_days)).strftime(DEFAULT_SERVER_DATE_FORMAT)
         date_list =  []
         for day in range(delay_days):
             date_list.append((now_dt - timedelta(days=day)).strftime(DEFAULT_SERVER_DATE_FORMAT))
 
-        # ---------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------
         # Parameters:
-        # ---------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         from_date = wiz_browse.from_date
         to_date = wiz_browse.to_date
@@ -661,17 +660,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ('sale_id.state', 'not in', ('draft', 'sent', 'cancel')),
         ]
 
-        filter_text = 'Dettaglio ritardi (nascosti < {})'.format(
-            from_delivery_date)
+        filter_text = 'Dettaglio ritardi (nascosti < {})'.format(from_delivery_date)
         if from_date:
             filter_text += ', Dalla data: {}'.format(from_date)
-            domain.append(
-                ('sale_id.date_order', '>=', from_date))
+            domain.append(('sale_id.date_order', '>=', from_date))
 
         if to_date:
             filter_text += ', Dalla data: {}'.format(to_date)
-            domain.append(
-                ('sale_id.date_order', '<=', to_date))
+            domain.append(('sale_id.date_order', '<=', to_date))
 
         picking_ids = picking_pool.search(cr, uid, domain, context=context)
 
@@ -704,25 +700,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             },
         }
 
-        excel_pool.column_width(ws_name, [
-            12, 10,
-            15, 15, 20, 40,
-            15, 10,
-            10, 40, 20, 10,
-            30, 5,
-        ])
-
-        # -----------------------------------------------------------------
-        # Title:
-        # -----------------------------------------------------------------
-        row = 0
-        excel_pool.write_xls_line(
-            ws_name, row, [filter_text],
-            default_format=excel_format['title'])
-
-        # -----------------------------------------------------------------
-        # Header:
-        # -----------------------------------------------------------------
         header = [
             'Stagione', 'Tipo',
             'Fattura', 'DDT', 'Ordine', 'Partner',
@@ -730,9 +707,26 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Ritardo', 'Commento', 'Solleciti', 'Scadenza',
             'Prodotto', 'Q.',
              ]
+        width = [
+            12, 10,
+            15, 15, 20, 40,
+            15, 10,
+            10, 40, 20, 10,
+            30, 5,
+        ]
+
+        # -----------------------------------------------------------------
+        # Title:
+        # -----------------------------------------------------------------
+        row = 0
+        excel_pool.column_width(ws_name, width)
+        excel_pool.write_xls_line(ws_name, row, [filter_text], default_format=excel_format['title'])
+
+        # -----------------------------------------------------------------
+        # Header:
+        # -----------------------------------------------------------------
         row += 1
-        excel_pool.write_xls_line(
-            ws_name, row, header, default_format=excel_format['header'])
+        excel_pool.write_xls_line(ws_name, row, header, default_format=excel_format['header'])
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
@@ -842,6 +836,82 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ), default_format=format_color['text'])
             if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:  #
                 hidden_row.append(header_row)
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Collect data OC:
+        # --------------------------------------------------------------------------------------------------------------
+        header = [
+            'Stagione', 'Tipo', 'Ordine', 'Partner', 'Data',
+            'Commento', 'Solleciti', 'Scadenza',
+            'Prodotto', 'Residuo',
+             ]
+        width = [
+            12, 10, 20, 40, 10,
+            10, 40, 20,
+            30, 5,
+        ]
+
+        domain = [
+            ('order_id.previsional', '=', False),
+            ('order_id.state', 'not in', ('draft', 'sent', 'cancel')),
+            ('date_deadline', '<=', now_dt.strftime(DEFAULT_SERVER_DATE_FORMAT)),
+            # todo closed line or header?
+        ]
+        line_ids = line_pool.search(cr, uid, domain, context=context)
+
+        # ==============================================================================================================
+        # PAGE OC:
+        # ==============================================================================================================
+        ws_name = 'Dettaglio OC in ritardo'
+        excel_pool.create_worksheet(ws_name)
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Title:
+        # --------------------------------------------------------------------------------------------------------------
+        row = 0
+        excel_pool.column_width(ws_name, width)
+        excel_pool.write_xls_line(
+            ws_name, row, ['Dettaglio ritardi OC non consegati'], default_format=excel_format['title'])
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Header:
+        # --------------------------------------------------------------------------------------------------------------
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, header, default_format=excel_format['header'])
+        excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+        lines = picking_pool.browse(cr, uid, line_ids, context=context)
+
+        # Fixed:
+        format_color = excel_format['red']
+        line_type = 'Detail'
+        comment = '[Ritardo] '
+        for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
+            oc_qty = line.product_uom_qty
+            delivered_qty = line.delivered_qty
+            if oc_qty <= delivered_qty:
+                continue
+
+            order = line.order_id
+            date_order = order.date_order[:10]
+            season = self.get_season_period(date_order)
+            partner = order.partner_id
+            product = line.product_id
+            date_deadline = line.date_deadline or ''
+
+            row += 1
+            excel_pool.write_xls_line(
+                ws_name, row, (
+                    season,
+                    line_type,
+                    '{} del {}'.format(order.name or '/', date_order),
+                    partner.name,
+                    comment,
+                    order.claim_date_log or '',  # Data sollecito
+                    date_deadline,
+                    product.default_code or '',
+                    max((oc_qty - delivered_qty), 0),
+                ), default_format=format_color['text'])
+
 
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
