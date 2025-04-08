@@ -644,7 +644,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             DEFAULT_SERVER_DATE_FORMAT)
         date_list =  []
         for day in range(delay_days):
-            date_list.append(now_dt - timedelta(days=day)).strftime(DEFAULT_SERVER_DATE_FORMAT)
+            date_list.append((now_dt - timedelta(days=day)).strftime(DEFAULT_SERVER_DATE_FORMAT))
 
         # ---------------------------------------------------------------------
         # Parameters:
