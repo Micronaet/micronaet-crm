@@ -732,7 +732,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
-        excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
+        # excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
         # filter_column_list(self, ws_name, column, filter_list)
         excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
         hidden_row = []
@@ -781,7 +781,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     delays.append(delay)
 
                 row += 1
-                if delivery_date < from_delivery_date or '[Ritardo] ' not in comment :
+                if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
                     hidden_row.append(row+1)
                 excel_pool.write_xls_line(
                     ws_name, row, (
@@ -815,7 +815,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 format_color = excel_format['green']
                 comment = '[Giusto] '
 
-            if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:
+            if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
                 hidden_row.append(row+1)
             excel_pool.write_xls_line(
                 ws_name, header_row, (
