@@ -781,8 +781,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     delays.append(delay)
 
                 row += 1
-                if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
-                    hidden_row.append(row+1)
                 excel_pool.write_xls_line(
                     ws_name, row, (
                         season,
@@ -802,6 +800,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         product.default_code or '',
                         qty,
                     ), default_format=format_color['text'])
+                if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
+                    hidden_row.append(row)
 
             line_type = 'Picking'
             medium_delay = sum(delays) / len(delays) if delays else 0
@@ -815,8 +815,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 format_color = excel_format['green']
                 comment = '[Giusto] '
 
-            if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
-                hidden_row.append(row+1)
             excel_pool.write_xls_line(
                 ws_name, header_row, (
                     season,
@@ -836,6 +834,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     # product.default_code or '',
                     # qty,
                 ), default_format=format_color['text'])
+            # if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
+            #    hidden_row.append(row)
 
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
