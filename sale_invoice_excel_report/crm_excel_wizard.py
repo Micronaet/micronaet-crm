@@ -855,7 +855,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ('order_id.previsional', '=', False),
             ('order_id.state', 'not in', ('draft', 'sent', 'cancel')),
             ('date_deadline', '<=', now_dt.strftime(DEFAULT_SERVER_DATE_FORMAT)),
-            # todo closed line or header?
+
+            ('order_id.mx_closed', '=', False),
+            ('mx_closed', '=', False),
         ]
         line_ids = line_pool.search(cr, uid, domain, context=context)
 
