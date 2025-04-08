@@ -844,12 +844,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Collect data OC:
         # --------------------------------------------------------------------------------------------------------------
         header = [
-            'Stagione', 'Ordine', 'Partner', 'Data',
+            'Stagione', 'Ordine', 'Partner',
             'Commento', 'Solleciti', 'Scadenza',
             'Prodotto', 'Residuo',
              ]
         width = [
-            12, 20, 40, 10,
+            12, 20, 40,
             10, 40, 20,
             30, 5,
         ]
