@@ -837,6 +837,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:  #
                 hidden_row.append(header_row)
 
+        # Hide row old that 7 days:
+        excel_pool.row_hidden(ws_name, hidden_row)
+
         # --------------------------------------------------------------------------------------------------------------
         # Collect data OC:
         # --------------------------------------------------------------------------------------------------------------
@@ -914,8 +917,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ), default_format=format_color['text'])
 
 
-        # Hide row old that 7 days:
-        excel_pool.row_hidden(ws_name, hidden_row)
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
     def action_extract_all(self, cr, uid, ids, context=None):
