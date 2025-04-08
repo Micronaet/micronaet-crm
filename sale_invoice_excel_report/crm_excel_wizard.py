@@ -732,8 +732,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
-        # excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
         # filter_column_list(self, ws_name, column, filter_list)
+        excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
         excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
@@ -800,7 +800,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         product.default_code or '',
                         qty,
                     ), default_format=format_color['text'])
-                if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
+                if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:  #
                     hidden_row.append(row)
 
             line_type = 'Picking'
@@ -834,7 +834,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     # product.default_code or '',
                     # qty,
                 ), default_format=format_color['text'])
-            if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
+            if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:  #
                 hidden_row.append(header_row)
 
         # Hide row old that 7 days:
