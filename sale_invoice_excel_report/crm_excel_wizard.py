@@ -639,7 +639,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool = self.pool.get('excel.writer')
         user_pool = self.pool.get('res.users')
         user = user_pool.browse(cr, uid, uid, context=context)
-        company_partner_id = user.company_id.partner_id.id
+        company_name = user.company_id.name
 
 
         delay_days = 7
@@ -863,7 +863,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ('order_id.state', 'not in', ('draft', 'sent', 'cancel')),
             ('date_deadline', '<=', now_dt.strftime(DEFAULT_SERVER_DATE_FORMAT)),
 
-            ('order_id.partner_id', '!=', company_partner_id),
+            ('order_id.partner_id.name', '!=', company_name),
 
             ('order_id.mx_closed', '=', False),
             ('mx_closed', '=', False),
