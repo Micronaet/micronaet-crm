@@ -782,7 +782,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
                 row += 1
                 if delivery_date < from_delivery_date or '[Ritardo] ' not in comment :
-                    hidden_row.append(row)
+                    hidden_row.append(row+1)
                 excel_pool.write_xls_line(
                     ws_name, row, (
                         season,
@@ -816,7 +816,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 comment = '[Giusto] '
 
             if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:
-                hidden_row.append(row)
+                hidden_row.append(row+1)
             excel_pool.write_xls_line(
                 ws_name, header_row, (
                     season,
