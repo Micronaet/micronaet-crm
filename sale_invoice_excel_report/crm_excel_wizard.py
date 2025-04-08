@@ -834,8 +834,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     # product.default_code or '',
                     # qty,
                 ), default_format=format_color['text'])
-            # if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
-            #    hidden_row.append(row)
+            if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
+                hidden_row.append(header_row)
 
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
