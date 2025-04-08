@@ -735,6 +735,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
         excel_pool.filter_column_list(ws_name, 'H', ['2025-04-02', '2025-04-03', '2025-04-04', '2025-04-05', '2025-04-06', '2025-04-07', '2025-04-08'])
         # filter_column_list(self, ws_name, column, filter_list)
+        excel_pool.preset_filter_column(ws_name, 'B', 'x == "Picking"')
         excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
