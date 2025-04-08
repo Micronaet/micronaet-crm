@@ -946,7 +946,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 excel_pool.write_xls_line(
                     ws_name, order_row, (
                         '-'.join(order_delay),
-                    ), col=6, default_format=format_color['text'])
+                    ), col=5, default_format=format_color['text'])
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
 
