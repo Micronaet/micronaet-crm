@@ -891,6 +891,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         comment = '[Ritardo] '
         _logger.warning('OC lines found: {}'.format(len(line_ids)))
         last_order = False
+        order_delay = []
         for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
             oc_qty = line.product_uom_qty
             delivered_qty = line.delivered_qty
@@ -907,6 +908,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             if last_order != order:
                 last_order = order
                 row += 1
+                order_row = row
                 excel_pool.write_xls_line(
                     ws_name, row, (
                         season,
@@ -916,6 +918,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         comment,
                         order.claim_date_log or '',
                     ), default_format=format_color['text'])
+                order_delay = []
 
             row += 1
             excel_pool.write_xls_line(
@@ -930,6 +933,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     product.default_code or '',
                     max((oc_qty - delivered_qty), 0),
                 ), default_format=format_color['text'])
+            if date_deadline not in order_delay:
+                order_delay.append(date_deadline)
+                excel_pool.write_xls_line(
+                    ws_name, order_row, (
+                        '-'.join(order_delay),
+                    ), col=7, default_format=format_color['text'])
 
 
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
