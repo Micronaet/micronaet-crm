@@ -879,7 +879,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         row += 1
         excel_pool.write_xls_line(ws_name, row, header, default_format=excel_format['header'])
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
-        lines = picking_pool.browse(cr, uid, line_ids, context=context)
+        lines = line_pool.browse(cr, uid, line_ids, context=context)
 
         # Fixed:
         format_color = excel_format['red']
