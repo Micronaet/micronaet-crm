@@ -638,6 +638,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # line_pool = self.pool.get('sale.order.line')
         excel_pool = self.pool.get('excel.writer')
 
+        from_delivery_date = (datetime.now() - timedelta(days=7)).strftime(
+            DEFAULT_SERVER_DATE_FORMAT)
+
         # ---------------------------------------------------------------------
         # Parameters:
         # ---------------------------------------------------------------------
@@ -653,7 +656,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ('sale_id.state', 'not in', ('draft', 'sent', 'cancel')),
         ]
 
-        filter_text = 'Dettaglio ritardi'
+        filter_text = 'Dettaglio ritardi (nascosti < {})'.format(
+            from_delivery_date)
         if from_date:
             filter_text += ', Dalla data: {}'.format(from_date)
             domain.append(
@@ -727,6 +731,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
+        # worksheet.filter_column('A', 'x >= {}'.format(from_delivery_date))
+        hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
             delivery_date = (picking.min_date or '')[:10]
@@ -772,6 +778,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     delays.append(delay)
 
                 row += 1
+                if delivery_date < from_delivery_date:
+                    hidden_row.append(row)
                 excel_pool.write_xls_line(
                     ws_name, row, (
                         season,
@@ -804,6 +812,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 format_color = excel_format['green']
                 comment = '[Giusto] '
 
+            if delivery_date < from_delivery_date:
+                hidden_row.append(row)
             excel_pool.write_xls_line(
                 ws_name, header_row, (
                     season,
@@ -824,7 +834,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     # qty,
                 ), default_format=format_color['text'])
 
-
+        # Hide row old that 7 days:
+        excel_pool.row_hidden(ws_name, hidden_row)
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
     def action_extract_all(self, cr, uid, ids, context=None):
