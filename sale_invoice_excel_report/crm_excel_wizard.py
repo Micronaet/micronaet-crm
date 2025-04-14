@@ -849,12 +849,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # --------------------------------------------------------------------------------------------------------------
         header = [
             'Stagione', 'Tipo', 'Ordine', 'Partner',
-            'Solleciti', 'Scadenza',
+            'Solleciti', 'Scadenza', 'Ritardo',
             'Prodotto', 'Residuo',
              ]
         width = [
             12, 10, 30, 40,
-            40, 20,
+            40, 20, 15,
             30, 5,
         ]
 
@@ -908,6 +908,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             order = line.order_id
             date_order = order.date_order[:10]
+            date_order_dt = datetime.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+            delay = (now_dt - date_order_dt).days
+
             season = self.get_season_period(date_order)
             partner = order.partner_id
             product = line.product_id
@@ -937,14 +940,20 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     partner.name,
                     order.claim_date_log or '',  # Data sollecito
                     date_deadline,
+                    delay,
                     product.default_code or '',
                     max((oc_qty - delivered_qty), 0),
                 ), default_format=format_color['text'])
+
             if date_deadline not in order_delay:
                 order_delay.append(date_deadline)
+                order_delay_days.append(delay)
+
+                date_order_dt = datetime.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+                this_delay = (now_dt - date_order_dt).days
+
                 excel_pool.write_xls_line(
-                    ws_name, order_row, (
-                        '-'.join(order_delay),
+                    ws_name, order_row, ('-'.join(order_delay, this_delay),
                     ), col=5, default_format=format_color['text'])
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
