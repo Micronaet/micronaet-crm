@@ -949,8 +949,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 order_delay.append(key)
                 excel_pool.write_xls_line(
                     ws_name, order_row, (
-                        '[{}] '.format(r[0] for r in order_delay),
-                        '[{}] '.format(str(r[1]) for r in order_delay),
+                        str(['[{}] '.format(r[0] for r in order_delay)]),
+                        str(['[{}] '.format(str(r[1]) for r in order_delay)]),
                         ),
                     col=5, default_format=format_color['text'])
 
