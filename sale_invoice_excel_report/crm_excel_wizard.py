@@ -935,7 +935,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     'Dettaglio',
                     '{} del {}'.format(order.name or '/', date_order),
                     partner.name,
-                    comment,
                     order.claim_date_log or '',  # Data sollecito
                     date_deadline,
                     product.default_code or '',
@@ -949,7 +948,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     ), col=5, default_format=format_color['text'])
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
-
 
         return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
