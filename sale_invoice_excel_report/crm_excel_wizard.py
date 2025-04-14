@@ -947,11 +947,15 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             key = date_deadline, delay
             if key not in order_delay:
                 order_delay.append(key)
+
+                detail_1 = detail_2 = ''
+                for k in order_delay:
+                    detail_1 += '[{}] '.format(k[0])
+                    detail_2 += '[{}] '.format(str(k[1]))
+
                 excel_pool.write_xls_line(
-                    ws_name, order_row, (
-                        str(['[{}] '.format(r[0] for r in order_delay)]),
-                        str(['[{}] '.format(str(r[1]) for r in order_delay)]),
-                        ),
+                    ws_name, order_row,
+                    (detail_1, detail_2),
                     col=5, default_format=format_color['text'])
 
         # Hide row old that 7 days:
