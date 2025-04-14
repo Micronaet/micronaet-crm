@@ -944,17 +944,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     product.default_code or '',
                     max((oc_qty - delivered_qty), 0),
                 ), default_format=format_color['text'])
-
-            if date_deadline not in order_delay:
-                order_delay.append(date_deadline)
-
-                if date_deadline:
-                    date_deadline_dt = datetime.strptime(date_deadline, DEFAULT_SERVER_DATE_FORMAT)
-                this_delay = str((date_deadline_dt - now_dt).days)
-
+            key = date_deadline, delay
+            if key not in order_delay:
+                order_delay.append(key)
                 excel_pool.write_xls_line(
-                    ws_name, order_row,
-                    ('-'.join(order_delay), '-'.join(this_delay)),
+                    ws_name, order_row, (
+                        '[{}] '.format(r[0] for r in order_delay),
+                        '[{}] '.format(str(r[1]) for r in order_delay),
+                        ),
                     col=5, default_format=format_color['text'])
 
         # Hide row old that 7 days:
