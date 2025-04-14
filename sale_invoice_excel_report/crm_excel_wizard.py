@@ -947,7 +947,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             if date_deadline not in order_delay:
                 order_delay.append(date_deadline)
-                order_delay_days.append(delay)
 
                 date_order_dt = datetime.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
                 this_delay = (now_dt - date_order_dt).days
