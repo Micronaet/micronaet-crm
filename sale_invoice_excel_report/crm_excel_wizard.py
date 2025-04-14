@@ -913,10 +913,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             season = self.get_season_period(date_order)
             partner = order.partner_id
             product = line.product_id
-            date_deadline = line.date_deadline or ''
 
-            date_deadline_dt = datetime.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
-            delay = (now_dt - date_deadline_dt).days
+            date_deadline = line.date_deadline or ''
+            if date_deadline:
+                date_deadline_dt = datetime.strptime(date_deadline, DEFAULT_SERVER_DATE_FORMAT)
+                delay = (now_dt - date_deadline_dt).days
+            else:
+                delay = 0
 
             if last_order != order:
                 last_order = order
