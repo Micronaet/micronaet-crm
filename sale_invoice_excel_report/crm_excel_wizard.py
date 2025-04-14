@@ -900,7 +900,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         hidden_row = []
         excel_pool.preset_filter_column(ws_name, 'B', 'x == "Testata"')
 
-        pdb.set_trace()
         for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
             oc_qty = line.product_uom_qty
             delivered_qty = line.delivered_qty
