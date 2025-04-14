@@ -740,7 +740,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
             ddt = picking.ddt_id
-            invoice = ddt.invoice_id or picking.invoice_id
+            invoice = picking.invoice_id or ddt.invoice_id
 
             partner = picking.partner_id
 
