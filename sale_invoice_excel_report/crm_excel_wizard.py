@@ -734,44 +734,43 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
 
         pickings = picking_pool.browse(cr, uid, picking_ids, context=context)
-        # excel_pool.preset_filter_column(ws_name, 'H', 'x >= "{}"'.format(from_delivery_date))
         excel_pool.filter_column_list(ws_name, 'H', date_list)
-        # filter_column_list(self, ws_name, column, filter_list)
-        # excel_pool.preset_filter_column(ws_name, 'B', 'x == "Picking"')
         excel_pool.preset_filter_column(ws_name, 'J', 'x == "[Ritardo] "')  # "[Data mancante] "
         hidden_row = []
         for picking in sorted(pickings, key=lambda p: p.min_date):
             order = picking.sale_id
-            delivery_date = (picking.min_date or '')[:10]
             ddt = picking.ddt_id
             invoice = ddt.invoice_id
+
+            partner = picking.partner_id
+
+            delivery_date = (picking.min_date or '')[:10]
             date_order = order.date_order[:10]
             season = self.get_season_period(date_order)
-            partner = picking.partner_id
 
             row += 1
             header_row = row
-            format_color = excel_format['white']
             delays = []
             for line in picking.move_lines:
                 line_type = 'Detail'
                 comment = ''
                 product = line.product_id
-                date_deadline = line.sale_line_id.date_deadline or ''
+                line_deadline = line.sale_line_id.date_deadline or ''
 
                 # -------------------------------------------------------------
                 # Data for partial / full order:
                 # -------------------------------------------------------------
                 qty = line.product_uom_qty
                 delay = 0
-                if delivery_date and date_deadline:
+                if delivery_date and line_deadline:
                     delivery_dt = datetime.strptime(delivery_date, DEFAULT_SERVER_DATE_FORMAT)
-                    deadline_dt = datetime.strptime(date_deadline, DEFAULT_SERVER_DATE_FORMAT)
+                    deadline_dt = datetime.strptime(line_deadline, DEFAULT_SERVER_DATE_FORMAT)
                     delay = (delivery_dt - deadline_dt).days
-                    if delivery_date > date_deadline:
+
+                    if delivery_date > line_deadline:
                         format_color = excel_format['red']
                         comment += '[Ritardo] '
-                    elif delivery_date < date_deadline:
+                    elif delivery_date < line_deadline:
                         format_color = excel_format['white']
                         comment += '[Anticipo] '
                     else:
@@ -799,12 +798,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                         delay,
                         comment,
                         order.claim_date_log or '',  # Data sollecito
-                        date_deadline,
+                        line_deadline,
 
                         product.default_code or '',
                         qty,
                     ), default_format=format_color['text'])
-                if delivery_date < from_delivery_date or '[Ritardo] ' not in comment:  #
+
+                if '[Ritardo] ' not in comment:  # delivery_date < from_delivery_date or
                     hidden_row.append(row)
 
             line_type = 'Picking'
@@ -833,7 +833,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     medium_delay,
                     comment,
                     # '',  # Data sollecito
-                    # date_deadline,
+                    # line_deadline,
 
                     # product.default_code or '',
                     # qty,
