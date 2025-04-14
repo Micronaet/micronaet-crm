@@ -900,6 +900,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         hidden_row = []
         excel_pool.preset_filter_column(ws_name, 'B', 'x == "Testata"')
 
+        pdb.set_trace()
         for line in lines:  # sorted(pickings, key=lambda p: p.min_date):
             oc_qty = line.product_uom_qty
             delivered_qty = line.delivered_qty
@@ -908,13 +909,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
             order = line.order_id
             date_order = order.date_order[:10]
-            date_order_dt = datetime.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
-            delay = (now_dt - date_order_dt).days
 
             season = self.get_season_period(date_order)
             partner = order.partner_id
             product = line.product_id
             date_deadline = line.date_deadline or ''
+
+            date_deadline_dt = datetime.strptime(date_order, DEFAULT_SERVER_DATE_FORMAT)
+            delay = (now_dt - date_deadline_dt).days
 
             if last_order != order:
                 last_order = order
@@ -945,6 +947,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     max((oc_qty - delivered_qty), 0),
                 ), default_format=format_color['text'])
             key = date_deadline, delay
+
             if key not in order_delay:
                 order_delay.append(key)
 
