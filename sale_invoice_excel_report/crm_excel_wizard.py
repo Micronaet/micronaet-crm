@@ -996,7 +996,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 cr, uid, send_group,
                 'Dettaglio ritardi su consegnato e ordinato',
                 'Dettaglio delle consegne e ordinato in ritardo.',
-                'Ritardo', context=context)
+                'Ritardo.xlsx', context=context)
         else:
             return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
