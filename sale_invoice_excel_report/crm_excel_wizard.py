@@ -633,7 +633,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         """
         if context is None:
             context = {}
-        send_group = 'group_send_oc_delay_report_manager'
+        send_group = 'sale_invoice_excel_report.group_send_oc_delay_report_manager'
 
         now_dt = datetime.now()
         month = now_dt.month
