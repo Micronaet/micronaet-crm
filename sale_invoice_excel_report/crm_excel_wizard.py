@@ -628,11 +628,36 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ], default_format=excel_format['white']['text'])
         return excel_pool.return_attachment(cr, uid, 'CRM OC compare status')
 
+    def schedule_action_extract_oc_delay_report(self, cr, uid, context=None):
+        """ Scheduled action for send report
+        """
+        if context is None:
+            context = {}
+        send_group = 'group_send_oc_delay_report_manager'
+
+        now_dt = datetime.now()
+        month = now_dt.month
+        year = now_dt.year
+        if month <= 8:
+            sesaon_year = year - 1
+        else:
+            sesaon_year = year
+        season_date = '{}-09-01'.format(sesaon_year)
+
+        wizard_id = self.create(cr, uid, {
+            'from_date': season_date,
+        }, context=context)
+
+        ctx = context.copy()
+        ctx['send_group'] = send_group
+        return self.action_extract_oc_delay(cr, uid, [wizard_id], context=ctx)
+
     def action_extract_oc_delay(self, cr, uid, ids, context=None):
         """ OC delay in delivery
         """
         if context is None:
             context = {}
+        send_group = context.get('send_group')
 
         picking_pool = self.pool.get('stock.picking')
         line_pool = self.pool.get('sale.order.line')
@@ -966,7 +991,14 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Hide row old that 7 days:
         excel_pool.row_hidden(ws_name, hidden_row)
 
-        return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
+        if send_group:
+            return excel_pool.send_mail_to_group(
+                cr, uid, send_group,
+                'Dettaglio ritardi su consegnato e ordinato',
+                'Dettaglio delle consegne e ordinato in ritardo.',
+                'Ritardo', context=context)
+        else:
+            return excel_pool.return_attachment(cr, uid, 'Controllo ritardi')
 
     def action_extract_all(self, cr, uid, ids, context=None):
         """ All in one report:
