@@ -42,7 +42,7 @@
     'init_xml': [],
     'demo': [],
     'data': [
-        'group/send_group.xml',
+        'security/send_group.xml',
 
         'crm_excel_view.xml',
         'scheduler.xml',
