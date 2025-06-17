@@ -163,8 +163,12 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
         if mode == 'promotional':
             header_line = [
                 'Partner', 'Email', 'Lingua',
+                'Indirizzo', 'Paese', 'Provincia', 'Nazione',
                 ]
-            column_w = [40, 35, 10]
+            column_w = [
+                40, 35, 10,
+                35, 35, 10, 20,
+            ]
 
             # Create Excel WB
             ws_ml = _('Mailing')
@@ -218,6 +222,11 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     partner.name.strip(),
                     email,
                     'Italiano' if italian else 'Inglese',
+
+                    partner.street or '',
+                    partner.city or '',
+                    partner.state_id.code if partner.state_id else '',
+                    partner.country_id.name if partner.country_id else '',
                     ])
 
         else:
@@ -295,8 +304,7 @@ class ResPartnerNewsletterExtractWizard(orm.TransientModel):
                     partner.name,
                     partner.city,
                     partner.country_id.name if partner.country_id else '',
-                    partner.newsletter_category_id.name \
-                        if partner.newsletter_category_id else '',
+                    partner.newsletter_category_id.name if partner.newsletter_category_id else '',
                     partner.newsletter_group or '',
                     partner_invoiced.get(partner.id, 0.0),
                     ]
