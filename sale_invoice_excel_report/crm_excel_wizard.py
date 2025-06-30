@@ -691,7 +691,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             12, 12, 12, 12, 10, 12,
             15,
             14, 14, 14, 14,
-            50, 10,
+            40, 40, 10,
         ]
         header = [
             'Codice',
@@ -715,7 +715,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Inv. non movim.',
             'Costo trasp.',
             'Cambio',
-            'Commento',
+            'Errori',
+            'Warning',
             'Escluso',
         ]
         excel_pool.column_width(ws_name, width)
@@ -741,7 +742,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # ----------------------------------------------------------------------------------------------------------
             # Stock
             # ----------------------------------------------------------------------------------------------------------
-            error = ''
+            error = warning = ''
             start_qty = product.mx_start_qty
             final_qty = start_qty + purchase_qty - sold_qty
             medium_qty = (start_qty + final_qty) / 2.0
@@ -764,7 +765,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 else:
                     # Prezzo medio usato:
                     used_purchase = (medium_purchase + product.inventory_cost_transport)
-                    error += '[No costo only buy] '
+                    warning += '[No costo only buy] '
             else:
                 # Uso prezzo "senza movimenti"
                 used_purchase = product.inventory_cost_no_move
@@ -794,6 +795,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             if medium_qty:
                 rotation_rate = sold_qty * used_purchase / medium_qty
             else:
+                warning += '[No rotazione] '
                 rotation_rate = '/'
 
             # ==========================================================================================================
