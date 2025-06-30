@@ -776,7 +776,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             else:
                 # Uso prezzo "senza movimenti"
                 used_purchase = product.inventory_cost_no_move
-                error += '[Non acquistato] '
+                warning += '[Non acquistato] '
 
             if not sold_qty:
                 error += '[Non venduto] '
