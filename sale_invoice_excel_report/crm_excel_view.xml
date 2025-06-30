@@ -48,6 +48,8 @@
                        <button name="action_sale_report" string="Sale report" type="object" icon="gtk-print" class="oe_highlight" />
                        <button name="action_ddt_report" string="DDT report" type="object" icon="gtk-print" class="oe_highlight" />
                        <button name="action_invoice_report" string="Invoice report" type="object" icon="gtk-print" class="oe_highlight" />
+
+                       <button name="action_rotation_index" string="Indice rotazione anno corrente" type="object" icon="gtk-print" class="oe_highlight" />
                    </header>
                    <group colspan="4" col="4">
                         <separator string="Period:" colspan="4"/>

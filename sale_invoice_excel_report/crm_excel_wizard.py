@@ -445,6 +445,490 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         wiz_browse = self.browse(cr, uid, ids, context=context)[0]
         return True
 
+    def action_rotation_index(self, cr, uid, ids, context=None):
+        """ Rotation index current year
+        """
+        excel_pool = self.pool.get('excel.writer')
+
+        if context is None:
+            context = {}
+        # wiz_browse = self.browse(cr, uid, ids, context=context)[0]  # Not used
+
+        excluded = [
+            'NMO',
+            'SBANC',
+            'ANTICIPATO',
+            'TRASP',
+            'PALLET',
+            'SC.EXTRA',
+            'VARIE',
+            'LOCAZIONE',
+            'EMO',
+            'EUROPALLET',
+        ]
+
+        # Excel:
+        start_date = datetime.now().replace(month=1, day=1).strftime('%Y-%m-%d')
+
+        # Create (first 2, populated after):
+        ws_name = 'Totali'
+        excel_pool.create_worksheet(ws_name)
+
+        ws_name = 'Prodotti'
+        excel_pool.create_worksheet(ws_name)
+
+        # Create 2 used in loop
+        ws_name = 'Acquisti'
+        excel_pool.create_worksheet(ws_name)
+        ws_name = 'Corrispettivi'
+        excel_pool.create_worksheet(ws_name)
+        ws_name = 'Vendite'
+        excel_pool.create_worksheet(ws_name)
+
+        # Format:
+        excel_pool.set_format()
+        this_format = {
+            'title': excel_pool.get_format('title'),
+            'header': excel_pool.get_format('header'),
+
+            'white': {
+                'text': excel_pool.get_format('text'),
+                'number': excel_pool.get_format('number'),
+            },
+            'red': {
+                'text': excel_pool.get_format('bg_red'),
+                'number': excel_pool.get_format('bg_red_number'),
+            },
+            'green': {
+                'text': excel_pool.get_format('bg_green'),
+                'number': excel_pool.get_format('bg_green_number'),
+            },
+        }
+
+        row = 0
+        # Layout:
+        width = [
+        ]
+
+        header = [
+        ]
+
+        excel_pool.column_width(ws_name, width)
+
+        # Header:
+        excel_pool.write_xls_line(ws_name, row, header, default_format=f_header)
+        row += 1
+
+
+        # Used for Purchase and Correspond:
+        loop = (
+            ('OF', 'Acquisti'),
+            ('OC', 'Corrispettivi'),
+        )
+
+        move_pool = self.pool.get('stock.move')
+        product_data = {}
+        width = [
+            15, 10, 10,
+            12, 12, 35, 20,
+        ]
+        header = [
+            'Codice',
+            'Q.',
+            'Prezzo',
+
+            'Picking',
+            'Date',
+            'Partner',
+            'Origine',
+        ]
+        for doc, ws_name in loop:
+            row = 0
+            excel_pool.column_width(ws_name, width)
+            excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+
+            # Read newsletter category and put in database:
+            domain = [
+                ('product_id', '!=', False),
+                ('state', '=', 'done'),
+                ('picking_id.date', '>=', start_date),
+                ('picking_id.origin', 'ilike', doc),
+            ]
+            if doc == 'OC':
+                domain.append(('picking_id.correspond', '=', True))
+            move_ids = move_pool.search(domain)
+
+            total = len(move_ids)
+            moves = move_pool.browse(move_ids)
+            for move in moves:
+                product = move.product_id
+                default_code = (product.default_code or '').upper()
+                if default_code in excluded:
+                    continue
+
+                row += 1
+                print('Row {} {} / {}'.format(doc, row, total))
+
+                error = ''
+                picking = move.picking_id
+                product_qty = move.product_uom_qty or 0
+
+                if doc == 'OC':
+                    origin_line = move.sale_line_id
+                else:
+                    origin_line = move.purchase_line_id
+
+                if picking.partner_id:
+                    partner_name = picking.partner_id.name or ''
+                else:
+                    partner_name = ''
+                    error += '[No partner] '
+
+                if origin_line:
+                    price = origin_line.price_unit  # todo discount for OC?
+                else:
+                    price = 0
+                    error += '[No {} price] '.format(doc)
+
+                if default_code not in product_data:
+                    # Product, Q. buy, Q. Sold, Total Bye, Total Sold
+                    product_data[default_code] = [
+                        product,  # Product
+                        0.0,  # Q. Buy
+                        0.0,  # Q. Sold
+                        0.0,  # Total Buy
+                        0.0,  # Total Sold
+                    ]
+
+                if doc == 'OC':
+                    # Sold:
+                    product_data[default_code][2] += product_qty
+                    product_data[default_code][4] += product_qty * price
+                else:
+                    # Buy:
+                    product_data[default_code][1] += product_qty
+                    product_data[default_code][3] += product_qty * price
+
+                row_data = [
+                    default_code,
+                    product_qty,
+                    price or 0,
+
+                    picking.name or '',
+                    picking.date or '',
+                    partner_name or '',
+                    picking.origin or '',
+                    error,
+                ]
+                excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
+
+        # --------------------------------------------------------------------------------------------------------------
+        #                           Vendite
+        # --------------------------------------------------------------------------------------------------------------
+        line_pool = self.pool.get('account.invoice.line')
+
+        width = [
+            10, 12, 12,
+            14, 12, 35, 20,
+        ]
+        header = [
+            'Codice',
+            'Q.',
+            'P.d.V.',
+
+            'Fattura',
+            'Data',
+            'Partner',
+            'Errore',
+        ]
+        row = 0
+        excel_pool.column_width(ws_name, width)
+        excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+
+        # Read newsletter category and put in database:
+        line_ids = line_pool.search([
+            ('product_id', '!=', False),
+            ('invoice_id.date_invoice', '>=', start_date),
+        ])
+        total = len(line_ids)
+        lines = line_pool.browse(line_ids)
+
+        for line in lines:
+            product = line.product_id
+            default_code = (product.default_code or '').upper()
+            if default_code in excluded:
+                continue
+
+            row += 1
+            print('Invoice Row {} / {}'.format(row, total))
+            error = ''
+            invoice = line.invoice_id
+
+            subtotal = line.price_subtotal or 0.0
+            product_qty = line.quantity or 0.0
+            if product_qty:
+                price = subtotal / product_qty
+            else:
+                price = 0.0
+                error += '[No purchase price] '
+
+            if default_code not in product_data:
+                # product.mx_net_mrp_qty
+                product_data[default_code] = [
+                    product,  # Product
+                    0.0,  # Q. Buy
+                    0.0,  # Q. Sold
+                    0.0,  # Total Buy
+                    0.0,  # Total Sold
+                ]
+
+            product_data[default_code][2] += product_qty  # sold
+            product_data[default_code][4] += product_qty * price  # sold
+
+            partner_name = invoice.partner_id.name or ''
+
+            row_data = [
+                default_code,
+                product_qty,
+                price or 0,
+
+                invoice.number or '',
+                invoice.date_invoice or '',
+                partner_name or '',
+                error,
+            ]
+            excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
+
+        # --------------------------------------------------------------------------------------------------------------
+        #                           Prodotti
+        # --------------------------------------------------------------------------------------------------------------
+        print('Create page: Prodotti')
+        ws_name = 'Prodotti'
+
+        row = 0
+        width = [
+            10, 20, 10, 10, 10, 10, 10,
+            12, 12, 12, 12, 10, 10,
+            10,
+            12, 12, 12, 12,
+            40, 20,
+        ]
+        header = [
+            'Codice',
+            'Nome',
+            'Acq.',
+            'Vend.',
+            'Inv. iniz.',
+            'Inv. fin.',
+            'Mag. medio',
+
+            'Acq. medio',
+            'Acq. utilizzato',
+            'Vend. media',
+            'Marg. medio',
+            'Marg. %',
+            'Indice rotazione',
+
+            'List. (anag.)',
+
+            'Inv. costo solo acq.',
+            'Inv. non movim.',
+            'Costo trasp.',
+            'Cambio',
+            'Commento',
+            'Escluso',
+        ]
+        excel_pool.column_width(ws_name, width)
+        excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+
+        medium_data = {
+            # quantity:
+            'start': 0.0,
+            'purchase': 0.0,
+            'sold': 0.0,
+
+            # subtotal:
+            'total_purchase': 0.0,
+            'total_sold': 0.0,
+        }
+
+        for default_code in sorted(product_data):
+            row += 1
+            product, purchase_qty, sold_qty, total_purchase, total_sold = product_data[default_code]
+            name = product.name
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Stock
+            # ----------------------------------------------------------------------------------------------------------
+            error = ''
+            start_qty = product.mx_start_qty
+            final_qty = start_qty + purchase_qty - sold_qty
+            medium_qty = (start_qty + final_qty) / 2.0
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Comment
+            # ----------------------------------------------------------------------------------------------------------
+            if purchase_qty:
+                medium_purchase = total_purchase / purchase_qty
+            else:
+                medium_purchase = 0.0
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Price used for cost of purchase:
+            # ----------------------------------------------------------------------------------------------------------
+            if purchase_qty:
+                # Uso prezzo "only buy" (se presente se no il medio) + "trasporto"
+                if product.inventory_cost_only_buy:
+                    used_purchase = (product.inventory_cost_only_buy + product.inventory_cost_transport)
+                else:
+                    # Prezzo medio usato:
+                    used_purchase = (medium_purchase + product.inventory_cost_transport)
+                    error += '[No costo only buy] '
+            else:
+                # Uso prezzo "senza movimenti"
+                used_purchase = product.inventory_cost_no_move
+                error += '[Non acquistato] '
+
+            if not sold_qty:
+                error += '[Non venduto] '
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Margin:
+            # ----------------------------------------------------------------------------------------------------------
+            if sold_qty:
+                medium_sold = total_sold / sold_qty
+            else:
+                medium_sold = 0.0
+
+            margin = medium_sold - used_purchase
+            if not (medium_sold and used_purchase):
+                margin_rate = '/'  # Not used
+                error += '[Margine non calcolabile] '
+            else:
+                margin_rate = margin / medium_sold
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Rotation rate:
+            # ----------------------------------------------------------------------------------------------------------
+            if medium_qty:
+                rotation_rate = sold_qty * used_purchase / medium_qty
+            else:
+                rotation_rate = '/'
+
+            # ==========================================================================================================
+            #                            Medium data
+            # ==========================================================================================================
+            if default_code[:1] != 'F' and used_purchase > 0 and sold_qty > 0:
+                medium_excluded = False
+
+                # Quantity:
+                medium_data['start'] += start_qty
+                medium_data['purchase'] += purchase_qty
+                medium_data['sold'] += sold_qty
+
+                # Subtotal:
+                medium_data['total_purchase'] += total_purchase
+                medium_data['total_sold'] += total_sold
+            else:
+                medium_excluded = True
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Write line
+            # ----------------------------------------------------------------------------------------------------------
+            row_data = [
+                default_code,
+                name,
+                purchase_qty,
+                sold_qty,
+                start_qty,
+                final_qty,
+                medium_qty,
+
+                medium_purchase,
+                used_purchase,
+                medium_sold,
+                margin,
+                margin_rate,
+                rotation_rate,
+
+                product.lst_price,  # Prezzo listino
+
+                product.inventory_cost_only_buy,
+                product.inventory_cost_no_move,
+                product.inventory_cost_transport,
+                product.inventory_cost_exchange,
+
+                error,
+                'X' if medium_excluded else '',
+            ]
+            excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
+
+
+        # --------------------------------------------------------------------------------------------------------------
+        #                          Totali
+        # --------------------------------------------------------------------------------------------------------------
+        print('Create page: Totali')
+        ws_name = 'Totali'
+        row = 0
+        width = [
+            12, 12, 12, 12, 12,
+            15, 15, 15, 15,
+            18,
+        ]
+        header = [
+            'Q.\nIniziale',
+            'Q.\nFinale',
+            'Q.\nAcq.',
+            'Q.\nVend.',
+            'Q.\nMedia',
+
+            'Totale\nAcq.',
+            'Totale\nVend.',
+            'Totale\nMarg.',
+            'Totale\nMarg. %',
+
+            'Indice rotazione',
+        ]
+        excel_pool.column_width(ws_name, width)
+        excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+
+        final_qty = medium_data['start'] + medium_data['purchase'] - medium_data['sold']
+        medium_qty = (medium_data['start'] + final_qty) / 2.0
+
+        total_margin = medium_data['total_sold'] + medium_data['total_purchase']
+        if medium_data['total_sold']:
+            margin_rate = total_margin / medium_data['total_sold']
+        else:
+            margin_rate = 0.0
+
+        if medium_qty:
+            rotation_rate = 0.0  # q venduta media * costo acquisto / medium_qty
+        else:
+            rotation_rate = '/'
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Write line
+        # --------------------------------------------------------------------------------------------------------------
+        row_data = [
+            medium_data['start'],
+            final_qty,
+            medium_data['purchase'],
+            medium_data['sold'],
+            medium_qty,
+
+            medium_data['total_purchase'],
+            medium_data['total_sold'],
+            total_margin,
+            margin_rate,
+
+            rotation_rate,
+        ]
+        row += 1
+        excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
+
+        return excel_pool.return_attachment(cr, uid, name_of_file='rotation_report.xlsx', context=context)
+
+
     def action_extract_oc_comparative(self, cr, uid, ids, context=None):
         """ OC for comparative operation
         """
