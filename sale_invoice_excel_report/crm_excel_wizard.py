@@ -846,6 +846,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 product.inventory_cost_exchange,
 
                 (error, format_color['text']),
+                (warning, format_color['text']),
                 ('X' if medium_excluded else '', format_color['text']),
             ]
             excel_pool.write_xls_line(ws_name, row, row_data, default_format=format_color['number'])
