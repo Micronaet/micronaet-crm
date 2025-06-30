@@ -905,8 +905,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         ]
         row += 1
         excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
-
-        return excel_pool.return_attachment(cr, uid, name_of_file='rotation_report.xlsx', context=context)
+        return excel_pool.return_attachment(cr, uid, name_of_file='rotation_report.xlsx')
 
 
     def action_extract_oc_comparative(self, cr, uid, ids, context=None):
