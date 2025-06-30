@@ -44,8 +44,9 @@ excluded = [
 # ----------------------------------------------------------------------------------------------------------------------
 # Read configuration parameter:
 # ----------------------------------------------------------------------------------------------------------------------
+company = 'gpb'
 # From config file:
-cfg_file = os.path.expanduser('../openerp_gpb.cfg')
+cfg_file = os.path.expanduser('../openerp_{}.cfg'.fornat(company))
 
 config = configparser.ConfigParser()
 config.read([cfg_file])
@@ -58,7 +59,7 @@ port = config.get('dbaccess', 'port')   # verify if it's necessary: getint
 # Excel:
 start_date = datetime.now().replace(month=1, day=1).strftime('%Y-%m-%d')
 
-file_out = './round_stock.xlsx'
+file_out = './round_stock_{}.xlsx'.format(company)
 row_start = 1
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -164,12 +165,20 @@ for doc, ws_name in loop:
 
         if default_code not in product_data:
             # Product, Q. buy, Q. Sold, Total Bye, Total Sold
-            product_data[default_code] = [product, 0.0, 0.0, 0.0, 0.0]
+            product_data[default_code] = [
+                product,  # Product
+                0.0,  # Q. Buy
+                0.0,  # Q. Sold
+                0.0,  # Total Buy
+                0.0,  # Total Sold
+            ]
         
         if doc == 'OC':
+            # Sold:
             product_data[default_code][2] += product_qty
             product_data[default_code][4] += product_qty * price
-        else:    
+        else:
+            # Buy:
             product_data[default_code][1] += product_qty
             product_data[default_code][3] += product_qty * price
 
@@ -232,8 +241,14 @@ for line in lines:
         
     if default_code not in product_data:
         # product.mx_net_mrp_qty
-        product_data[default_code] = [product, 0.0, 0.0, 0.0, 0.0]
-        
+        product_data[default_code] = [
+            product,  # Product
+            0.0,  # Q. Buy
+            0.0,  # Q. Sold
+            0.0,  # Total Buy
+            0.0,  # Total Sold
+        ]
+
     product_data[default_code][2] += product_qty  # sold
     product_data[default_code][4] += product_qty * price  # sold
     
@@ -281,6 +296,17 @@ xls_write_row(WS, row, [
     'Commento',
     'Escluso',
     ])
+
+medium_data = {
+    # quantity:
+    'start': 0.0,
+    'purchase': 0.0,
+    'sold': 0.0,
+
+    # subtotal:
+    'total_purchase': 0.0,
+    'total_sold': 0.0,
+}
 
 for default_code in sorted(product_data):
     row += 1
@@ -345,6 +371,23 @@ for default_code in sorted(product_data):
     else:
         rotation_rate = '/'
     
+    # ==================================================================================================================
+    #                            Medium data
+    # ==================================================================================================================
+    if default_code[:1] != 'F' and used_purchase > 0 and sold_qty > 0:
+        medium_excluded = False
+
+        # Quantity:
+        medium_data['start'] += start_qty
+        medium_data['purchase'] += purchase_qty
+        medium_data['sold'] += sold_qty
+
+        # Subtotal:
+        medium_data['total_purchase'] += total_purchase
+        medium_data['total_sold'] += total_sold
+    else:
+        medium_excluded = True
+
     # ------------------------------------------------------------------------------------------------------------------
     # Write line
     # ------------------------------------------------------------------------------------------------------------------
@@ -372,7 +415,60 @@ for default_code in sorted(product_data):
         product.inventory_cost_exchange,
         
         error,
-        'X' if default_code[:1] == 'F' else '',
+        'X' if medium_excluded else '',
         ])
+
+# ----------------------------------------------------------------------------------------------------------------------
+#                          Totali
+# ----------------------------------------------------------------------------------------------------------------------
+WS = WB.add_worksheet('Totali')
+row = 0
+xls_write_row(WS, row, [
+    'Q.\nIniziale',
+    'Q.\nFinale',
+    'Q.\nAcq.',
+    'Q.\nVend.',
+    'Q.\nMedia',
+
+    'Totale\nAcq.',
+    'Totale\nVend.',
+    'Totale\nMarg.',
+    'Totale\nMarg. %',
+
+    'Indice rotazione',
+])
+
+final_qty = medium_data['start'] + medium_data['purchase'] - medium_data['sold']
+medium_qty = (medium_data['start'] + final_qty) / 2.0
+
+total_margin = medium_data['total_sold'] + medium_data['total_purchase']
+if medium_data['total_sold']:
+    margin_rate = total_margin / medium_data['total_sold']
+else:
+    margin_rate = 0.0
+
+if medium_qty:
+    rotation_rate = 0.0  # q venduta media * costo acquiesto / medium_qty
+else:
+    rotation_rate = '/'
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# Write line
+# ------------------------------------------------------------------------------------------------------------------
+xls_write_row(WS, row, [
+    medium_data['start'],
+    final_qty,
+    medium_data['purchase'],
+    medium_data['sold'],
+    medium_qty,
+
+    medium_data['total_purchase'],
+    medium_data['total_sold'],
+    total_margin,
+    margin_rate,
+
+    rotation_rate,
+])
 
 WB.close()
