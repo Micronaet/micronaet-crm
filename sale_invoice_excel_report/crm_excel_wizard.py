@@ -446,7 +446,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         return True
 
     def action_rotation_index(self, cr, uid, ids, context=None):
-        """ Rotation index current year
+        """ Rotation index current year (not used wizard parameters)
         """
         excel_pool = self.pool.get('excel.writer')
 
@@ -470,10 +470,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # Excel:
         start_date = datetime.now().replace(month=1, day=1).strftime('%Y-%m-%d')
 
-        # Create (first 2, populated after):
+        # Create all WS page now:
         ws_name = 'Totali'
         excel_pool.create_worksheet(ws_name)
-
         ws_name = 'Prodotti'
         excel_pool.create_worksheet(ws_name)
 
@@ -482,6 +481,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.create_worksheet(ws_name)
         ws_name = 'Corrispettivi'
         excel_pool.create_worksheet(ws_name)
+
         ws_name = 'Vendite'
         excel_pool.create_worksheet(ws_name)
 
@@ -505,27 +505,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             },
         }
 
-        row = 0
-        # Layout:
-        width = [
-        ]
-
-        header = [
-        ]
-
-        excel_pool.column_width(ws_name, width)
-
-        # Header:
-        excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
-        row += 1
-
-
         # Used for Purchase and Correspond:
-        loop = (
-            ('OF', 'Acquisti'),
-            ('OC', 'Corrispettivi'),
-        )
-
         move_pool = self.pool.get('stock.move')
         product_data = {}
         width = [
@@ -542,7 +522,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Partner',
             'Origine',
         ]
-        for doc, ws_name in loop:
+        for doc, ws_name in (
+                ('OF', 'Acquisti'),
+                ('OC', 'Corrispettivi'),
+                ):
             row = 0
             excel_pool.column_width(ws_name, width)
             excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
@@ -556,11 +539,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             ]
             if doc == 'OC':
                 domain.append(('picking_id.correspond', '=', True))
-            move_ids = move_pool.search(domain)
+            move_ids = move_pool.search(cr, uid, domain, context=context)
 
             total = len(move_ids)
-            moves = move_pool.browse(move_ids)
-            for move in moves:
+            for move in move_pool.browse(cr, uid, move_ids, context=context):
                 product = move.product_id
                 default_code = (product.default_code or '').upper()
                 if default_code in excluded:
@@ -646,14 +628,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
 
         # Read newsletter category and put in database:
-        line_ids = line_pool.search([
+        line_ids = line_pool.search(cr, uid, [
             ('product_id', '!=', False),
             ('invoice_id.date_invoice', '>=', start_date),
-        ])
+        ], context=context)
         total = len(line_ids)
-        lines = line_pool.browse(line_ids)
-
-        for line in lines:
+        for line in line_pool.browse(cr, uid, line_ids, context=context):
             product = line.product_id
             default_code = (product.default_code or '').upper()
             if default_code in excluded:
@@ -1165,9 +1145,9 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         from_date = wiz_browse.from_date
         to_date = wiz_browse.to_date
 
-        # ---------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------
         # Collect data:
-        # ---------------------------------------------------------------------
+        # --------------------------------------------------------------------------------------------------------------
         domain = [
             ('sale_id.previsional', '=', False),
             ('sale_id.state', 'not in', ('draft', 'sent', 'cancel')),
