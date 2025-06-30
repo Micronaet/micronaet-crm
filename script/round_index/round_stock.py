@@ -46,7 +46,7 @@ excluded = [
 # ----------------------------------------------------------------------------------------------------------------------
 company = 'gpb'
 # From config file:
-cfg_file = os.path.expanduser('../openerp_{}.cfg'.fornat(company))
+cfg_file = os.path.expanduser('../openerp_{}.cfg'.format(company))
 
 config = configparser.ConfigParser()
 config.read([cfg_file])
