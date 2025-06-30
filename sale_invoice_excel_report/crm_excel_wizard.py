@@ -687,11 +687,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         row = 0
         width = [
-            10, 20, 10, 10, 10, 10, 10,
-            12, 12, 12, 12, 10, 10,
-            10,
-            12, 12, 12, 12,
-            40, 20,
+            10, 30, 10, 10, 10, 10, 10,
+            12, 12, 12, 12, 10, 12,
+            15,
+            14, 14, 14, 14,
+            50, 10,
         ]
         header = [
             'Codice',
@@ -720,6 +720,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         ]
         excel_pool.column_width(ws_name, width)
         excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+        excel_pool.row_height(ws_name, row, 30)
 
         medium_data = {
             # quantity:
@@ -815,9 +816,13 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             # ----------------------------------------------------------------------------------------------------------
             # Write line
             # ----------------------------------------------------------------------------------------------------------
+            if medium_excluded:
+                format_color = this_format['red']
+            else:
+                format_color = this_format['white']
             row_data = [
-                default_code,
-                name,
+                (default_code, format_color['text']),
+                (name, format_color['text']),
                 purchase_qty,
                 sold_qty,
                 start_qty,
@@ -838,10 +843,10 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 product.inventory_cost_transport,
                 product.inventory_cost_exchange,
 
-                error,
-                'X' if medium_excluded else '',
+                (error, format_color['text']),
+                ('X' if medium_excluded else '', format_color['text']),
             ]
-            excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
+            excel_pool.write_xls_line(ws_name, row, row_data, default_format=format_color['number'])
 
 
         # --------------------------------------------------------------------------------------------------------------
