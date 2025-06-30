@@ -510,7 +510,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         product_data = {}
         width = [
             15, 10, 10,
-            12, 12, 35, 20,
+            12, 12, 35, 20, 30,
         ]
         header = [
             'Codice',
@@ -614,7 +614,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         width = [
             10, 12, 12,
-            14, 12, 35, 20, 20,
+            14, 12, 35, 30,
         ]
         header = [
             'Codice',
@@ -624,7 +624,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Fattura',
             'Data',
             'Partner',
-            'Origine',
+            # 'Origine',
             'Errore',
         ]
         row = 0
