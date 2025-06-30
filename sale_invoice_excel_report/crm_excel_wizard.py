@@ -856,16 +856,16 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             18,
         ]
         header = [
-            'Q.\n Iniziale',
-            'Q.\n Finale',
-            'Q.\n Acq.',
-            'Q.\n Vend.',
-            'Q.\n Media',
+            'Q. \n Iniziale',
+            'Q. \n Finale',
+            'Q. \n Acq.',
+            'Q. \n Vend.',
+            'Q. \n Media',
 
-            'Totale\n Acq.',
-            'Totale\n Vend.',
-            'Totale\n Marg.',
-            'Totale\n Marg. %',
+            'Totale \n Acq.',
+            'Totale \n Vend.',
+            'Totale \n Marg.',
+            'Totale \n Marg. %',
 
             'Indice rotazione',
         ]
