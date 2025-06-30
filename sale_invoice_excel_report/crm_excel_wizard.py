@@ -549,7 +549,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     continue
 
                 row += 1
-                _logger.info('Row {} {} / {}'.format(doc, row, total))
 
                 error = ''
                 picking = move.picking_id
@@ -640,7 +639,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 continue
 
             row += 1
-            _logger.info('Invoice Row {} / {}'.format(row, total))
             error = ''
             invoice = line.invoice_id
 
@@ -850,7 +848,6 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 ('X' if medium_excluded else '', format_color['text']),
             ]
             excel_pool.write_xls_line(ws_name, row, row_data, default_format=format_color['number'])
-
 
         # --------------------------------------------------------------------------------------------------------------
         #                          Totali
