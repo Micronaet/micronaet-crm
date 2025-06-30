@@ -856,21 +856,22 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             18,
         ]
         header = [
-            'Q.\nIniziale',
-            'Q.\nFinale',
-            'Q.\nAcq.',
-            'Q.\nVend.',
-            'Q.\nMedia',
+            'Q.\n Iniziale',
+            'Q.\n Finale',
+            'Q.\n Acq.',
+            'Q.\n Vend.',
+            'Q.\n Media',
 
-            'Totale\nAcq.',
-            'Totale\nVend.',
-            'Totale\nMarg.',
-            'Totale\nMarg. %',
+            'Totale\n Acq.',
+            'Totale\n Vend.',
+            'Totale\n Marg.',
+            'Totale\n Marg. %',
 
             'Indice rotazione',
         ]
         excel_pool.column_width(ws_name, width)
         excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+        excel_pool.row_height(ws_name, row, 30)
 
         final_qty = medium_data['start'] + medium_data['purchase'] - medium_data['sold']
         medium_qty = (medium_data['start'] + final_qty) / 2.0
