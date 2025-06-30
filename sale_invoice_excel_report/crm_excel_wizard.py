@@ -516,7 +516,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.column_width(ws_name, width)
 
         # Header:
-        excel_pool.write_xls_line(ws_name, row, header, default_format=f_header)
+        excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
         row += 1
 
 
