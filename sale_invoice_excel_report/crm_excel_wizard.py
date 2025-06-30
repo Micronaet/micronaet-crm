@@ -521,6 +521,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Date',
             'Partner',
             'Origine',
+            'Errore',
         ]
         for doc, ws_name in (
                 ('OF', 'Acquisti'),
@@ -594,8 +595,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
                 row_data = [
                     default_code,
-                    product_qty,
-                    price or 0,
+                    (product_qty, this_format['white']['text']),
+                    (price or 0, this_format['white']['text']),
 
                     picking.name or '',
                     picking.date or '',
@@ -608,11 +609,12 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # --------------------------------------------------------------------------------------------------------------
         #                           Vendite
         # --------------------------------------------------------------------------------------------------------------
+        ws_name = 'Vendite'
         line_pool = self.pool.get('account.invoice.line')
 
         width = [
             10, 12, 12,
-            14, 12, 35, 20,
+            14, 12, 35, 20, 20,
         ]
         header = [
             'Codice',
@@ -622,6 +624,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             'Fattura',
             'Data',
             'Partner',
+            'Origine',
             'Errore',
         ]
         row = 0
@@ -918,7 +921,11 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             rotation_rate,
         ]
         row += 1
-        excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['text'])
+        excel_pool.write_xls_line(ws_name, row, row_data, default_format=this_format['white']['number'])
+
+        # --------------------------------------------------------------------------------------------------------------
+        # End of procedure:
+        # --------------------------------------------------------------------------------------------------------------
         return excel_pool.return_attachment(cr, uid, 'Indici rotazione', 'rotation_report.xlsx')
 
 
