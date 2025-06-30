@@ -549,7 +549,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                     continue
 
                 row += 1
-                print('Row {} {} / {}'.format(doc, row, total))
+                _logger.info('Row {} {} / {}'.format(doc, row, total))
 
                 error = ''
                 picking = move.picking_id
@@ -640,7 +640,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 continue
 
             row += 1
-            print('Invoice Row {} / {}'.format(row, total))
+            _logger.info('Invoice Row {} / {}'.format(row, total))
             error = ''
             invoice = line.invoice_id
 
@@ -682,7 +682,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # --------------------------------------------------------------------------------------------------------------
         #                           Prodotti
         # --------------------------------------------------------------------------------------------------------------
-        print('Create page: Prodotti')
+        _logger.info('Create page: Prodotti')
         ws_name = 'Prodotti'
 
         row = 0
@@ -847,7 +847,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         # --------------------------------------------------------------------------------------------------------------
         #                          Totali
         # --------------------------------------------------------------------------------------------------------------
-        print('Create page: Totali')
+        _logger.info('Create page: Totali')
         ws_name = 'Totali'
         row = 0
         width = [
