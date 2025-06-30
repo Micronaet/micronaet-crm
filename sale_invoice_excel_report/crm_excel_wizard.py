@@ -785,7 +785,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
                 margin_rate = '/'  # Not used
                 error += '[Margine non calcolabile] '
             else:
-                margin_rate = margin / medium_sold
+                margin_rate = 100.0 *  margin / medium_sold
 
             # ----------------------------------------------------------------------------------------------------------
             # Rotation rate:
@@ -883,7 +883,7 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
 
         total_margin = medium_data['total_sold'] + medium_data['total_purchase']
         if medium_data['total_sold']:
-            margin_rate = total_margin / medium_data['total_sold']
+            margin_rate = 100.0 * total_margin / medium_data['total_sold']
         else:
             margin_rate = 0.0
 
