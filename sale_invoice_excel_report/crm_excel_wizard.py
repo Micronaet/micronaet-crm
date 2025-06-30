@@ -529,6 +529,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
             row = 0
             excel_pool.column_width(ws_name, width)
             excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+            excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+            excel_pool.freeze_panes(ws_name, 1, 2)
 
             # Read newsletter category and put in database:
             domain = [
@@ -625,6 +627,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         row = 0
         excel_pool.column_width(ws_name, width)
         excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
+        excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+        excel_pool.freeze_panes(ws_name, 1, 1)
 
         # Read newsletter category and put in database:
         line_ids = line_pool.search(cr, uid, [
@@ -720,6 +724,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.column_width(ws_name, width)
         excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
         excel_pool.row_height(ws_name, row, 30)
+        excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+        excel_pool.freeze_panes(ws_name, 1, 2)
 
         medium_data = {
             # quantity:
@@ -877,6 +883,8 @@ class CrmExcelExtractReportWizard(orm.TransientModel):
         excel_pool.column_width(ws_name, width)
         excel_pool.write_xls_line(ws_name, row, header, default_format=this_format['header'])
         excel_pool.row_height(ws_name, row, 30)
+        # excel_pool.autofilter(ws_name, row, 0, row, len(header) - 1)
+        excel_pool.freeze_panes(ws_name, 1, 0)
 
         final_qty = medium_data['start'] + medium_data['purchase'] - medium_data['sold']
         medium_qty = (medium_data['start'] + final_qty) / 2.0
