@@ -34,7 +34,6 @@
                                         <field name="user_token" password="1" />
                                     </group>
                                 </page>
-
                                 <page name="category_page" string="Categorie CRM:">
                                     <group colspan="4" col="4">
                                         <separator string="Categorie CRM" colspan="4"/>
