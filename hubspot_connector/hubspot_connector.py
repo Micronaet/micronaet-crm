@@ -61,7 +61,6 @@ class HubspotConnector(orm.Model):
         'user_token': fields.char('Token', size=100),
         'domain': fields.char('Domain', size=80),
         'hubspot_code': fields.char('Code', size=80),
-        'category_ids': fields.many2many(),
     }
 
 
