@@ -31,7 +31,7 @@
 
         <record model="ir.actions.act_window" id="action_hubspot_connector">
             <field name="name">Hubspot Connector</field>
-            <field name="res_model">crm.excel.extract.report.wizard</field>
+            <field name="res_model">hubspot.connector</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="hubspot_connector_view_tree"/>
