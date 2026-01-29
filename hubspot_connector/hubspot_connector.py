@@ -94,5 +94,5 @@ class HubspotConnectorInherit(orm.Model):
     _inherit = 'hubspot.connector'
 
     _columns = {
-        'category_ids': fields.many2one('crm.newsletter.category', 'hubspot_id', 'Categorie CRM'),
+        'category_ids': fields.one2many('crm.newsletter.category', 'hubspot_id', 'Categorie CRM'),
     }
