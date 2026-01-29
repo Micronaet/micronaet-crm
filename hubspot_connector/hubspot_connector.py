@@ -61,4 +61,38 @@ class HubspotConnector(orm.Model):
         'user_token': fields.char('Token', size=100),
         'domain': fields.char('Domain', size=80),
         'hubspot_code': fields.char('Code', size=80),
+        'category_ids': fields.many2many(),
+    }
+
+
+class CrmNewsletterCategoryHubspot(orm.Model):
+    """ Model name: Crm Newsletter Hubspot Category
+    """
+    _name = 'crm.newsletter.category.hubspot'
+    _rec_name = 'category_id'
+    _order = 'name'
+
+    def button_update_contact(self, cr, uid, ids, context=None):
+        """ Update contacts
+        """
+        return True
+
+    _columns = {
+        'hubspot_on': fields.boolean(
+            'Pubblicata', help='Se spuntato i contatti collegati sono importati su hubspot'),
+        'category_id': fields.many2one('crm.newsletter.category', 'Categoria CRM'),
+        'hubspot_id': fields.many2one('hubspot.connector', 'Hubspot'),
+        'name': fields.char(
+            'Nome Hubspot', size=80,
+            help='Nome utilizzato su hubspot, se non presente viene utilizzato quello di ODOO'),
+    }
+
+
+class HubspotConnectorInherit(orm.Model):
+    """ Hubspot Connector Inherit
+    """
+    _inherit = 'hubspot.connector'
+
+    _columns = {
+        'category_ids': fields.many2one('crm.newsletter.category', 'hubspot_id', 'Categorie CRM'),
     }

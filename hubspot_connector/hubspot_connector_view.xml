@@ -24,11 +24,32 @@
                         <group colspan="4" col="4">
                             <field name="name"/>
                             <field name="company_id"/>
-                            <separator string="Parametri connessione" colspan="4"/>
-                            <field name="domain" />
-                            <field name="hubspot_code" />
-                            <field name="token" password="1" />
-                            <field name="user_token" password="1" />
+                            <notebook>
+                                <page name="parameter_page" string="Parametri:">
+                                    <group colspan="4" col="4">
+                                        <separator string="Parametri connessione" colspan="4"/>
+                                        <field name="domain" />
+                                        <field name="hubspot_code" />
+                                        <field name="token" password="1" />
+                                        <field name="user_token" password="1" />
+                                    </group>
+                                </page>
+
+                                <page name="category_page" string="Categorie CRM:">
+                                    <group colspan="4" col="4">
+                                        <separator string="Categorie CRM" colspan="4"/>
+                                        <field name="category_ids" nolabel="1">
+                                            <tree string="Categorie" editable="bottom" colors="not hubspot_on">
+                                                <field name="hubspot_id" invisible="1" />
+                                                <field name="hubspot_on" />
+                                                <field name="category_id" required="1" />
+                                                <field name="name" />
+                                                <button name="button_update_contact" type="object" string="Pubblica categoria" />
+                                            </tree>
+                                        </field>
+                                    </group>
+                                </page>
+                            </notebook>
                         </group>
                     </sheet>
                 </form>

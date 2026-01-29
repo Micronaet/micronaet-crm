@@ -62,4 +62,3 @@ class ResPartner(orm.Model):
             ('home', 'Domestico'),
             ], 'Settore newsletter'),
         }
-# vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
