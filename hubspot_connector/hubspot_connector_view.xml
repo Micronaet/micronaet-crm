@@ -29,6 +29,7 @@
                                 <page name="parameter_page" string="Parametri:">
                                     <group colspan="4" col="4">
                                         <separator string="Parametri connessione" colspan="4"/>
+                                        <field name="endpoint" colspan="4" />
                                         <field name="domain" />
                                         <field name="hubspot_code" />
                                         <field name="token" password="1" />
@@ -57,7 +58,6 @@
                 </form>
             </field>
         </record>
-
         <record model="ir.actions.act_window" id="action_hubspot_connector">
             <field name="name">Hubspot Connector</field>
             <field name="res_model">hubspot.connector</field>

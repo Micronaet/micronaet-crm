@@ -77,6 +77,7 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
         partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]
+        pdb.set_trace()
 
         # --------------------------------------------------------------------------------------------------------------
         # Publish contact:
