@@ -92,8 +92,8 @@ class HubspotConnector(orm.Model):
 
         pdb.set_trace()
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
-            hubspot_id = partner.hubspot_id
-            if not hubspot_id:
+            hubspot_ref = partner.hubspot_ref
+            if not hubspot_ref:
                 payload = {
                     #"associations": [
                     #    {
