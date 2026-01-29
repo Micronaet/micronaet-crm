@@ -2,5 +2,7 @@
 access_hubspot_connector_manager,hubspot.connector,model_hubspot_connector,hubspot_connector.group_hubspot_manager,1,1,1,1
 access_hubspot_connector_manager,hubspot.connector,model_hubspot_connector,hubspot_connector.group_hubspot_user,1,0,0,0
 
-access_hubspot_connector_user,hubspot.connector,model_hubspot_connector,base.group_user,1,0,0,0
+access_crm_newsletter_category_hubspot_manager,crm.newsletter.category.hubspot,model_crm_newsletter_category_hubspot,hubspot_connector.group_hubspot_manager,1,1,1,1
+access_crm_newsletter_category_hubspot_manager,crm.newsletter.category.hubspot,model_crm_newsletter_category_hubspot,hubspot_connector.group_hubspot_user,1,0,0,0
 
+access_hubspot_connector_user,hubspot.connector,model_hubspot_connector,base.group_user,1,0,0,0
