@@ -21,9 +21,15 @@
                         <button name="button_update_contact" type="object" string="Pubblica" />
                     </header>
                     <sheet>
-                        <field name="name"/>
-                        <field name="company_id"/>
-                        <field name="domain"/>
+                        <group colspan="4" col="4">
+                            <field name="name"/>
+                            <field name="company_id"/>
+                            <separator string="Parametri connessione" colspan="4"/>
+                            <field name="domain" />
+                            <field name="hubspot_code" />
+                            <field name="token" password="1" />
+                            <field name="user_token" password="1" />
+                        </group>
                     </sheet>
                 </form>
             </field>
