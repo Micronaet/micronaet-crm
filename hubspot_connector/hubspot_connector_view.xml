@@ -39,10 +39,12 @@
                                     <group colspan="4" col="4">
                                         <separator string="Categorie CRM" colspan="4"/>
                                         <field name="category_ids" nolabel="1">
-                                            <tree string="Categorie" editable="bottom"><!--colors="not hubspot_on"-->
+                                            <tree string="Categorie" editable="bottom" colors="not hubspot_on">
                                                 <field name="hubspot_id" invisible="1" />
                                                 <field name="hubspot_on" />
                                                 <field name="category_id" />
+                                                <button name="button_odoo_contact" type="object" string="Lista contatti correnti" />
+
                                                 <field name="name" />
                                                 <button name="button_update_contact" type="object" string="Pubblica categoria" />
                                             </tree>

@@ -52,7 +52,26 @@ class HubspotConnector(orm.Model):
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts
         """
+        partner_pool = self.pool.get('res.partner')
+
+        if context is None:
+            context = {}
+
+        domain = context.get('force_domain') or []
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
+        for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
+            hubspot_id = partner.hubspot_id
+            hubspot_data = {
+                'name': partner.name,
+            }
+
+            if hubspot_id:
+                pass  # Update
+            else:
+                pass  # Create
+
         return True
+
 
     _columns = {
         'name': fields.char('Nome connessione', required=True, size=100),
@@ -71,10 +90,60 @@ class CrmNewsletterCategoryHubspot(orm.Model):
     _rec_name = 'category_id'
     _order = 'category_id'
 
+    def get_force_category(self, category_id, context):
+        """ Prepare context for call original method
+        """
+        if context is None:
+            context = {}
+        ctx = context.copy()
+        ctx['force_domain'] = [
+            ('newsletter_category_id', '=', category_id),
+        ]
+        return ctx
+
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts
         """
-        return True
+        hubspot_pool = self.pool.get('hubspot.connector')
+        ctx = self.get_force_category(ids[0], context=context)
+        return hubspot_pool.button_update_contact(self, cr, uid, ids, context=ctx)
+
+    def button_odoo_contact(self, cr, uid, ids, context=None):
+        """ Update contacts
+        """
+        model_pool = self.pool.get('ir.model.data')
+
+        # Get domain:
+        ctx = self.get_force_category(ids[0], context=context)
+        domain = ctx['force_domain']
+
+        #tree_id = model_pool.get_object_reference(
+        #    cr, uid,
+        #    'base_geo_localize',
+        #    'res_partner_geocodes_view')[1]
+        #search_view_id = model_pool.get_object_reference(
+        #    cr, uid,
+        #    'crm_newsletter_category',
+        #    'view_res_partner_newsletter_search')[1]
+        tree_id = search_view_if = form_id = False
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Partner di categoria'),
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'res_id': False,
+            'res_model': 'res.partner',
+            'view_id': tree_id,
+            'search_view_id': search_view_id,
+            'views': [
+                (tree_id, 'tree'),
+                (form_id, 'form'),
+            ],
+            'domain': domain,
+            'context': context,
+            'target': 'current',  # 'new'
+        }
 
     _columns = {
         'hubspot_on': fields.boolean('Pubblicata', help='Se spuntato i contatti collegati sono importati su hubspot'),
@@ -93,4 +162,17 @@ class HubspotConnectorInherit(orm.Model):
 
     _columns = {
         'category_ids': fields.one2many('crm.newsletter.category.hubspot', 'hubspot_id', 'Categorie CRM'),
+    }
+
+
+class ResPartnerInherit(orm.Model):
+    """ Res Partner
+    """
+    _inherit = 'res.partner'
+
+    _columns = {
+        'hubspot_ref': fields.char(
+            'Hubspot ref.',
+            help='ID Hubpost, assegnato al momento della crezione, usato per aggiornamenti',
+        ),
     }
