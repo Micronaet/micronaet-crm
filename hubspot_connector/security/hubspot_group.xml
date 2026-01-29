@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+   <data>
+        <record id="group_hubspot_manager" model="res.groups">
+            <field name="name">Hubspot Manager</field>
+        </record>
+        <record id="group_hubspot_user" model="res.groups">
+            <field name="name">Hubspot User</field>
+        </record>
+   </data>
+</openerp>

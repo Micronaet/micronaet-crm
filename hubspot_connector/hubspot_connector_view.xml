@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="hubspot_connector_view_tree" model="ir.ui.view">
+            <field name="name">hubspot.connector.tree.view</field>
+            <field name="model">hubspot.connector</field>
+            <field name="arch" type="xml">
+                <tree string="hubspot_connector_tree">
+                    <field name="name"/>
+                    <field name="company_id"/>
+                    <field name="domain"/>
+                </tree>
+            </field>
+        </record>
+        <record id="hubspot_connector_view_form" model="ir.ui.view">
+            <field name="name">hubspot.connector.form.view</field>
+            <field name="model">hubspot.connector</field>
+            <field name="arch" type="xml">
+                <form string="hubspot_connector_tree">
+                    <header>
+                        <button name="button_update_contact" type="object" string="Pubblica" />
+                    </header>
+                    <sheet>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="domain"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_hubspot_connector">
+            <field name="name">Hubspot Connector</field>
+            <field name="res_model">crm.excel.extract.report.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="hubspot_connector_view_tree"/>
+        </record>
+
+        <menuitem
+            parent="base.menu_base_partner"
+            id="menu_hubspot_root"
+            name="Hubspot"
+            sequence="0"
+            groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user"
+            />
+            <menuitem
+                parent="menu_hubspot_root"
+                id="menu_hubspot_root_connector"
+                action="action_hubspot_connector"
+                sequence="10"/>
+
+    </data>
+</openerp>
