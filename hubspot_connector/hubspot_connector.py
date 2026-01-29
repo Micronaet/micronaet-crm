@@ -110,7 +110,7 @@ class HubspotConnector(orm.Model):
                     # 'lifecyclestage':
                     'name': partner.name,
                     'address': partner.street or '',
-                    'city': parter.city or '',
+                    'city': partner.city or '',
                     'zip': partner.zipcode or '',
                     #'state',
                     #'hs_object_id',
@@ -119,18 +119,22 @@ class HubspotConnector(orm.Model):
                     #'city' 'state'
                 }
             }
-            response = requests.post(url, json=payload, headers=headers)
-            if response.ok:
-                response_json = response.json()
-                # print(response.text)
-            else:
-                pass # Error creating
-
-            if hubspot_id:
-                pass  # Update
-            else:
-                pass  # Create
-
+            try:
+                response = requests.post(url, json=payload, headers=headers)
+                if response.status_code in [200, 201]:
+                    res_data = response.json()
+                    # Salva l'ID di HubSpot nel campo di Odoo per i futuri aggiornamenti
+                    new_hp_id = res_data.get('id')
+                    partner.write({'hubspot_ref': new_hp_id})
+                    #if response.ok:
+                    #    response_json = response.json()
+                    #    # print(response.text)
+                    #else:
+                    #    pass  # Error creating
+                else:
+                    _logger.error("Errore HubSpot: %s", response.text)
+            except Exception as e:
+                _logger.error("Errore durante la chiamata: %s", str(e))
         return True
 
 
