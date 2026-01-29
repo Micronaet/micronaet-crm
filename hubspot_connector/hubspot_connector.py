@@ -38,6 +38,7 @@ from openerp.tools import (DEFAULT_SERVER_DATE_FORMAT,
     DEFAULT_SERVER_DATETIME_FORMAT,
     DATETIME_FORMATS_MAP,
     float_compare)
+import requests
 
 _logger = logging.getLogger(__name__)
 
@@ -53,17 +54,76 @@ class HubspotConnector(orm.Model):
         """ Update contacts
         """
         partner_pool = self.pool.get('res.partner')
+        category_pool = self.pool.get('crm.newsletter.category.hubspot')
+
+        connector = self.browse(cr, uid, ids, context=context)[0]
 
         if context is None:
             context = {}
 
+        # --------------------------------------------------------------------------------------------------------------
+        # Load category:
+        # --------------------------------------------------------------------------------------------------------------
+        category_map = {}
+        category_ids = category_pool.search(cr, uid, [
+            ('hubspot_on', '=', True),
+        ], context=context)
+
+        for category in category_pool.browse(cr, uid, category_ids, context=context):
+            category_map[category.id] = category.name or category.category_id.name
+
+        # --------------------------------------------------------------------------------------------------------------
+        #                                                 Publish contact:
+        # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
-        partner_ids = partner_pool.search(cr, uid, domain, context=context)
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Publish contact:
+        # --------------------------------------------------------------------------------------------------------------
+        root_url = connector.url  # 'https://api.hubapi.com/crm/v3/objects'
+        url = "{}/contacts".format(root_url)
+        token = connector.token
+
+        headers = {
+            "Authorization": "Bearer {}".format(token),
+            "Content-Type": "application/json"
+        }
+
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
             hubspot_id = partner.hubspot_id
-            hubspot_data = {
-                'name': partner.name,
+            payload = {
+                #"associations": [
+                #    {
+                #        "to": {"id": "{}".format(partner.id)},
+                #        "types": [
+                #            {
+                #                "associationCategory": "HUBSPOT_DEFINED",
+                #                "associationTypeId": 123
+                #            }
+                #        ]
+                #    }
+                #],
+                "properties": {
+                    # Company:
+                    # 'lifecyclestage':
+                    'name': partner.name,
+                    'address': partner.street or '',
+                    'city': parter.city or '',
+                    'zip': partner.zipcode or '',
+                    #'state',
+                    #'hs_object_id',
+                    # Contact:
+                    #'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec' 'website'
+                    #'city' 'state'
+                }
             }
+            response = requests.post(url, json=payload, headers=headers)
+            if response.ok:
+                response_json = response.json()
+                # print(response.text)
+            else:
+                pass # Error creating
 
             if hubspot_id:
                 pass  # Update
@@ -76,10 +136,16 @@ class HubspotConnector(orm.Model):
     _columns = {
         'name': fields.char('Nome connessione', required=True, size=100),
         'company_id': fields.many2one('res.company', 'Azienda'),
+        'endpoint': fields.char(
+            'Endpoint', required=True, size=120, help='Per es.https://api.hubapi.com/crm/v3/objects'),
         'token': fields.char('Token', required=True, size=100),
         'user_token': fields.char('Token', size=100),
         'domain': fields.char('Domain', size=80),
         'hubspot_code': fields.char('Code', size=80),
+    }
+
+    _defaults = {
+        'endpoint': lambda *s: 'https://api.hubapi.com/crm/v3/objects',
     }
 
 
