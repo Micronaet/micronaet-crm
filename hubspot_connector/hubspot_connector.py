@@ -77,13 +77,12 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
         partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]
-        pdb.set_trace()
 
         # --------------------------------------------------------------------------------------------------------------
         # Publish contact:
         # --------------------------------------------------------------------------------------------------------------
-        root_url = connector.url  # 'https://api.hubapi.com/crm/v3/objects'
-        url = "{}/contacts".format(root_url)
+        endpoint = connector.endpoint  # 'https://api.hubapi.com/crm/v3/objects'
+        url = "{}/contacts".format(endpoint)
         token = connector.token
 
         headers = {
@@ -91,50 +90,52 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
 
+        pdb.set_trace()
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
             hubspot_id = partner.hubspot_id
-            payload = {
-                #"associations": [
-                #    {
-                #        "to": {"id": "{}".format(partner.id)},
-                #        "types": [
-                #            {
-                #                "associationCategory": "HUBSPOT_DEFINED",
-                #                "associationTypeId": 123
-                #            }
-                #        ]
-                #    }
-                #],
-                "properties": {
-                    # Company:
-                    # 'lifecyclestage':
-                    'name': partner.name,
-                    'address': partner.street or '',
-                    'city': partner.city or '',
-                    'zip': partner.zipcode or '',
-                    #'state',
-                    #'hs_object_id',
-                    # Contact:
-                    #'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec' 'website'
-                    #'city' 'state'
+            if not hubspot_id:
+                payload = {
+                    #"associations": [
+                    #    {
+                    #        "to": {"id": "{}".format(partner.id)},
+                    #        "types": [
+                    #            {
+                    #                "associationCategory": "HUBSPOT_DEFINED",
+                    #                "associationTypeId": 123
+                    #            }
+                    #        ]
+                    #    }
+                    #],
+                    "properties": {
+                        # Company:
+                        # 'lifecyclestage':
+                        'name': partner.name,
+                        'address': partner.street or '',
+                        'city': partner.city or '',
+                        'zip': partner.zipcode or '',
+                        #'state',
+                        #'hs_object_id',
+                        # Contact:
+                        #'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec' 'website'
+                        #'city' 'state'
+                    }
                 }
-            }
-            try:
-                response = requests.post(url, json=payload, headers=headers)
-                if response.status_code in [200, 201]:
-                    res_data = response.json()
-                    # Salva l'ID di HubSpot nel campo di Odoo per i futuri aggiornamenti
-                    new_hp_id = res_data.get('id')
-                    partner.write({'hubspot_ref': new_hp_id})
-                    #if response.ok:
-                    #    response_json = response.json()
-                    #    # print(response.text)
-                    #else:
-                    #    pass  # Error creating
-                else:
-                    _logger.error("Errore HubSpot: %s", response.text)
-            except Exception as e:
-                _logger.error("Errore durante la chiamata: %s", str(e))
+                try:
+                    response = requests.post(url, json=payload, headers=headers)
+                    if response.status_code in [200, 201]:
+                        res_data = response.json()
+                        # Salva l'ID di HubSpot nel campo di Odoo per i futuri aggiornamenti
+                        new_hp_id = res_data.get('id')
+                        partner.write({'hubspot_ref': new_hp_id})
+                        #if response.ok:
+                        #    response_json = response.json()
+                        #    # print(response.text)
+                        #else:
+                        #    pass  # Error creating
+                    else:
+                        _logger.error("Errore HubSpot: %s", response.text)
+                except Exception as e:
+                    _logger.error("Errore durante la chiamata: %s", str(e))
         return True
 
 
