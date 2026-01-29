@@ -69,7 +69,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
     """
     _name = 'crm.newsletter.category.hubspot'
     _rec_name = 'category_id'
-    _order = 'name'
+    _order = 'category_id'
 
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts
@@ -77,9 +77,8 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         return True
 
     _columns = {
-        'hubspot_on': fields.boolean(
-            'Pubblicata', help='Se spuntato i contatti collegati sono importati su hubspot'),
-        'category_id': fields.many2one('crm.newsletter.category', 'Categoria CRM'),
+        'hubspot_on': fields.boolean('Pubblicata', help='Se spuntato i contatti collegati sono importati su hubspot'),
+        'category_id': fields.many2one('crm.newsletter.category', 'Categoria CRM', required=True),
         'hubspot_id': fields.many2one('hubspot.connector', 'Hubspot'),
         'name': fields.char(
             'Nome Hubspot', size=80,
