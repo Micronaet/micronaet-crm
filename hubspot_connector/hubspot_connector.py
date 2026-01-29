@@ -196,7 +196,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         #    cr, uid,
         #    'crm_newsletter_category',
         #    'view_res_partner_newsletter_search')[1]
-        tree_id = search_view_if = form_id = False
+        tree_id = search_view_id = form_id = False
 
         return {
             'type': 'ir.actions.act_window',
