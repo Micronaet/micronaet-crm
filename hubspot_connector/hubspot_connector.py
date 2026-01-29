@@ -177,7 +177,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         """
         hubspot_pool = self.pool.get('hubspot.connector')
         ctx = self.get_force_category(ids[0], context=context)
-        return hubspot_pool.button_update_contact(self, cr, uid, ids, context=ctx)
+        return hubspot_pool.button_update_contact(cr, uid, ids, context=ctx)
 
     def button_odoo_contact(self, cr, uid, ids, context=None):
         """ Update contacts
