@@ -40,7 +40,7 @@
                                     <group colspan="4" col="4">
                                         <separator string="Categorie CRM" colspan="4"/>
                                         <field name="category_ids" nolabel="1">
-                                            <tree string="Categorie" editable="bottom" colors="not hubspot_on">
+                                            <tree string="Categorie" editable="bottom" colors="grey: hubspot_on == False">
                                                 <field name="hubspot_id" invisible="1" />
                                                 <field name="hubspot_on" />
                                                 <field name="category_id" />
