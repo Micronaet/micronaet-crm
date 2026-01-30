@@ -150,7 +150,7 @@ class HubspotConnector(orm.Model):
             payload = self.prepare_hubspot_data(partner, mode=mode)
             if hubspot_ref:  # UPDATE
                 response = requests.patch(
-                    "{}/{}".format(url[mode]), hubspot_ref, json=payload, headers=headers, timeout=timeout)
+                    "{}/{}".format(url[mode], hubspot_ref), json=payload, headers=headers, timeout=timeout)
 
                 if response.ok:
                     _logger.info("Partner %s aggiornato correttamente su HubSpot (ID: %s)", partner.name, hubspot_ref)
