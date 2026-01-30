@@ -57,13 +57,13 @@ class HubspotConnector(orm.Model):
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
 
         connector = self.browse(cr, uid, ids, context=context)[0]
-
         if context is None:
             context = {}
 
         # --------------------------------------------------------------------------------------------------------------
         # Load category:
         # --------------------------------------------------------------------------------------------------------------
+        _logger.info('Loading hubspot CRM categories')
         category_map = {}
         category_ids = category_pool.search(cr, uid, [
             ('hubspot_on', '=', True),
@@ -73,7 +73,7 @@ class HubspotConnector(orm.Model):
             category_map[category.id] = category.name or category.category_id.name
 
         # --------------------------------------------------------------------------------------------------------------
-        #                                                 Publish contact:
+        #                                          Publish contact:
         # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
         partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]
@@ -81,7 +81,7 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         # Publish contact:
         # --------------------------------------------------------------------------------------------------------------
-        endpoint = connector.endpoint  # 'https://api.hubapi.com/crm/v3/objects'
+        endpoint = connector.endpoint
         url = "{}/contacts".format(endpoint)
         token = connector.token
 
@@ -110,6 +110,7 @@ class HubspotConnector(orm.Model):
                         # Company:
                         # 'lifecyclestage':
                         'name': partner.name,
+                        'firstname': partner.name,
                         'address': partner.street or '',
                         'city': partner.city or '',
                         'zip': partner.zip or '',
