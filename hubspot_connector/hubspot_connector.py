@@ -52,7 +52,7 @@ class HubspotConnector(orm.Model):
     _order = 'name'
 
     # Utility:
-    def get_company_hubspot_connector(self, cr, uid, ids, context=None):
+    def get_company_hubspot_connector(self, cr, uid, context=None):
         """ Search current connection when called from another object
         """
         hubspot_ids = self.search(cr, uid, [], context=context)   # Search company_id
