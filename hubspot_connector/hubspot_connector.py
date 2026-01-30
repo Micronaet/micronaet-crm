@@ -124,8 +124,10 @@ class HubspotConnector(orm.Model):
         unlink_partner_id = context.get('unlink_partner_id')
 
         if not unlink_partner_id:
-            _logger.error('Cannot delete, partner ID not passed!')
-            return False
+            raise osv.except_osv(
+                _('Errore:'),
+                _(u'Partner ID non trovato, non è possibile cancellare'),
+            )
 
         # --------------------------------------------------------------------------------------------------------------
         # Open Partner:
@@ -141,8 +143,10 @@ class HubspotConnector(orm.Model):
             hubspot_ref = partner.hubspot_contacts_ref
 
         if not hubspot_ref:  # UPDATE
-            _logger.error('No Hubspot Ref for this partner, cannot delete')
-            return False
+            raise osv.except_osv(
+                _('Errore:'),
+                _(u'Non trovato ID Hubspot, non è possibile cancellare'),
+            )
 
         # --------------------------------------------------------------------------------------------------------------
         # Delete hubspot partner:
@@ -177,6 +181,11 @@ class HubspotConnector(orm.Model):
             _logger.error(
                 u"Errore aggiornamento HubSpot per ODOO ID {} (ID: {}): {}".format(
                     partner.id, hubspot_ref, response.text))
+            raise osv.except_osv(
+                _('Errore:'),
+                u"Errore aggiornamento HubSpot per ODOO ID {} (ID: {}): {}".format(
+                    partner.id, hubspot_ref, response.text))
+
         return True
 
     def button_update_contact(self, cr, uid, ids, context=None):
@@ -244,10 +253,12 @@ class HubspotConnector(orm.Model):
                     "{}/{}".format(url[mode], hubspot_ref), json=payload, headers=headers, timeout=timeout)
 
                 if response.ok:
-                    _logger.info("Partner %s aggiornato correttamente su HubSpot (ID: %s)", partner.name, hubspot_ref)
+                    _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
+                        partner.name, hubspot_ref))
                 else:
-                    _logger.error("Errore aggiornamento HubSpot per %s (ID: %s): %s",
-                                  partner.name, hubspot_ref, response.text)
+                    _logger.error(
+                        "Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
+                            partner.name, hubspot_ref, response.text))
             else:  # CREATE
                 try:
                     response = requests.post(url[mode], json=payload, headers=headers, timeout=timeout)
@@ -259,12 +270,12 @@ class HubspotConnector(orm.Model):
                                 field_name: new_hp_id,
                             }, context=context)
                             cr.commit()  # Commit to save immediately the ID:
-                            _logger.info("Partner %s sincronizzato con successo ID: %s", partner.name, new_hp_id)
+                            # _logger.info("Partner %s sincronizzato con successo ID: %s", partner.name, new_hp_id)
 
                     elif response.status_code == 409: # Contact yet present in hubspot
                         res_json = response.json()
                         msg = res_json.get('message', '')
-                        _logger.warning("Contatto %s già esistente su HubSpot: %s", partner.name, msg)
+                        # _logger.warning("Contatto %s già esistente su HubSpot: %s", partner.name, msg)
 
                         # Cerco di recuperare l'ID esistente dal messaggio di errore per registrarlo comunque
                         match = re.search(r'ID: (\d+)', msg)
@@ -275,10 +286,16 @@ class HubspotConnector(orm.Model):
                             }, context=context)
                             cr.commit()
                     else:
-                        _logger.error("Error HubSpot for %s: %s", partner.name, response.text)
+                        raise osv.except_osv(
+                            _('Errore:'),
+                            'Error HubSpot for {}: {}'.format(partner.name, response.text),
+                        )
 
                 except Exception as e:
-                    _logger.error("Error during call %s: %s", partner.name, str(e))
+                    raise osv.except_osv(
+                        _('Errore:'),
+                        _(u'Errore chiamata HS {}: {}'.format(partner.name, str(e))),
+                    )
                     # No commit here for security, go next
 
     _columns = {
