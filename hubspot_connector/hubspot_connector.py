@@ -106,7 +106,7 @@ class HubspotConnector(orm.Model):
                         'address': partner.street or '',
                         'city': partner.city or '',
                         'zip': partner.zip or '',
-                        'email': partner.email or '',
+                        # 'email': partner.email or '',
                     }
                 }
 
