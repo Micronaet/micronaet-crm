@@ -59,8 +59,8 @@ class HubspotConnector(orm.Model):
 
         if not hubspot_ids:
             raise osv.except_osv(
-                _('Errore:'),
-                _('Non trovata configurazione Hubspot'),
+                _(u'Errore:'),
+                _(u'Non trovata configurazione Hubspot'),
             )
         return hubspot_ids[0]
 
@@ -125,7 +125,7 @@ class HubspotConnector(orm.Model):
 
         if not unlink_partner_id:
             raise osv.except_osv(
-                _('Errore:'),
+                _(u'Errore:'),
                 _(u'Partner ID non trovato, non è possibile cancellare'),
             )
 
@@ -144,7 +144,7 @@ class HubspotConnector(orm.Model):
 
         if not hubspot_ref:  # UPDATE
             raise osv.except_osv(
-                _('Errore:'),
+                _(u'Errore:'),
                 _(u'Non trovato ID Hubspot, non è possibile cancellare'),
             )
 
@@ -253,11 +253,11 @@ class HubspotConnector(orm.Model):
                     "{}/{}".format(url[mode], hubspot_ref), json=payload, headers=headers, timeout=timeout)
 
                 if response.ok:
-                    _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
+                    _logger.info(u"Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
                         partner.id, hubspot_ref))
                 else:
                     _logger.error(
-                        "Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
+                        u"Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
                             partner.id, hubspot_ref, response.text))
             else:  # CREATE
                 try:
@@ -287,8 +287,8 @@ class HubspotConnector(orm.Model):
                             cr.commit()
                     else:
                         raise osv.except_osv(
-                            _('Errore:'),
-                            'Error HubSpot for {}: {}'.format(partner.id, response.text),
+                            _(u'Errore:'),
+                            u'Error HubSpot for {}: {}'.format(partner.id, response.text),
                         )
 
                 except Exception as e:
