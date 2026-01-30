@@ -134,9 +134,13 @@ class HubspotConnector(orm.Model):
         }
 
         # Generate Payload:
-        payload = self.prepare_hubspot_data(partner, mode=mode)
-        payload["objectId"] = "{}".format(partner.hubspot_ref),
+        # payload = self.prepare_hubspot_data(partner, mode=mode)
+        # payload["objectId"] = "{}".format(partner.hubspot_ref),
         # "idProperty": "<string>"
+        payload = {
+            'objectId': "{}".format(partner.hubspot_ref),
+            # "idProperty": "<string>"
+        }
 
         url = "{}/{}/{}".format(endpoint, mode, call)
         _logger.info('Calling: {}'.format(url))
