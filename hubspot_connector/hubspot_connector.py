@@ -159,8 +159,8 @@ class HubspotConnector(orm.Model):
             }, context=context)
         else:
             _logger.error(
-                "Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
-                    partner.name, hubspot_ref, response.text))
+                u"Errore aggiornamento HubSpot per ODOO ID {} (ID: {}): {}".format(
+                    partner.id, hubspot_ref, response.text))
         return True
 
     def button_update_contact(self, cr, uid, ids, context=None):
