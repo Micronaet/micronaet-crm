@@ -2,7 +2,7 @@
 <openerp>
     <data>
         <!-- res.partner -->
-        <record id="" model="ir.ui.view">
+        <record id="view_partner_hubspot_tree" model="ir.ui.view">
             <field name="name">res.partner.hubpost</field>
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_tree"/>
@@ -39,7 +39,7 @@
                             <field name="company_id"/>
 
                             <notebook colspan="4">
-                                <page name="parameter_page" string="Parametri:">
+                                <page name="parameter_page" string="Parametri">
                                     <group colspan="4" col="4">
                                         <separator string="Parametri connessione" colspan="4"/>
                                         <field name="endpoint" colspan="4" />
@@ -49,7 +49,7 @@
                                         <field name="user_token" password="1" />
                                     </group>
                                 </page>
-                                <page name="category_page" string="Categorie CRM:">
+                                <page name="category_page" string="Categorie CRM">
                                     <group colspan="4" col="4">
                                         <separator string="Categorie CRM" colspan="4"/>
                                         <field name="category_ids" nolabel="1">
