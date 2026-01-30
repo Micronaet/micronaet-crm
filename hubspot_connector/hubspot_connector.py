@@ -51,9 +51,58 @@ class HubspotConnector(orm.Model):
     _description = 'Hubspot Connector'
     _order = 'name'
 
+    def prepare_hubspot_data(self, partner, mode='contact'):
+        """ Create dict for REST Call
+        """
+        if mode == 'contact':
+            return {
+                    # "associations": [
+                    #    {
+                    #        "to": {"id": "{}".format(partner.id)},
+                    #        "types": [
+                    #            {
+                    #                "associationCategory": "HUBSPOT_DEFINED",
+                    #                "associationTypeId": 123
+                    #            }
+                    #        ]
+                    #    }
+                    # ],
+                    "properties": {
+                        # Company:
+                        # 'lifecyclestage':
+                        # 'name': partner.name,
+
+                        # Contact:
+                        'firstname': partner.name or '',
+                        'address': partner.street or '',
+                        'city': partner.city or '',
+                        'zip': partner.zip or '',
+                        'email': partner.email or '',
+                        # 'state',
+                        # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec'
+                        # 'website' 'city' 'state'
+                    }
+                }
+        else:  # company
+            return {
+                    "properties": {
+                        # Company:
+                        'name': partner.name or '',
+                        'address': partner.street or '',
+                        'city': partner.city or '',
+                        'zip': partner.zip or '',
+                        'email': partner.email or '',
+                    }
+                }
+
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts on Hubspot:
         """
+        # --------------------------------------------------------------------------------------------------------------
+        # Parameter:
+        # --------------------------------------------------------------------------------------------------------------
+        timeout = 15
+
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
 
@@ -83,64 +132,45 @@ class HubspotConnector(orm.Model):
         # Publish contact:
         # --------------------------------------------------------------------------------------------------------------
         endpoint = connector.endpoint
-        url = "{}/contacts".format(endpoint)
         token = connector.token
-
+        url = {
+            'company': "{}/companies".format(endpoint),
+            'contact': "{}/contacts".format(endpoint),
+        }
         headers = {
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
         }
 
         pdb.set_trace()
+        # todo manage ODOO contact create ad unique HS contact!
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
+            mode = 'company' if partner.is_company else 'contact'
             hubspot_ref = partner.hubspot_ref
-            if not hubspot_ref:
-                payload = {
-                    # "associations": [
-                    #    {
-                    #        "to": {"id": "{}".format(partner.id)},
-                    #        "types": [
-                    #            {
-                    #                "associationCategory": "HUBSPOT_DEFINED",
-                    #                "associationTypeId": 123
-                    #            }
-                    #        ]
-                    #    }
-                    # ],
-                    "properties": {
-                        # Company:
-                        # 'lifecyclestage':
-                        # 'name': partner.name,
+            payload = prepare_hubspot_data(self, partner, mode=mode)
+            if hubspot_ref:  # UPDATE
+                response = requests.patch(
+                    "{}/{}".format(url[mode]), hubspot_ref, json=payload, headers=headers, timeout=timeout)
 
-                        # Contact:
-                        'firstname': partner.name or '',
-                        'address': partner.street or '',
-                        'city': partner.city or '',
-                        'zip': partner.zip or '',
-                        'email': partner.email or '',
-                        # 'state',
-                        # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec'
-                        # 'website' 'city' 'state'
-                    }
-                }
+                if response.ok:
+                    _logger.info("Partner %s aggiornato correttamente su HubSpot (ID: %s)", partner.name, hubspot_ref)
+                else:
+                    _logger.error("Errore aggiornamento HubSpot per %s (ID: %s): %s",
+                                  partner.name, hubspot_ref, response.text)
+            else:  # CREATE
                 try:
-                    # Aggiunto timeout=15 per evitare blocchi infiniti del thread
-                    response = requests.post(url, json=payload, headers=headers, timeout=15)
-
+                    response = requests.post(url[mode], json=payload, headers=headers, timeout=timeout)
                     if response.ok:
                         res_json = response.json()
-                        # Save hubspot ID for future update
                         new_hp_id = res_json.get('id')
-                        if new_hp_id:
+                        if new_hp_id:  # Save hubspot ID for future update
                             partner_pool.write(cr, uid, [partner.id], {
                                 'hubspot_ref': new_hp_id,
                             }, context=context)
-                            # Commit to save immediately the ID:
-                            cr.commit()
+                            cr.commit()  # Commit to save immediately the ID:
                             _logger.info("Partner %s sincronizzato con successo ID: %s", partner.name, new_hp_id)
 
-                    elif response.status_code == 409:
-                        # Gestione contatto già esistente su HubSpot
+                    elif response.status_code == 409: # Contact yet present in hubspot
                         res_json = response.json()
                         msg = res_json.get('message', '')
                         _logger.warning("Contatto %s già esistente su HubSpot: %s", partner.name, msg)
