@@ -115,7 +115,6 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         # Open Partner:
         # --------------------------------------------------------------------------------------------------------------
-        pdb.set_trace()
         partner = partner_pool.browse(cr, uid, unlink_partner_id, context=context)
         mode = 'companies' if partner.is_company else 'contacts'
         hubspot_ref = partner.hubspot_ref
@@ -133,10 +132,13 @@ class HubspotConnector(orm.Model):
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
         }
-        payload = {
-            "objectId": "{}".format(partner.hubspot_ref),
-            # "idProperty": "<string>"
-        }
+
+        # Generate Payload:
+        payload = self.prepare_hubspot_data(partner, mode=mode)
+        payload["objectId"] = "{}".format(partner.hubspot_ref),
+        # "idProperty": "<string>"
+
+        pdb.set_trace()
         response = requests.patch(
             "{}/{}/{}".format(endpoint, mode, call),
             json=payload, headers=headers, timeout=timeout,
