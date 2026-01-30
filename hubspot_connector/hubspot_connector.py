@@ -99,6 +99,7 @@ class HubspotConnector(orm.Model):
         """ Update contacts on Hubspot:
         """
         call = "gdpr - delete"
+        timeout = 15
 
         # Partner used:
         partner_pool = self.pool.get('res.partner')
