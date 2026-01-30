@@ -178,13 +178,10 @@ class HubspotConnector(orm.Model):
                 field_name: False,  # Clean Hubspot Reference
             }, context=context)
         else:
-            _logger.error(
-                u"Errore aggiornamento HubSpot per ODOO ID {} (ID: {}): {}".format(
-                    partner.id, hubspot_ref, response.text))
             raise osv.except_osv(
-                _('Errore:'),
-                u"Errore aggiornamento HubSpot per ODOO ID {} (ID: {}): {}".format(
-                    partner.id, hubspot_ref, response.text))
+                u'Errore:',
+                u"Errore agg. HS ID {} (payload: {}): \n{}".format(
+                    payload, hubspot_ref, response.text))
 
         return True
 
