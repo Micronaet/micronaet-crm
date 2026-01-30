@@ -117,6 +117,7 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         partner = partner_pool.browse(cr, uid, unlink_partner_id, context=context)
         mode = 'companies' if partner.is_company else 'contacts'
+        mode = 'contacts'
         hubspot_ref = partner.hubspot_ref
         if not hubspot_ref:  # UPDATE
             _logger.error('No Hubspot Ref for this partner, cannot delete')
@@ -148,7 +149,7 @@ class HubspotConnector(orm.Model):
             url=url, json=payload, headers=headers, timeout=timeout,
         )
         _logger.info('Response {}'.format(response.text))
-        pdb.set_trace()
+        # pdb.set_trace()
 
         if response.ok:
             _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
