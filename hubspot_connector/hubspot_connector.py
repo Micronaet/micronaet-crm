@@ -285,13 +285,13 @@ class HubspotConnector(orm.Model):
                     else:
                         raise osv.except_osv(
                             _(u'Errore:'),
-                            u'Error HubSpot for {}: {}'.format(partner.id, response.text),
+                            u'Error HubSpot payload {}:\n {}'.format(payload, response.text),
                         )
 
                 except Exception as e:
                     raise osv.except_osv(
                         _('Errore:'),
-                        _(u'Errore chiamata HS {}: {}'.format(partner.id, str(e))),
+                        _(u'Errore chiamata HS {}:\n {}'.format(payload, str(e))),
                     )
                     # No commit here for security, go next
 
