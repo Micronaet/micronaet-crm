@@ -8,7 +8,8 @@
             <field name="inherit_id" ref="base.view_partner_tree"/>
             <field name="arch" type="xml">
                 <field name="display_name" position="before">
-                    <field name="hubspot_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                    <field name="hubspot_companies_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                    <field name="hubspot_contacts_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
                 </field>
             </field>
         </record>
@@ -18,7 +19,8 @@
             <field name="inherit_id" ref="crm_newsletter_category.view_res_partner_newsletter_form"/>
             <field name="arch" type="xml">
                 <field name="newsletter_category_id" position="before">
-                    <field name="hubspot_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                    <field name="hubspot_companies_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                    <field name="hubspot_contacts_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
                     <button name="button_delete_contact" type="object" string="GDPR Delete" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" confirm="Confermi la cencellazione del contatto GDPR compliant su Hubspot?"/>
                 </field>
             </field>

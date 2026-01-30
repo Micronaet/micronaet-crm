@@ -54,6 +54,7 @@ class HubspotConnector(orm.Model):
     def prepare_hubspot_data(self, partner, mode='contact'):
         """ Create dict for REST Call
         """
+        # todo ID ODOO
         if mode == 'contact':
             return {
                     # "associations": [
@@ -68,7 +69,6 @@ class HubspotConnector(orm.Model):
                     #    }
                     # ],
                     "properties": {
-
                         # Company:
                         # 'lifecyclestage':
                         # 'name': partner.name,
@@ -118,8 +118,15 @@ class HubspotConnector(orm.Model):
         # Open Partner:
         # --------------------------------------------------------------------------------------------------------------
         partner = partner_pool.browse(cr, uid, unlink_partner_id, context=context)
-        mode = 'companies' if partner.is_company else 'contacts'
-        hubspot_ref = partner.hubspot_ref
+        if partner.is_company:
+             mode = 'companies'
+             field_name = 'hubspot_companies_ref'
+             hubspot_ref = partner.hubspot_companies_ref
+        else:
+            mode = 'contacts'
+            field_name = 'hubspot_contacts_ref'
+            hubspot_ref = partner.hubspot_contacts_ref
+
         if not hubspot_ref:  # UPDATE
             _logger.error('No Hubspot Ref for this partner, cannot delete')
             return False
@@ -137,8 +144,8 @@ class HubspotConnector(orm.Model):
 
         # Generate Payload:
         payload = {
-            'objectId': "{}".format(partner.hubspot_ref),
-            # "idProperty": "<string>"
+            'objectId': "{}".format(hubspot_ref),
+            # "idProperty": "<string>"  # todo ID ODOO?
         }
 
         url = "{}/{}/{}".format(endpoint, mode, call)
@@ -146,13 +153,12 @@ class HubspotConnector(orm.Model):
         response = requests.post(
             url=url, json=payload, headers=headers, timeout=timeout,
         )
-        _logger.info('Response {}'.format(response.text))
 
         if response.ok:
             _logger.info(u"Partner ODOO {} aggiornato correttamente su HubSpot (ID: {})".format(
                 partner.id, hubspot_ref))
             partner_pool.write(cr, uid, [partner.id], {
-                'hubspot_ref': False,  # Clean Hubspot Reference
+                field_name: False,  # Clean Hubspot Reference
             }, context=context)
         else:
             _logger.error(
@@ -210,8 +216,15 @@ class HubspotConnector(orm.Model):
         pdb.set_trace()
         # todo manage ODOO contact create ad unique HS contact!
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
-            mode = 'company' if partner.is_company else 'contact'
-            hubspot_ref = partner.hubspot_ref
+            if partner.is_company:
+                mode = 'companies'
+                field_name = 'hubspot_companies_ref'
+                hubspot_ref = partner.hubspot_companies_ref
+            else:
+                mode = 'contacts'
+                field_name = 'hubspot_contacts_ref'
+                hubspot_ref = partner.hubspot_contacts_ref
+
             payload = self.prepare_hubspot_data(partner, mode=mode)
             if hubspot_ref:  # UPDATE
                 response = requests.patch(
@@ -230,7 +243,7 @@ class HubspotConnector(orm.Model):
                         new_hp_id = res_json.get('id')
                         if new_hp_id:  # Save hubspot ID for future update
                             partner_pool.write(cr, uid, [partner.id], {
-                                'hubspot_ref': new_hp_id,
+                                field_name: new_hp_id,
                             }, context=context)
                             cr.commit()  # Commit to save immediately the ID:
                             _logger.info("Partner %s sincronizzato con successo ID: %s", partner.name, new_hp_id)
@@ -245,7 +258,7 @@ class HubspotConnector(orm.Model):
                         if match:
                             existing_id = match.group(1)
                             partner_pool.write(cr, uid, [partner.id], {
-                                'hubspot_ref': existing_id,
+                                field_name: existing_id,
                             }, context=context)
                             cr.commit()
                     else:
@@ -375,8 +388,12 @@ class ResPartnerInherit(orm.Model):
         return hubspot_pool.button_delete_contact(cr, uid, hubspot_ids, context=ctx)
 
     _columns = {
-        'hubspot_ref': fields.char(
-            'Hubspot ref.',
-            help='ID Hubpost, assegnato al momento della crezione, usato per aggiornamenti',
+        'hubspot_contacts_ref': fields.char(
+            'Hubspot ref. Contatto',
+            help='ID Hubpost, assegnato al momento della crezione, usato per aggiornamenti (contatti)',
+        ),
+        'hubspot_companies_ref': fields.char(
+            'Hubspot ref. Azienda',
+            help='ID Hubpost, assegnato al momento della crezione, usato per aggiornamenti (aziende)',
         ),
     }
