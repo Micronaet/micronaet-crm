@@ -232,7 +232,7 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
 
-        pdb.set_trace()
+        # pdb.set_trace()
         # todo manage ODOO contact create ad unique HS contact!
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
             if partner.is_company:
