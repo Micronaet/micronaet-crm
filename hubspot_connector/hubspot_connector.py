@@ -371,7 +371,7 @@ class ResPartnerInherit(orm.Model):
     """
     _inherit = 'res.partner'
 
-    def hubspot_update_single_partner(self, category_id, context):
+    def hubspot_update_single_partner(self, cr, uid, ids, context=None):
         """ Prepare context for call original method
         """
         hubspot_pool = self.pool.get('hubspot.connector')
