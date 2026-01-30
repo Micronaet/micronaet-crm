@@ -138,12 +138,13 @@ class HubspotConnector(orm.Model):
         payload["objectId"] = "{}".format(partner.hubspot_ref),
         # "idProperty": "<string>"
 
-        pdb.set_trace()
         url = "{}/{}/{}".format(endpoint, mode, call)
         _logger.info('Calling: {}'.format(url))
         response = requests.post(
             url=url, json=payload, headers=headers, timeout=timeout,
         )
+        _logger.info('Response {}'.format(response.text))
+        pdb.set_trace()
 
         if response.ok:
             _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
