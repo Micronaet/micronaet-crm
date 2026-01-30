@@ -68,6 +68,7 @@ class HubspotConnector(orm.Model):
                     #    }
                     # ],
                     "properties": {
+
                         # Company:
                         # 'lifecyclestage':
                         # 'name': partner.name,
@@ -78,6 +79,7 @@ class HubspotConnector(orm.Model):
                         'city': partner.city or '',
                         'zip': partner.zip or '',
                         'email': partner.email or '',
+
                         # 'state',
                         # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec'
                         # 'website' 'city' 'state'
