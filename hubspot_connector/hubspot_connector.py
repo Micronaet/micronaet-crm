@@ -371,6 +371,20 @@ class ResPartnerInherit(orm.Model):
     """
     _inherit = 'res.partner'
 
+    def hubspot_update_single_partner(self, category_id, context):
+        """ Prepare context for call original method
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+        if context is None:
+            context = {}
+
+        ctx = context.copy()
+        ctx['force_domain'] = [
+            ('id', '=', ids[0]),  # Only this partner
+        ]
+        return hubspot_pool.button_update_contact(cr, uid, ids, context=ctx)
+
+
     def button_delete_contact(self, cr, uid, ids, context=None):
         """ Call delete action
         """

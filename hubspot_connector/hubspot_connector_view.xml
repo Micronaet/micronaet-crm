@@ -10,6 +10,7 @@
                 <field name="display_name" position="before">
                     <field name="hubspot_companies_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
                     <field name="hubspot_contacts_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                    <button name="hubspot_update_single_partner" type="object" string="HS Publish" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" icon="gtk-refresh"/>
                 </field>
             </field>
         </record>
@@ -21,7 +22,8 @@
                 <field name="newsletter_category_id" position="before">
                     <field name="hubspot_companies_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
                     <field name="hubspot_contacts_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
-                    <button name="button_delete_contact" type="object" string="GDPR Delete" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" confirm="Confermi la cencellazione del contatto GDPR compliant su Hubspot?"/>
+                    <button name="button_delete_contact" type="object" string="HS GDPR Delete" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" confirm="Confermi la cencellazione del contatto GDPR compliant su Hubspot?"/>
+                    <button name="hubspot_update_single_partner" type="object" string="HS Publish" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" icon="gtk-refresh"/>
                 </field>
             </field>
         </record>
