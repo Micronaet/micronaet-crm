@@ -254,11 +254,11 @@ class HubspotConnector(orm.Model):
 
                 if response.ok:
                     _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
-                        partner.name, hubspot_ref))
+                        partner.id, hubspot_ref))
                 else:
                     _logger.error(
                         "Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
-                            partner.name, hubspot_ref, response.text))
+                            partner.id, hubspot_ref, response.text))
             else:  # CREATE
                 try:
                     response = requests.post(url[mode], json=payload, headers=headers, timeout=timeout)
@@ -288,13 +288,13 @@ class HubspotConnector(orm.Model):
                     else:
                         raise osv.except_osv(
                             _('Errore:'),
-                            'Error HubSpot for {}: {}'.format(partner.name, response.text),
+                            'Error HubSpot for {}: {}'.format(partner.id, response.text),
                         )
 
                 except Exception as e:
                     raise osv.except_osv(
                         _('Errore:'),
-                        _(u'Errore chiamata HS {}: {}'.format(partner.name, str(e))),
+                        _(u'Errore chiamata HS {}: {}'.format(partner.id, str(e))),
                     )
                     # No commit here for security, go next
 
