@@ -51,6 +51,19 @@ class HubspotConnector(orm.Model):
     _description = 'Hubspot Connector'
     _order = 'name'
 
+    # Utility:
+    def get_company_hubspot_connector(self, cr, uid, ids, context=None):
+        """ Search current connection when called from another object
+        """
+        hubspot_ids = self.search(cr, uid, [], context=context)   # Search company_id
+
+        if not hubspot_ids:
+            raise osv.except_osv(
+                _('Errore:'),
+                _('Non trovata configurazione Hubspot'),
+            )
+        return hubspot_ids[0]
+
     def prepare_hubspot_data(self, partner, mode='contact'):
         """ Create dict for REST Call
         """
@@ -306,8 +319,11 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         """ Update contacts
         """
         hubspot_pool = self.pool.get('hubspot.connector')
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+
         ctx = self.get_force_category(ids[0], context=context)
-        return hubspot_pool.button_update_contact(cr, uid, ids, context=ctx)
+        return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
 
     def button_odoo_contact(self, cr, uid, ids, context=None):
         """ Update contacts
@@ -375,6 +391,9 @@ class ResPartnerInherit(orm.Model):
         """ Prepare context for call original method
         """
         hubspot_pool = self.pool.get('hubspot.connector')
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+
         if context is None:
             context = {}
 
@@ -382,24 +401,21 @@ class ResPartnerInherit(orm.Model):
         ctx['force_domain'] = [
             ('id', '=', ids[0]),  # Only this partner
         ]
-        return hubspot_pool.button_update_contact(cr, uid, ids, context=ctx)
-
+        return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
 
     def button_delete_contact(self, cr, uid, ids, context=None):
         """ Call delete action
         """
         hubspot_pool = self.pool.get('hubspot.connector')
-        hubspot_ids = hubspot_pool.search(cr, uid, [], context=context)   # Search company_id from partner?
-        if not hubspot_ids:
-            _logger.error('No hubspot partner found!')
-            return False
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
 
         if context is None:
             context = {}
 
         ctx = context.copy()
         ctx['unlink_partner_id'] = ids[0]
-        return hubspot_pool.button_delete_contact(cr, uid, hubspot_ids, context=ctx)
+        return hubspot_pool.button_delete_contact(cr, uid, [hubspot_id], context=ctx)
 
     _columns = {
         'hubspot_contacts_ref': fields.char(
