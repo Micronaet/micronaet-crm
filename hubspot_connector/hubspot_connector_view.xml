@@ -19,6 +19,7 @@
             <field name="arch" type="xml">
                 <field name="newsletter_category_id" position="before">
                     <field name="hubspot_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                    <button name="button_delete_contact" type="object" string="GDPR Delete" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" confirm="Confermi la cencellazione del contatto GDPR compliant su Hubspot?"/>
                 </field>
             </field>
         </record>

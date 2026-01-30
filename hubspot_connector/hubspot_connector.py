@@ -95,6 +95,65 @@ class HubspotConnector(orm.Model):
                     }
                 }
 
+    def button_delete_contact(self, cr, uid, ids, context=None):
+        """ Update contacts on Hubspot:
+        """
+        call = "gdpr - delete"
+
+        # Partner used:
+        partner_pool = self.pool.get('res.partner')
+
+        if context is None:
+            context = {}
+        unlink_partner_id = context.get('unlink_partner_id')
+
+        if not unlink_partner_id:
+            _logger.error('Cannot delete, partner ID not passed!')
+            return False
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Open Partner:
+        # --------------------------------------------------------------------------------------------------------------
+        pdb.set_trace()
+        partner = partner_pool.browse(cr, uid, unlink_partner_id, context=context)
+        mode = 'companies' if partner.is_company else 'contacts'
+        hubspot_ref = partner.hubspot_ref
+        if not hubspot_ref:  # UPDATE
+            _logger.error('No Hubspot Ref for this partner, cannot delete')
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Delete hubspot partner:
+        # --------------------------------------------------------------------------------------------------------------
+        connector = self.browse(cr, uid, ids, context=context)[0]
+        endpoint = connector.endpoint
+        token = connector.token
+        headers = {
+            "Authorization": "Bearer {}".format(token),
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "objectId": "{}".partner.hubspot_ref,
+            # "idProperty": "<string>"
+        }
+        response = requests.patch(
+            "{}/{}/{}".format(endpoint, mode, call),
+            json=payload,
+            headers=headers,
+            timeout=timeout,
+        )
+
+        if response.ok:
+            _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
+                partner.name, hubspot_ref))
+            partner_pool.write(cr, uid, [partner.id], {
+                'hubspot_ref': False,  # Clean Hubspot Reference
+            }, context=context)
+        else:
+            _logger.error(
+                "Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
+                    partner.name, hubspot_ref, response.text))
+        return True
+
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts on Hubspot:
         """
@@ -292,6 +351,19 @@ class ResPartnerInherit(orm.Model):
     """ Res Partner
     """
     _inherit = 'res.partner'
+
+    def button_delete_contact(self, cr, uid, ids, context=None):
+        """ Call delete action
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+        hubspot_ids = hubspot_pool.search(cr, uid, [], context=context)   # Search company_id from partner?
+
+        if context is None:
+            context = {}
+
+        ctx = context.copy()
+        ctx['unlink_partner_id'] = hubspot_ids[0]
+        return hubspot_pool.button_delete_contact(cr, uid, ids, context=ctx)
 
     _columns = {
         'hubspot_ref': fields.char(
