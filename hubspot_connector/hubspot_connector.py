@@ -133,14 +133,12 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
         payload = {
-            "objectId": "{}".partner.hubspot_ref,
+            "objectId": "{}".format(partner.hubspot_ref),
             # "idProperty": "<string>"
         }
         response = requests.patch(
             "{}/{}/{}".format(endpoint, mode, call),
-            json=payload,
-            headers=headers,
-            timeout=timeout,
+            json=payload, headers=headers, timeout=timeout,
         )
 
         if response.ok:
