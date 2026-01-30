@@ -152,8 +152,8 @@ class HubspotConnector(orm.Model):
         # pdb.set_trace()
 
         if response.ok:
-            _logger.info("Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
-                partner.name, hubspot_ref))
+            _logger.info(u"Partner ODOO {} aggiornato correttamente su HubSpot (ID: {})".format(
+                partner.id, hubspot_ref))
             partner_pool.write(cr, uid, [partner.id], {
                 'hubspot_ref': False,  # Clean Hubspot Reference
             }, context=context)
