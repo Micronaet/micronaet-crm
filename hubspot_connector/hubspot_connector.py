@@ -109,7 +109,7 @@ class HubspotConnector(orm.Model):
                     "properties": {
                         # Company:
                         # 'lifecyclestage':
-                        'name': partner.name,
+                        # 'name': partner.name,
                         'firstname': partner.name,
                         'address': partner.street or '',
                         'city': partner.city or '',
