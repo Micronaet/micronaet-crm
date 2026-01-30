@@ -98,7 +98,7 @@ class HubspotConnector(orm.Model):
     def button_delete_contact(self, cr, uid, ids, context=None):
         """ Update contacts on Hubspot:
         """
-        call = "gdpr - delete"
+        call = "gdpr-delete"
         timeout = 15
 
         # Partner used:
