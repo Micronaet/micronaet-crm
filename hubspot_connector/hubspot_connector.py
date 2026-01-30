@@ -120,6 +120,7 @@ class HubspotConnector(orm.Model):
         hubspot_ref = partner.hubspot_ref
         if not hubspot_ref:  # UPDATE
             _logger.error('No Hubspot Ref for this partner, cannot delete')
+            return False
 
         # --------------------------------------------------------------------------------------------------------------
         # Delete hubspot partner:
@@ -357,13 +358,16 @@ class ResPartnerInherit(orm.Model):
         """
         hubspot_pool = self.pool.get('hubspot.connector')
         hubspot_ids = hubspot_pool.search(cr, uid, [], context=context)   # Search company_id from partner?
+        if not hubspot_ids:
+            _logger.error('No hubspot partner found!')
+            return False
 
         if context is None:
             context = {}
 
         ctx = context.copy()
-        ctx['unlink_partner_id'] = hubspot_ids[0]
-        return hubspot_pool.button_delete_contact(cr, uid, ids, context=ctx)
+        ctx['unlink_partner_id'] = ids[0]
+        return hubspot_pool.button_delete_contact(cr, uid, hubspot_ids, context=ctx)
 
     _columns = {
         'hubspot_ref': fields.char(
