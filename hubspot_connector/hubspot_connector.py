@@ -27,6 +27,7 @@ import sys
 import logging
 import openerp
 import pdb
+import re
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
@@ -51,7 +52,7 @@ class HubspotConnector(orm.Model):
     _order = 'name'
 
     def button_update_contact(self, cr, uid, ids, context=None):
-        """ Update contacts
+        """ Update contacts on Hubspot:
         """
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
@@ -76,7 +77,7 @@ class HubspotConnector(orm.Model):
         #                                          Publish contact:
         # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
-        partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]  # TODO debug with 2
 
         # --------------------------------------------------------------------------------------------------------------
         # Publish contact:
@@ -95,7 +96,7 @@ class HubspotConnector(orm.Model):
             hubspot_ref = partner.hubspot_ref
             if not hubspot_ref:
                 payload = {
-                    #"associations": [
+                    # "associations": [
                     #    {
                     #        "to": {"id": "{}".format(partner.id)},
                     #        "types": [
@@ -105,35 +106,59 @@ class HubspotConnector(orm.Model):
                     #            }
                     #        ]
                     #    }
-                    #],
+                    # ],
                     "properties": {
                         # Company:
                         # 'lifecyclestage':
                         # 'name': partner.name,
-                        'firstname': partner.name,
+
+                        # Contact:
+                        'firstname': partner.name or '',
                         'address': partner.street or '',
                         'city': partner.city or '',
                         'zip': partner.zip or '',
-                        #'state',
-                        #'hs_object_id',
-                        # Contact:
-                        #'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec' 'website'
-                        #'city' 'state'
+                        'email': partner.email or '',
+                        # 'state',
+                        # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec'
+                        # 'website' 'city' 'state'
                     }
                 }
                 try:
-                    response = requests.post(url, json=payload, headers=headers)
+                    # Aggiunto timeout=15 per evitare blocchi infiniti del thread
+                    response = requests.post(url, json=payload, headers=headers, timeout=15)
+
                     if response.ok:
                         res_json = response.json()
                         # Save hubspot ID for future update
                         new_hp_id = res_json.get('id')
-                        partner.write({'hubspot_ref': new_hp_id})
-                    else:
-                        _logger.error("Errore HubSpot: %s", response.text)
-                except Exception as e:
-                    _logger.error("Errore durante la chiamata: %s", str(e))
-        return True
+                        if new_hp_id:
+                            partner_pool.write(cr, uid, [partner.id], {
+                                'hubspot_ref': new_hp_id,
+                            }, context=context)
+                            # Commit to save immediately the ID:
+                            cr.commit()
+                            _logger.info("Partner %s sincronizzato con successo ID: %s", partner.name, new_hp_id)
 
+                    elif response.status_code == 409:
+                        # Gestione contatto già esistente su HubSpot
+                        res_json = response.json()
+                        msg = res_json.get('message', '')
+                        _logger.warning("Contatto %s già esistente su HubSpot: %s", partner.name, msg)
+
+                        # Cerco di recuperare l'ID esistente dal messaggio di errore per registrarlo comunque
+                        match = re.search(r'ID: (\d+)', msg)
+                        if match:
+                            existing_id = match.group(1)
+                            partner_pool.write(cr, uid, [partner.id], {
+                                'hubspot_ref': existing_id,
+                            }, context=context)
+                            cr.commit()
+                    else:
+                        _logger.error("Error HubSpot for %s: %s", partner.name, response.text)
+
+                except Exception as e:
+                    _logger.error("Error during call %s: %s", partner.name, str(e))
+                    # No commit here for security, go next
 
     _columns = {
         'name': fields.char('Nome connessione', required=True, size=100),
