@@ -139,9 +139,10 @@ class HubspotConnector(orm.Model):
         # "idProperty": "<string>"
 
         pdb.set_trace()
-        response = requests.patch(
-            "{}/{}/{}".format(endpoint, mode, call),
-            json=payload, headers=headers, timeout=timeout,
+        url = "{}/{}/{}".format(endpoint, mode, call)
+        _logger.info('Calling: {}'.format(url))
+        response = requests.post(
+            url=url, json=payload, headers=headers, timeout=timeout,
         )
 
         if response.ok:
