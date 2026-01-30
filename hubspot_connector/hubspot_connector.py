@@ -147,7 +147,7 @@ class HubspotConnector(orm.Model):
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
             mode = 'company' if partner.is_company else 'contact'
             hubspot_ref = partner.hubspot_ref
-            payload = prepare_hubspot_data(self, partner, mode=mode)
+            payload = self.prepare_hubspot_data(partner, mode=mode)
             if hubspot_ref:  # UPDATE
                 response = requests.patch(
                     "{}/{}".format(url[mode]), hubspot_ref, json=payload, headers=headers, timeout=timeout)
