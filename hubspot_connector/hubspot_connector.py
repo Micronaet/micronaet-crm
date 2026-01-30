@@ -218,8 +218,8 @@ class HubspotConnector(orm.Model):
         endpoint = connector.endpoint
         token = connector.token
         url = {
-            'company': "{}/companies".format(endpoint),
-            'contact': "{}/contacts".format(endpoint),
+            'companies': "{}/companies".format(endpoint),
+            'contacts': "{}/contacts".format(endpoint),
         }
         headers = {
             "Authorization": "Bearer {}".format(token),
