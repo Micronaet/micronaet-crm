@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+        <!-- res.partner -->
+        <record id="" model="ir.ui.view">
+            <field name="name">res.partner.hubpost</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <field name="display_name" position="before">
+                    <field name="hubspot_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
+                </field>
+            </field>
+        </record>
+
+        <!-- hubspot.connector -->
         <record id="hubspot_connector_view_tree" model="ir.ui.view">
             <field name="name">hubspot.connector.tree.view</field>
             <field name="model">hubspot.connector</field>
