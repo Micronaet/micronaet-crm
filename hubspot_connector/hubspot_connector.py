@@ -535,8 +535,6 @@ class CrmNewsletterCategoryHubspot(orm.Model):
 
         ctx = context.copy()
         ctx['force_domain'] = [
-            ('hubspot_companies_ref', '=', False),
-            ('hubspot_contacts_ref', '=', False),
             ('newsletter_category_id', '=', relation.category_id.id),
             ('is_address', '=', False),
         ]
