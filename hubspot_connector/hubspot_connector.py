@@ -309,7 +309,7 @@ class HubspotConnector(orm.Model):
 
         if context is None:
             context = {}
-        get_partner_id = context.get('unlink_partner_id')
+        get_partner_id = context.get('get_partner_id')
 
         if not get_partner_id:
             raise osv.except_osv(
@@ -472,6 +472,16 @@ class ResPartnerInherit(orm.Model):
     """ Res Partner
     """
     _inherit = 'res.partner'
+
+    def button_get_contact(self, cr, uid, ids, context=None):
+        """ Update contacts
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+        # Get connection:
+        hubspot_id = hubspot_pool.button_get_contact(cr, uid, context=context)
+
+        ctx['get_partner_id'] = ids[0]
+        return hubspot_pool.button_get_contact(cr, uid, [hubspot_id], context=ctx)
 
     def hubspot_update_single_partner(self, cr, uid, ids, context=None):
         """ Prepare context for call original method
