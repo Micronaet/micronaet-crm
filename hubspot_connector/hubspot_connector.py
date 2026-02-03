@@ -352,6 +352,7 @@ class HubspotConnector(orm.Model):
 
         url = "{}/{}/{}".format(endpoint, mode, selected_partner_id)
         _logger.info('Calling: {}'.format(url))
+        pdb.set_trace()
         response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
 
         if response.ok:
