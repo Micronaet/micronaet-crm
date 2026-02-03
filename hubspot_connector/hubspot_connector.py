@@ -71,7 +71,7 @@ class HubspotConnector(orm.Model):
             category_map = {}
 
         # todo ID ODOO
-        if mode == 'contact':
+        if mode == 'contacts':
             return {
                     # "associations": [
                     #    {
@@ -101,7 +101,7 @@ class HubspotConnector(orm.Model):
                         # 'website' 'city' 'state'
                     }
                 }
-        else:  # company
+        else:  # companies
             return {
                     "properties": {
                         'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
@@ -237,7 +237,6 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
 
-        pdb.set_trace()
         # todo manage ODOO contact create ad unique HS contact!
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
             if partner.is_company:
