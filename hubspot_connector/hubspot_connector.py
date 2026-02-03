@@ -517,6 +517,25 @@ class ResPartnerInherit(orm.Model):
     """
     _inherit = 'res.partner'
 
+    def button_open_hs_contact(self, cr, uid, ids, context=None):
+        """ Update contacts
+        """
+        partner = self.browse(cr, uid, ids[0], context=context)
+
+        if partner.is_company:
+             mode = 'companies'
+             hubspot_ref = partner.hubspot_companies_ref
+        else:
+            mode = 'contacts'
+            hubspot_ref = partner.hubspot_contacts_ref
+
+        url = 'https://app-eu1.hubspot.com/contacts/{}'.format(hubspot_ref)
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url,
+            'target': 'new',
+        }
+
     def button_get_contact(self, cr, uid, ids, context=None):
         """ Update contacts
         """
