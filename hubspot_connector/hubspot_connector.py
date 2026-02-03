@@ -119,6 +119,8 @@ class HubspotConnector(orm.Model):
                         'name': partner.name or '',
                         'address': partner.street or '',
                         'city': partner.city or '',
+                        'province': partner.state_id.code or '',
+                        'regione': partner.state_id.region_id.name or '',
                         'country': partner.country_id.code or '',
                         'zip': partner.zip or '',
                         # 'email': partner.email or '',
@@ -249,7 +251,10 @@ class HubspotConnector(orm.Model):
         }
 
         # todo manage ODOO contact create ad unique HS contact!
+        total = len(partner_ids)
+        counter = 0
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
+            counter += 1
             # ----------------------------------------------------------------------------------------------------------
             # Mode: Companies - Contacts:
             # ----------------------------------------------------------------------------------------------------------
@@ -274,7 +279,8 @@ class HubspotConnector(orm.Model):
                     "{}/{}".format(url[mode], hubspot_ref), json=payload, headers=headers, timeout=timeout)
 
                 if response.ok:
-                    _logger.info(u"Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
+                    _logger.info(u"{} di {}. Partner {} aggiornato correttamente su HubSpot (ID: {})".format(
+                        counter, total,
                         partner.id, hubspot_ref))
                 else:
                     _logger.error(
