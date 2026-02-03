@@ -93,6 +93,8 @@ class HubspotConnector(orm.Model):
                         'firstname': partner.name or '',
                         'address': partner.street or '',
                         'city': partner.city or '',
+                        'provincia': partner.state_id.code or '',
+                        'regione': partner.state_id.region_id.name or '',
                         'country': partner.country_id.code or '',
                         'zip': partner.zip or '',
                         'email': partner.email or '',
