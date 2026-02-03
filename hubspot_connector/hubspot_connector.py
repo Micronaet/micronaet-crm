@@ -332,6 +332,7 @@ class HubspotConnector(orm.Model):
                             _('Errore:'),
                             _(u'Errore chiamata HS {}:\n\n {}'.format(payload, str(e))),
                         )
+                    continue
                     # No commit here for security, go next
 
     def button_get_contact(self, cr, uid, ids, context=None):
