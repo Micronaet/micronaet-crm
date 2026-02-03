@@ -184,11 +184,9 @@ class HubspotConnector(orm.Model):
             # "idProperty": "<string>"  # todo ID ODOO?
         }
 
-        url = "{}/{}/{}".format(endpoint, mode, call)
+        url = "{}/objects/{}/{}".format(endpoint, mode, call)
         _logger.info('Calling: {}'.format(url))
-        response = requests.post(
-            url=url, json=payload, headers=headers, timeout=timeout,
-        )
+        response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
 
         if response.ok:
             _logger.info(u"Partner ODOO {} aggiornato correttamente su HubSpot (ID: {})".format(
@@ -247,8 +245,8 @@ class HubspotConnector(orm.Model):
         endpoint = connector.endpoint
         token = connector.token
         url = {
-            'companies': "{}/companies".format(endpoint),
-            'contacts': "{}/contacts".format(endpoint),
+            'companies': "{}/objects/companies".format(endpoint),
+            'contacts': "{}/objects/contacts".format(endpoint),
         }
         headers = {
             "Authorization": "Bearer {}".format(token),
@@ -442,7 +440,7 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
 
-        url = "{}/{}/{}".format(endpoint, mode, hubspot_ref)
+        url = "{}/objects/{}/{}".format(endpoint, mode, hubspot_ref)
         _logger.info('Calling: {}'.format(url))
         response = requests.get(url=url, headers=headers, timeout=timeout)
 
@@ -624,7 +622,7 @@ class ResPartnerInherit(orm.Model):
             mode = 'contacts'
             hubspot_ref = partner.hubspot_contacts_ref
 
-        url = 'https://app-eu1.hubspot.com/{}/{}'.format(mode, hubspot_ref)
+        url = 'https://app-eu1.hubspot.com/{}/{}'.format(mode, hubspot_ref)  # todo missed some extra data!
         return {
             'type': 'ir.actions.act_url',
             'url': url,
