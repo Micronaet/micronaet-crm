@@ -299,6 +299,74 @@ class HubspotConnector(orm.Model):
                     )
                     # No commit here for security, go next
 
+    def button_get_contact(self, cr, uid, ids, context=None):
+        """ Get contacts from Hubspot:
+        """
+        timeout = 15
+
+        # Partner used:
+        partner_pool = self.pool.get('res.partner')
+
+        if context is None:
+            context = {}
+        get_partner_id = context.get('unlink_partner_id')
+
+        if not get_partner_id:
+            raise osv.except_osv(
+                _(u'Errore:'),
+                _(u'Partner ID non trovato, non è possibile leggerlo'),
+            )
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Open Partner:
+        # --------------------------------------------------------------------------------------------------------------
+        partner = partner_pool.browse(cr, uid, get_partner_id, context=context)
+        if partner.is_company:
+             mode = 'companies'
+             field_name = 'hubspot_companies_ref'
+             hubspot_ref = partner.hubspot_companies_ref
+        else:
+            mode = 'contacts'
+            field_name = 'hubspot_contacts_ref'
+            hubspot_ref = partner.hubspot_contacts_ref
+
+        if not hubspot_ref:  # UPDATE
+            raise osv.except_osv(
+                _(u'Errore:'),
+                _(u'Non trovato ID Hubspot, non è possibile leggerlo'),
+            )
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Get hubspot partner:
+        # --------------------------------------------------------------------------------------------------------------
+        connector = self.browse(cr, uid, ids, context=context)[0]
+        endpoint = connector.endpoint
+        token = connector.token
+        headers = {
+            "Authorization": "Bearer {}".format(token),
+            "Content-Type": "application/json"
+        }
+
+        # Generate Payload:
+        payload = {
+            'objectId': "{}".format(hubspot_ref),
+            # "idProperty": "<string>"  # todo ID ODOO?
+        }
+
+        url = "{}/{}/{}".format(endpoint, mode, get_partner_id)
+        _logger.info('Calling: {}'.format(url))
+        response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
+
+        if response.ok:
+            _logger.info(u"Partner ODOO {} dettaglio HS {}\n:{}".format(
+                partner.id, hubspot_ref, response.text))
+        else:
+            raise osv.except_osv(
+                u'Errore:',
+                u"Errore agg. HS ID {} (payload: {}):\n\n{}".format(
+                    payload, hubspot_ref, response.text))
+        return True
+
     _columns = {
         'name': fields.char('Nome connessione', required=True, size=100),
         'company_id': fields.many2one('res.company', 'Azienda'),
