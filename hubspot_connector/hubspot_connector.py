@@ -478,6 +478,10 @@ class ResPartnerInherit(orm.Model):
         # Get connection:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
 
+        if context is None:
+            context = {}
+        ctx = context.copy()
+
         ctx['selected_partner_id'] = ids[0]
         return hubspot_pool.button_get_contact(cr, uid, [hubspot_id], context=ctx)
 
