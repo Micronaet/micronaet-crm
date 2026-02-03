@@ -8,7 +8,8 @@
             <field name="inherit_id" ref="base.view_partner_tree"/>
             <field name="arch" type="xml">
                 <field name="display_name" position="before">
-                    <button name="button_get_contact" type="object" string="HS Leggi dettaglio" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" icon="gtk-help" attrs="{'invisible: [('hubspot_companies_ref', '=', False), ('hubspot_contacts_ref', '=', False)]}"/>
+                    <button name="button_get_contact" type="object" string="HS Leggi dettaglio" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" icon="gtk-help"
+                            attrs="{'invisible': [('hubspot_companies_ref', '=', False), ('hubspot_contacts_ref', '=', False)]}"/>
                     <field name="hubspot_companies_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
                     <field name="hubspot_contacts_ref" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" />
                     <button name="hubspot_update_single_partner" type="object" string="HS Publish" groups="hubspot_connector.group_hubspot_manager,hubspot_connector.group_hubspot_user" icon="gtk-refresh"/>
