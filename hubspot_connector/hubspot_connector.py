@@ -525,11 +525,23 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         """ Update contacts
         """
         hubspot_pool = self.pool.get('hubspot.connector')
+        if context is None:
+            context = {}
+
         # Get connection:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+        category_id = ids[0]
+        relation = self.browse(cr, uid, category_id, context=context)
 
-        ctx = self.get_force_category(ids[0], context=context)
+        ctx = context.copy()
+        ctx['force_domain'] = [
+            ('hubspot_companies_ref', '=', False),
+            ('hubspot_contacts_ref', '=', False),
+            ('newsletter_category_id', '=', relation.category_id.id),
+            ('is_address', '=', False),
+        ]
         ctx['no_raise'] = True
+
         return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
 
     def button_update_contact_new(self, cr, uid, ids, context=None):
