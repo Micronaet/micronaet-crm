@@ -306,7 +306,6 @@ class HubspotConnector(orm.Model):
 
         # Partner used:
         partner_pool = self.pool.get('res.partner')
-
         if context is None:
             context = {}
         selected_partner_id = context.get('selected_partner_id')
