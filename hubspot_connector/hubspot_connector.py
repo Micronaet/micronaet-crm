@@ -212,7 +212,7 @@ class HubspotConnector(orm.Model):
         # Parameter:
         # --------------------------------------------------------------------------------------------------------------
         timeout = 15
-        no_raise = False
+        no_raise = True
 
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
