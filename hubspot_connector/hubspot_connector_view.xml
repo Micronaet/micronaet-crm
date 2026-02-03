@@ -80,8 +80,8 @@
                                                 <button name="button_odoo_contact" type="object" string="Lista contatti correnti" />
 
                                                 <field name="name" />
-                                                <button name="button_update_contact" type="object" string="Pubblica categoria (tutti)" />
-                                                <button name="button_update_contact_new" type="object" string="Pubblica categoria (mancanti)" />
+                                                <button name="button_update_contact" type="object" string="Pubblica categoria (tutti)" attrs="{'invisible': [('hubspot_on', '=', False)]}" />
+                                                <button name="button_update_contact_new" type="object" string="Pubblica categoria (mancanti)" attrs="{'invisible': [('hubspot_on', '=', False)]}" />
                                             </tree>
                                         </field>
                                     </group>
