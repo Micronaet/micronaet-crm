@@ -236,7 +236,7 @@ class HubspotConnector(orm.Model):
         #                                          Publish contact:
         # --------------------------------------------------------------------------------------------------------------
         no_raise = context.get('no_raise', False)
-        _logger.info('Error mode: {}'.format('Errore non bloccante' if not no_raise else 'Errore bloccante'))
+        _logger.info('Error mode: {}'.format('Errore non bloccante' if no_raise else 'Errore bloccante'))
         domain = context.get('force_domain') or []
 
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
@@ -336,6 +336,66 @@ class HubspotConnector(orm.Model):
                         )
                     continue
                     # No commit here for security, go next
+
+    def button_update_contact_link(self, cr, uid, ids, context=None):
+        """ Update contacts to company link on Hubspot:
+            force_domain: Used to update single partner or all category of partner
+        """
+        # --------------------------------------------------------------------------------------------------------------
+        # Parameter:
+        # --------------------------------------------------------------------------------------------------------------
+        # timeout = 15
+
+        partner_pool = self.pool.get('res.partner')
+        connector = self.browse(cr, uid, ids, context=context)[0]
+        if context is None:
+            context = {}
+
+        # --------------------------------------------------------------------------------------------------------------
+        #                                          Publish contact:
+        # --------------------------------------------------------------------------------------------------------------
+        no_raise = context.get('no_raise', False)
+        _logger.info('Error mode: {}'.format('Errore non bloccante' if no_raise else 'Errore bloccante'))
+        domain = context.get('force_domain') or []
+
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
+        _logger.info('Selected contact to partners #{}'.format(len(partner_ids)))
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Publish contact:
+        # --------------------------------------------------------------------------------------------------------------
+        endpoint = connector.endpoint
+        token = connector.token
+        url =  "{}/associations/Contacts/Companies/batch/create".format(endpoint),
+        headers = {
+            "Authorization": "Bearer {}".format(token),
+            "Content-Type": "application/json"
+        }
+
+        # todo manage ODOO contact create ad unique HS contact!
+        total = len(partner_ids)
+        counter = 0
+
+        payload = {"inputs": []}
+        for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
+            counter += 1  # todo max 1000!
+            payload['inputs'].append(
+                {
+                  "from": {
+                    "id": partner.hubspot_contacts_ref,
+                  },
+                  "to": {
+                    "id": partner.parent_id.hubspot_companies_ref
+                  },
+                  "type": "contact_to_company"
+                })
+
+        response = requests.post(url, json=payload, headers=headers) #  timeout=timeout)
+
+        if response.ok:
+            _logger.info(u"Contatti collegati correttamente")
+        else:
+            _logger.error(u"Errore aggiornamento contatto-azienda HubSpot:\n{}".format(response.text))
 
     def button_get_contact(self, cr, uid, ids, context=None):
         """ Get contacts from Hubspot:
@@ -463,6 +523,32 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         # Get connection:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
         return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
+
+    def button_update_contact_link(self, cr, uid, ids, context=None):
+        """ Update contacts to company link
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+
+        if context is None:
+            context = {}
+
+        ctx = context.copy()
+        ctx['force_domain'] = [
+            # Only contact:
+            ('is_company', '=', False),
+            ('is_address', '=', False),
+
+            # With HS code, linked to company with code:
+            ('hubspot_contacts_ref', '!=', False),
+            ('parent_id.hubspot_companies_ref', '!=', False),
+
+            ('newsletter_category_id', '=', ids[0]),
+        ]
+        ctx['no_raise'] = True
+
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+        return hubspot_pool.button_update_contact_link(cr, uid, [hubspot_id], context=ctx)
 
     def button_odoo_contact(self, cr, uid, ids, context=None):
         """ Update contacts
