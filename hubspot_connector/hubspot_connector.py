@@ -113,10 +113,12 @@ class HubspotConnector(orm.Model):
                     domain = ''
             else:
                 domain = ''
+
             return {
                     "properties": {
                         'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
                         'domain': domain,
+
                         # Company:
                         'name': partner.name or '',
                         'address': partner.street or '',
@@ -125,6 +127,7 @@ class HubspotConnector(orm.Model):
                         'regione': partner.state_id.region_id.name or '',
                         'country': partner.country_id.code or '',
                         'zip': partner.zip or '',
+                        'partita_iva': partner.vat or '',
                         # 'email': partner.email or '',
                     }
                 }
