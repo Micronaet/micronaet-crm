@@ -350,9 +350,8 @@ class HubspotConnector(orm.Model):
             # "idProperty": "<string>"  # todo ID ODOO?
         }
 
-        url = "{}/{}/{}".format(endpoint, mode, get_partner_id)
+        url = "{}/{}/{}".format(endpoint, mode, selected_partner_id)
         _logger.info('Calling: {}'.format(url))
-        pdb.set_trace()
         response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
 
         if response.ok:
