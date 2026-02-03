@@ -103,9 +103,18 @@ class HubspotConnector(orm.Model):
                     }
                 }
         else:  # companies
+            # Extract domain from email:
+            email = partner.email or ''
+            if email:
+                domain = email.split('@')[-1].lower().replace(' ', '')
+                if domain in ('gmail.com', 'microsoft.com', 'ymail.com', 'libero.it', 'tim.it', 'mac.com'):
+                    domain = ''
+            else:
+                domain = ''
             return {
                     "properties": {
                         'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
+                        'domain': domain,
                         # Company:
                         'name': partner.name or '',
                         'address': partner.street or '',
