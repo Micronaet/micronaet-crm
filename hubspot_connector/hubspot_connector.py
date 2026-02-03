@@ -67,29 +67,17 @@ class HubspotConnector(orm.Model):
     def prepare_hubspot_data(self, partner, mode='contact', category_map=None):
         """ Create dict for REST Call
         """
+        CONTACT_TO_COMPANY = 279
         if category_map is None:
             category_map = {}
 
         # todo ID ODOO
+        # ==============================================================================================================
+        #  Contact:
+        # ==============================================================================================================
         if mode == 'contacts':
-            return {
-                    # "associations": [
-                    #    {
-                    #        "to": {"id": "{}".format(partner.id)},
-                    #        "types": [
-                    #            {
-                    #                "associationCategory": "HUBSPOT_DEFINED",
-                    #                "associationTypeId": 123
-                    #            }
-                    #        ]
-                    #    }
-                    # ],
+            result =  {
                     "properties": {
-                        # Company:
-                        # 'lifecyclestage':
-                        # 'name': partner.name,
-
-                        # Contact:
                         'firstname': partner.name or '',
                         'address': partner.street or '',
                         'city': partner.city or '',
@@ -99,11 +87,31 @@ class HubspotConnector(orm.Model):
                         'zip': partner.zip or '',
                         'email': partner.email or '',
 
-                        # 'state',
-                        # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email' 'email_pec'
-                        # 'website' 'city' 'state'
+                        # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email_pec'
+                        # 'website' 'state'
                     }
                 }
+            # Update with assotiations to parent partner (if present and published)
+            parent = partner.parent_id
+            if parent and parent.hubspot_companies_ref:
+                result['associations'] = [
+                    {
+                        "to": {
+                            "id": "{}".format(parent.hubspot_companies_ref),
+                        },
+                        "types": [
+                            {
+                                "associationCategory": "HUBSPOT_DEFINED",
+                                "associationTypeId": CONTACT_TO_COMPANY
+                            }
+                        ]
+                    }
+                ]
+            return result
+
+        # ==============================================================================================================
+        #  Company:
+        # ==============================================================================================================
         else:  # companies
             # Extract domain from email:
             email = partner.email or ''
