@@ -329,7 +329,7 @@ class HubspotConnector(orm.Model):
 
                 except Exception as e:
                     if no_raise:
-                        _logger.error(u'Error call HS {}:\n\n {}'.format(payload, str(e))),
+                        _logger.error(u'Error call:\n\n {}'.format(str(e))),
                     else:
                         raise osv.except_osv(
                             _('Errore:'),
