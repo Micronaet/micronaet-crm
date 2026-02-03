@@ -511,11 +511,14 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         if context is None:
             context = {}
 
+        category_id = ids[0]
+        relation = self.browse(cr, uid, category_id, context=context)
+
         ctx = context.copy()
         ctx['force_domain'] = [
             ('hubspot_companies_ref', '=', False),
             ('hubspot_contacts_ref', '=', False),
-            ('newsletter_category_id', '=', ids[0]),
+            ('newsletter_category_id', '=', relation.category_id.id),
             ('is_address', '=', False),
         ]
         ctx['no_raise'] = True
@@ -528,6 +531,8 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         """ Update contacts to company link
         """
         hubspot_pool = self.pool.get('hubspot.connector')
+        category_id = ids[0]
+        relation = self.browse(cr, uid, category_id, context=context)
 
         if context is None:
             context = {}
@@ -542,7 +547,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
             ('hubspot_contacts_ref', '!=', False),
             ('parent_id.hubspot_companies_ref', '!=', False),
 
-            ('newsletter_category_id', '=', ids[0]),
+            ('newsletter_category_id', '=', relation.category_id.id),
         ]
         ctx['no_raise'] = True
 
