@@ -142,8 +142,10 @@ class HubspotConnector(orm.Model):
                         'country': partner.country_id.code or '',
                         'zip': partner.zip or '',
                         'partita_iva': partner.vat or '',
-                        'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
-                        'fascia_di_scontistica': partner.discount_rates or '',
+
+                        # 'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
+                        # 'fascia_di_scontistica': partner.discount_rates or '',
+
                         # 'listino': partner.discount_rates or '',
                         # 'settore'
                         # 'macro_settore',
