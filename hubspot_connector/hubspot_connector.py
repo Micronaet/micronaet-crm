@@ -212,7 +212,6 @@ class HubspotConnector(orm.Model):
         # Parameter:
         # --------------------------------------------------------------------------------------------------------------
         timeout = 15
-        no_raise = True
 
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
@@ -236,7 +235,9 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         #                                          Publish contact:
         # --------------------------------------------------------------------------------------------------------------
+        no_raise = context.get('no_raise', False)
         domain = context.get('force_domain') or []
+
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
         _logger.info('Selected partners #{}'.format(len(partner_ids)))
         # --------------------------------------------------------------------------------------------------------------
@@ -437,6 +438,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
 
         ctx = self.get_force_category(ids[0], context=context)
+        ctx['no_raise'] = True
         return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
 
     def button_update_contact_new(self, cr, uid, ids, context=None):
@@ -455,6 +457,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
             ('newsletter_category_id', '=', ids[0]),
             ('is_address', '=', False),
         ]
+        ctx['no_raise'] = True
 
         # Get connection:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
