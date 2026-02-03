@@ -299,7 +299,7 @@ class HubspotConnector(orm.Model):
                     )
                     # No commit here for security, go next
 
-    def button_get_contact(self, cr, uid, context=None):
+    def button_get_contact(self, cr, uid, ids, context=None):
         """ Get contacts from Hubspot:
         """
         timeout = 15
@@ -475,7 +475,7 @@ class ResPartnerInherit(orm.Model):
         """ Update contacts
         """
         hubspot_pool = self.pool.get('hubspot.connector')
-        # Get connection:
+        # Get connection ID:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
 
         if context is None:
