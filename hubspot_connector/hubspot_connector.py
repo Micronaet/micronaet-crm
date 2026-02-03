@@ -191,6 +191,7 @@ class HubspotConnector(orm.Model):
 
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts on Hubspot:
+            force_domain: Used to update single partner or all category of partner
         """
         # --------------------------------------------------------------------------------------------------------------
         # Parameter:
@@ -236,7 +237,7 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
 
-        # pdb.set_trace()
+        pdb.set_trace()
         # todo manage ODOO contact create ad unique HS contact!
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
             if partner.is_company:
