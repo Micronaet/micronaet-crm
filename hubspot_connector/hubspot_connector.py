@@ -364,7 +364,7 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         endpoint = connector.endpoint
         token = connector.token
-        url =  "{}/associations/Contacts/Companies/batch/create".format(endpoint),
+        url =  "{}/associations/Contacts/Companies/batch/create".format(endpoint)
         headers = {
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
