@@ -529,7 +529,7 @@ class ResPartnerInherit(orm.Model):
             mode = 'contacts'
             hubspot_ref = partner.hubspot_contacts_ref
 
-        url = 'https://app-eu1.hubspot.com/contacts/{}'.format(hubspot_ref)
+        url = 'https://app-eu1.hubspot.com/{}/{}'.format(mode, hubspot_ref)
         return {
             'type': 'ir.actions.act_url',
             'url': url,
