@@ -309,9 +309,9 @@ class HubspotConnector(orm.Model):
 
         if context is None:
             context = {}
-        get_partner_id = context.get('get_partner_id')
+        selected_partner_id = context.get('selected_partner_id')
 
-        if not get_partner_id:
+        if not selected_partner_id:
             raise osv.except_osv(
                 _(u'Errore:'),
                 _(u'Partner ID non trovato, non è possibile leggerlo'),
@@ -320,14 +320,12 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         # Open Partner:
         # --------------------------------------------------------------------------------------------------------------
-        partner = partner_pool.browse(cr, uid, get_partner_id, context=context)
+        partner = partner_pool.browse(cr, uid, selected_partner_id, context=context)
         if partner.is_company:
              mode = 'companies'
-             field_name = 'hubspot_companies_ref'
              hubspot_ref = partner.hubspot_companies_ref
         else:
             mode = 'contacts'
-            field_name = 'hubspot_contacts_ref'
             hubspot_ref = partner.hubspot_contacts_ref
 
         if not hubspot_ref:  # UPDATE
@@ -355,6 +353,7 @@ class HubspotConnector(orm.Model):
 
         url = "{}/{}/{}".format(endpoint, mode, get_partner_id)
         _logger.info('Calling: {}'.format(url))
+        pdb.set_trace()
         response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
 
         if response.ok:
