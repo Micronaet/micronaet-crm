@@ -64,9 +64,12 @@ class HubspotConnector(orm.Model):
             )
         return hubspot_ids[0]
 
-    def prepare_hubspot_data(self, partner, mode='contact'):
+    def prepare_hubspot_data(self, partner, mode='contact', category_map=None):
         """ Create dict for REST Call
         """
+        if category_map is None:
+            category_map = {}
+
         # todo ID ODOO
         if mode == 'contact':
             return {
@@ -101,6 +104,7 @@ class HubspotConnector(orm.Model):
         else:  # company
             return {
                     "properties": {
+                        'lifecyclestage': categoty_map.get(partner.newsletter_category_id.id, ''),
                         # Company:
                         'name': partner.name or '',
                         'address': partner.street or '',
@@ -244,7 +248,7 @@ class HubspotConnector(orm.Model):
                 field_name = 'hubspot_contacts_ref'
                 hubspot_ref = partner.hubspot_contacts_ref
 
-            payload = self.prepare_hubspot_data(partner, mode=mode)
+            payload = self.prepare_hubspot_data(partner, mode=mode, category_map=category_map)
             if hubspot_ref:  # UPDATE
                 response = requests.patch(
                     "{}/{}".format(url[mode], hubspot_ref), json=payload, headers=headers, timeout=timeout)
