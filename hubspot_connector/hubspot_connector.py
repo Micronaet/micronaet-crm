@@ -73,6 +73,7 @@ class HubspotConnector(orm.Model):
 
         country = partner.country_id.code or ''
         if country == 'IT':  # Only for Italy
+            _logger.info('Country: IT')
             provincia = partner.state_id.code or ''
             regione = partner.state_id.region_id.name or ''
         else:
