@@ -78,17 +78,23 @@ class HubspotConnector(orm.Model):
         if mode == 'contacts':
             result =  {
                     "properties": {
+                        # 'hs_object_id'
                         'firstname': partner.name or '',
-                        'address': partner.street or '',
+                        # lastname,
+                        'phone': partner.phone or '',
+                        'mobilephone': partner.mobile or '',
+                        # 'fax',
+                        'email': partner.email or '',
+                        # email_pec
+                        # website
                         'city': partner.city or '',
+                        'country': partner.country_id.code or '',
                         'provincia': partner.state_id.code or '',
                         'regione': partner.state_id.region_id.name or '',
-                        'country': partner.country_id.code or '',
-                        'zip': partner.zip or '',
-                        'email': partner.email or '',
+                        # 'tipo': Provato Azienda
 
-                        # 'hs_object_id' 'firstname' 'lastname' 'phone' 'mobilephone' 'Fax' 'email_pec'
-                        # 'website' 'state'
+                        ## 'zip': partner.zip or '',
+                        ## 'address': partner.street or '',  NON PRESENTE
                     }
                 }
             # Update with assotiations to parent partner (if present and published)
@@ -136,7 +142,11 @@ class HubspotConnector(orm.Model):
                         'country': partner.country_id.code or '',
                         'zip': partner.zip or '',
                         'partita_iva': partner.vat or '',
-                        # 'email': partner.email or '',
+                        'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
+                        'listino': partner.discount_rates or '',
+                        # 'settore'
+                        # 'macro_settore',
+                        # 'azienda_attiva':
                     }
                 }
 
