@@ -299,7 +299,7 @@ class HubspotConnector(orm.Model):
                     )
                     # No commit here for security, go next
 
-    def button_get_contact(self, cr, uid, ids, context=None):
+    def button_get_contact(self, cr, uid, context=None):
         """ Get contacts from Hubspot:
         """
         timeout = 15
