@@ -232,7 +232,7 @@ class HubspotConnector(orm.Model):
         #                                          Publish contact:
         # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
-        partner_ids = partner_pool.search(cr, uid, domain, context=context)[:2]  # TODO debug with 2
+        partner_ids = partner_pool.search(cr, uid, domain, context=context)
 
         # --------------------------------------------------------------------------------------------------------------
         # Publish contact:
