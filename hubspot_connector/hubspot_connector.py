@@ -106,7 +106,7 @@ class HubspotConnector(orm.Model):
             # Extract domain from email:
             email = partner.email or ''
             if email:
-                domain = email.split('@')[-1].lower().replace(' ', '')
+                domain = email.split('@')[-1].lower().replace(' ', '').replace(',', '.')
                 if domain in ('gmail.com', 'microsoft.com', 'ymail.com', 'libero.it', 'tim.it', 'mac.com'):
                     domain = ''
             else:
@@ -250,6 +250,9 @@ class HubspotConnector(orm.Model):
 
         # todo manage ODOO contact create ad unique HS contact!
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
+            # ----------------------------------------------------------------------------------------------------------
+            # Mode: Companies - Contacts:
+            # ----------------------------------------------------------------------------------------------------------
             if partner.is_company:
                 mode = 'companies'
                 field_name = 'hubspot_companies_ref'
@@ -259,8 +262,14 @@ class HubspotConnector(orm.Model):
                 field_name = 'hubspot_contacts_ref'
                 hubspot_ref = partner.hubspot_contacts_ref
 
+            # ----------------------------------------------------------------------------------------------------------
+            # Create Payload:
+            # ----------------------------------------------------------------------------------------------------------
             payload = self.prepare_hubspot_data(partner, mode=mode, category_map=category_map)
             if hubspot_ref:  # UPDATE
+                # ------------------------------------------------------------------------------------------------------
+                # Update:
+                # ------------------------------------------------------------------------------------------------------
                 response = requests.patch(
                     "{}/{}".format(url[mode], hubspot_ref), json=payload, headers=headers, timeout=timeout)
 
@@ -272,6 +281,9 @@ class HubspotConnector(orm.Model):
                         u"Errore aggiornamento HubSpot per {} (ID: {}): {}".format(
                             partner.id, hubspot_ref, response.text))
             else:  # CREATE
+                # ------------------------------------------------------------------------------------------------------
+                # Create:
+                # ------------------------------------------------------------------------------------------------------
                 try:
                     response = requests.post(url[mode], json=payload, headers=headers, timeout=timeout)
                     if response.ok:
