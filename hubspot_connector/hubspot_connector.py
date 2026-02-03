@@ -479,6 +479,7 @@ class ResPartnerInherit(orm.Model):
         # Get connection:
         hubspot_id = hubspot_pool.button_get_contact(cr, uid, context=context)
 
+        pdb.set_trace()
         ctx['selected_partner_id'] = ids[0]
         return hubspot_pool.button_get_contact(cr, uid, [hubspot_id], context=ctx)
 
