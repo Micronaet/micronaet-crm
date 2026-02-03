@@ -106,7 +106,7 @@ class HubspotConnector(orm.Model):
             # Extract domain from email:
             email = partner.email or ''
             if email:
-                domain = email.split('@')[-1].lower().replace(' ', '').replace(',', '.')
+                domain = email.split('@')[-1].lower().strip().replace(' ', '').replace(',', '.')
                 if domain in ('gmail.com', 'microsoft.com', 'ymail.com', 'libero.it', 'tim.it', 'mac.com'):
                     domain = ''
             else:
