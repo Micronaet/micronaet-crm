@@ -426,7 +426,7 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         ctx['force_domain'] = [
             ('hubspot_companies_ref', '=', False),
             ('hubspot_contacts_ref', '=', False),
-            ('newsletter_category_id', '=', category_id),
+            ('newsletter_category_id', '=', ids[0]),
         ]
 
         # Get connection:
