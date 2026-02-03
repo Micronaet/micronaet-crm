@@ -556,7 +556,9 @@ class CrmNewsletterCategoryHubspot(orm.Model):
         model_pool = self.pool.get('ir.model.data')
 
         # Get domain:
-        ctx = self.get_force_category(ids[0], context=context)
+        category_id = ids[0]
+        relation = self.browse(cr, uid, category_id, context=context)
+        ctx = self.get_force_category(relation.category_id.id, context=context)
         domain = ctx['force_domain']
 
         #tree_id = model_pool.get_object_reference(
