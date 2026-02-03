@@ -344,13 +344,10 @@ class HubspotConnector(orm.Model):
             "Content-Type": "application/json"
         }
 
-        # Generate Payload:
-        payload = {}
-
         url = "{}/{}/{}".format(endpoint, mode, hubspot_ref)
         _logger.info('Calling: {}'.format(url))
         pdb.set_trace()
-        response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
+        response = requests.get(url=url, headers=headers, timeout=timeout)
 
         if response.ok:
             _logger.info(u"Partner ODOO {} dettaglio HS {}\n:{}".format(
