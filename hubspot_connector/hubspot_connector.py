@@ -346,11 +346,10 @@ class HubspotConnector(orm.Model):
 
         url = "{}/{}/{}".format(endpoint, mode, hubspot_ref)
         _logger.info('Calling: {}'.format(url))
-        pdb.set_trace()
         response = requests.get(url=url, headers=headers, timeout=timeout)
 
         if response.ok:
-            _logger.info(u"Partner ODOO {} dettaglio HS {}\n:{}".format(
+            raise osv.except_osv(u"Partner ODOO {} dettaglio HS {}\n:{}".format(
                 partner.id, hubspot_ref, response.text))
         else:
             raise osv.except_osv(
