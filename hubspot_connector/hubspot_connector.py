@@ -532,7 +532,7 @@ class ResPartnerInherit(orm.Model):
         partner = self.browse(cr, uid, ids[0], context=context)
 
         if partner.is_company:
-             mode = 'companies'
+             mode = 'contacts'  # todo no 'companies' ?
              hubspot_ref = partner.hubspot_companies_ref
         else:
             mode = 'contacts'
