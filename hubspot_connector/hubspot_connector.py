@@ -374,11 +374,11 @@ class HubspotConnector(orm.Model):
 
         # todo manage ODOO contact create ad unique HS contact!
         total = len(partner_ids)
-        counter = 0
+        if total >= 1000:
+            raise osv.except_osv('Errore', 'Errore troppi contatti: {}'.format(total))
 
         payload = {"inputs": []}
         for partner in partner_pool.browse(cr, uid, partner_ids, context=context):
-            counter += 1  # todo max 1000!
             payload['inputs'].append(
                 {
                   "from": {
@@ -389,6 +389,7 @@ class HubspotConnector(orm.Model):
                   },
                   "type": "contact_to_company"
                 })
+        pdb.set_trace()
 
         response = requests.post(url, json=payload, headers=headers) #  timeout=timeout)
 
