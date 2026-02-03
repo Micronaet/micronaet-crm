@@ -71,6 +71,14 @@ class HubspotConnector(orm.Model):
         if category_map is None:
             category_map = {}
 
+        country = partner.country_id.code or ''
+        if country == 'IT':  # Only for Italy
+            provincia = partner.state_id.code or ''
+            regione = partner.state_id.region_id.name or ''
+        else:
+            provincia = regione = ''
+
+
         # todo ID ODOO
         # ==============================================================================================================
         #  Contact:
@@ -88,9 +96,9 @@ class HubspotConnector(orm.Model):
                         # email_pec
                         # website
                         'city': partner.city or '',
-                        'country': partner.country_id.code or '',
-                        'provincia': partner.state_id.code or '',
-                        'regione': partner.state_id.region_id.name or '',
+                        'provincia': provincia,
+                        'regione': regione,
+                        'country': country,
                         # 'tipo': Provato Azienda
 
                         ## 'zip': partner.zip or '',
@@ -137,9 +145,10 @@ class HubspotConnector(orm.Model):
                         'name': partner.name or '',
                         'address': partner.street or '',
                         'city': partner.city or '',
-                        'provincia': partner.state_id.code or '',
-                        'regione': partner.state_id.region_id.name or '',
-                        'country': partner.country_id.code or '',
+                        'provincia': provincia,
+                        'regione': regione,
+                        'country': country,
+
                         'zip': partner.zip or '',
                         'partita_iva': partner.vat or '',
 
