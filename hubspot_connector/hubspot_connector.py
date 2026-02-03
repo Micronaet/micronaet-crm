@@ -349,13 +349,13 @@ class HubspotConnector(orm.Model):
         response = requests.get(url=url, headers=headers, timeout=timeout)
 
         if response.ok:
-            raise osv.except_osv(u"Partner ODOO {} dettaglio HS {}\n:{}".format(
-                partner.id, hubspot_ref, response.text))
+            raise osv.except_osv(
+                'Info',
+                u"Partner ODOO {} dettaglio HS {}\n:{}".format(partner.id, hubspot_ref, response.text))
         else:
             raise osv.except_osv(
                 u'Errore:',
-                u"Errore agg. HS ID {} (payload: {}):\n\n{}".format(
-                    payload, hubspot_ref, response.text))
+                u"Errore agg. HS ID {} (payload: {}):\n\n{}".format(payload, hubspot_ref, response.text))
         return True
 
     _columns = {
