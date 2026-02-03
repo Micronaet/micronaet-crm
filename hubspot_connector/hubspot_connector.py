@@ -616,16 +616,24 @@ class ResPartnerInherit(orm.Model):
     def button_open_hs_contact(self, cr, uid, ids, context=None):
         """ Update contacts
         """
+        hubspot_pool = self.pool.get('hubspot.connector')
+        # Get connection ID:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+        connection = hubspot_pool.browse(cr, uid, hubspot_id, context=context)
+        hubspot_code = connection.hubspot_code
+
         partner = self.browse(cr, uid, ids[0], context=context)
 
         if partner.is_company:
-             mode = 'contacts'  # todo no 'companies' ?
-             hubspot_ref = partner.hubspot_companies_ref
+            # mode = 'contacts'  # todo no 'companies' ?
+            hubspot_ref = partner.hubspot_companies_ref
         else:
-            mode = 'contacts'
+            # mode = 'contacts'
             hubspot_ref = partner.hubspot_contacts_ref
 
-        url = 'https://app-eu1.hubspot.com/{}/{}'.format(mode, hubspot_ref)  # todo missed some extra data!
+        url = 'https://app-eu1.hubspot.com/contacts/{}/record/0-2/{}'.format(mode, hubspot_code, hubspot_ref)
+        #     https://app-eu1.hubspot.com/contacts/111111111/record/0-2/3333333333
+
         return {
             'type': 'ir.actions.act_url',
             'url': url,
