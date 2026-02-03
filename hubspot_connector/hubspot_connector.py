@@ -236,6 +236,7 @@ class HubspotConnector(orm.Model):
         #                                          Publish contact:
         # --------------------------------------------------------------------------------------------------------------
         no_raise = context.get('no_raise', False)
+        _logger.info('Error mode: {}'.format('Errore non bloccante' if not no_raise else 'Errore bloccante'))
         domain = context.get('force_domain') or []
 
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
