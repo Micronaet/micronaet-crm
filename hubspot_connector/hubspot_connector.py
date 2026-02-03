@@ -390,7 +390,6 @@ class HubspotConnector(orm.Model):
                   },
                   "type": "contact_to_company"
                 })
-        pdb.set_trace()
         response = requests.post(url, json=payload, headers=headers)
 
         if response.ok:
