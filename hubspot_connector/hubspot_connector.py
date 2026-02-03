@@ -212,6 +212,7 @@ class HubspotConnector(orm.Model):
         # Parameter:
         # --------------------------------------------------------------------------------------------------------------
         timeout = 15
+        no_raise = False
 
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
@@ -324,10 +325,13 @@ class HubspotConnector(orm.Model):
                         )
 
                 except Exception as e:
-                    raise osv.except_osv(
-                        _('Errore:'),
-                        _(u'Errore chiamata HS {}:\n\n {}'.format(payload, str(e))),
-                    )
+                    if no_raise:
+                        _logger.error(u'Error call HS {}:\n\n {}'.format(payload, str(e))),
+                    else:
+                        raise osv.except_osv(
+                            _('Errore:'),
+                            _(u'Errore chiamata HS {}:\n\n {}'.format(payload, str(e))),
+                        )
                     # No commit here for security, go next
 
     def button_get_contact(self, cr, uid, ids, context=None):
