@@ -71,13 +71,6 @@ class HubspotConnector(orm.Model):
         if category_map is None:
             category_map = {}
 
-        agent_list = [
-            'Direzionale', 'Nicola Lanfredi', 'Rosaci Alberto', 'Bussetti Alessandro', 'Angelo Piccolo',
-            'Luigi De Nicolò', 'Gavino Tanchis', 'Vito Design', 'Peter Nordin', 'North Living', 'Jan Kurtz',
-            'Gwm', 'Heol', 'Ideas Contract', 'Venice Contract', 'La comercial (Baleari)', 'Semiotik Design',
-            'Veres Istvan', 'Italian Excellence',
-        ]
-
         # todo ID ODOO
         # ==============================================================================================================
         #  Contact:
