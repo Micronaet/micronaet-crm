@@ -77,7 +77,8 @@
                                                 <button name="button_odoo_contact" type="object" string="Lista contatti correnti" />
 
                                                 <field name="name" />
-                                                <button name="button_update_contact" type="object" string="Pubblica categoria" />
+                                                <button name="button_update_contact" type="object" string="Pubblica categoria (tutti)" />
+                                                <button name="button_update_contact_new" type="object" string="Pubblica categoria (mancanti)" />
                                             </tree>
                                         </field>
                                     </group>

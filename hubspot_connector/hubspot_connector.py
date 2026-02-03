@@ -200,6 +200,27 @@ class HubspotConnector(orm.Model):
 
         return True
 
+    def button_update_contact_new(self, cr, uid, ids, context=None):
+        """ Update contacts on Hubspot:
+            force_domain: Used to update single partner or all category of partner
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+
+        if context is None:
+            context = {}
+
+        ctx = context.copy()
+        ctx['force_domain'] = [
+            ('hubspot_companies_ref', '=', False),
+            ('hubspot_contacts_ref', '=', False),
+            ('newsletter_category_id', '=', category_id),
+        ]
+
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+        return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
+
+
     def button_update_contact(self, cr, uid, ids, context=None):
         """ Update contacts on Hubspot:
             force_domain: Used to update single partner or all category of partner
@@ -233,7 +254,7 @@ class HubspotConnector(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         domain = context.get('force_domain') or []
         partner_ids = partner_pool.search(cr, uid, domain, context=context)
-
+        _logger.info('Selected partners #{}'.format(len(partner_ids)))
         # --------------------------------------------------------------------------------------------------------------
         # Publish contact:
         # --------------------------------------------------------------------------------------------------------------
