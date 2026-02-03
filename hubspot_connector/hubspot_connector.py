@@ -345,12 +345,9 @@ class HubspotConnector(orm.Model):
         }
 
         # Generate Payload:
-        payload = {
-            'objectId': "{}".format(hubspot_ref),
-            # "idProperty": "<string>"  # todo ID ODOO?
-        }
+        payload = {}
 
-        url = "{}/{}/{}".format(endpoint, mode, selected_partner_id)
+        url = "{}/{}/{}".format(endpoint, mode, hubspot_ref)
         _logger.info('Calling: {}'.format(url))
         pdb.set_trace()
         response = requests.post(url=url, json=payload, headers=headers, timeout=timeout)
