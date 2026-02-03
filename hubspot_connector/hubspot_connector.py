@@ -104,7 +104,7 @@ class HubspotConnector(orm.Model):
         else:  # company
             return {
                     "properties": {
-                        'lifecyclestage': categoty_map.get(partner.newsletter_category_id.id, ''),
+                        'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
                         # Company:
                         'name': partner.name or '',
                         'address': partner.street or '',
