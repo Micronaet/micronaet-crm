@@ -540,7 +540,6 @@ class CrmNewsletterCategoryHubspot(orm.Model):
             ('is_address', '=', False),
         ]
         ctx['no_raise'] = True
-
         return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
 
     def button_update_contact_new(self, cr, uid, ids, context=None):
