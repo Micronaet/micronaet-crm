@@ -367,6 +367,7 @@ class HubspotConnector(orm.Model):
                         )
                     continue
                     # No commit here for security, go next
+        return True
 
     def button_update_contact_link(self, cr, uid, ids, context=None):
         """ Update contacts to company link on Hubspot:
@@ -713,7 +714,8 @@ class ResPartnerInherit(orm.Model):
         ctx['force_domain'] = [
             ('id', '=', ids[0]),  # Only this partner
         ]
-        return hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
+        hubspot_pool.button_update_contact(cr, uid, [hubspot_id], context=ctx)
+        return True
 
     def button_delete_contact(self, cr, uid, ids, context=None):
         """ Call delete action
