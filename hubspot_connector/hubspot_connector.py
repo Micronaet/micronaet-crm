@@ -137,30 +137,30 @@ class HubspotConnector(orm.Model):
                 domain = ''
 
             return {
-                    "properties": {
-                        'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
-                        'domain': domain,
+                "properties": {
+                    'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
+                    'domain': domain,
 
-                        # Company:
-                        'name': partner.name or '',
-                        'address': partner.street or '',
-                        'city': partner.city or '',
-                        'provincia': provincia,
-                        'regione': regione,
-                        'country': country,
+                    # Company:
+                    'name': partner.name or '',
+                    'address': partner.street or '',
+                    'city': partner.city or '',
+                    'provincia': provincia,
+                    'regione': regione,
+                    'country': country,
 
-                        'zip': partner.zip or '',
-                        'partita_iva': partner.vat or '',
+                    'zip': partner.zip or '',
+                    'partita_iva': partner.vat or '',
 
-                        'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
-                        # 'fascia_di_scontistica': partner.discount_rates or '',
+                    'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
+                    # 'fascia_di_scontistica': partner.discount_rates or '',
 
-                        # 'listino': partner.discount_rates or '',
-                        # 'settore'
-                        # 'macro_settore',
-                        # 'azienda_attiva':
-                    }
+                    # 'listino': partner.discount_rates or '',
+                    # 'settore'
+                    # 'macro_settore',
+                    # 'azienda_attiva':
                 }
+            }
 
     def button_delete_contact(self, cr, uid, ids, context=None):
         """ Update contacts on Hubspot:
