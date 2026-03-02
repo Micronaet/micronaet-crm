@@ -105,7 +105,7 @@ class HubspotConnector(orm.Model):
                         ## 'address': partner.street or '',  NON PRESENTE
                     }
                 }
-            # Update with assotiations to parent partner (if present and published)
+            # Update with associations to parent partner (if present and published)
             parent = partner.parent_id
             if parent and parent.hubspot_companies_ref:
                 result['associations'] = [
