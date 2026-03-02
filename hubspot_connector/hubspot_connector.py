@@ -153,6 +153,7 @@ class HubspotConnector(orm.Model):
                     'partita_iva': partner.vat or '',
 
                     'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
+                    'tipo_di_pagamento': partner.property_payment_term.name if partner.property_payment_term else '',
                     # 'fascia_di_scontistica': partner.discount_rates or '',
 
                     # 'listino': partner.discount_rates or '',
