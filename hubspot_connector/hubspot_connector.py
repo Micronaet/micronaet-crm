@@ -136,6 +136,7 @@ class HubspotConnector(orm.Model):
             else:
                 domain = ''
 
+            discount = (partner.discount_rates or '').replace('%', '').replace(' ', '').strip()
             return {
                 "properties": {
                     'lifecyclestage': category_map.get(partner.newsletter_category_id.id, ''),
@@ -155,7 +156,7 @@ class HubspotConnector(orm.Model):
                     'agente_di_riferimento': partner.agent_id.name if partner.agent_id else '',
                     'tipo_di_pagamento': partner.property_payment_term.name if partner.property_payment_term else '',
 
-                    # 'fascia_di_scontistica': partner.discount_rates or '',
+                    'fascia_di_scontistica': '{}%'.format(discount) if discount else '',
 
                     # 'listino': partner.discount_rates or '',
                     # 'settore'
