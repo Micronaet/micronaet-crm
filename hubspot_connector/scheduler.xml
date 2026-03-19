@@ -1,12 +1,12 @@
 <?xml version="1.0" ?>
 <openerp>
 	<data>
-	<!--<data noupdate="1">
-		<record id="ir_cron_schedule_action_extract_oc_delay_report_0" model="ir.cron">
-			<field eval="&quot;&quot;&quot;schedule_action_extract_oc_delay_report&quot;&quot;&quot;" name="function"/>
+	  <data noupdate="1">
+		<record id="ir_cron_hubspot_scheduled_retrieve_all_partner" model="ir.cron">
+			<field eval="&quot;&quot;&quot;hubspot_scheduled_retrieve_all_partner&quot;&quot;&quot;" name="function"/>
 			<field eval="&quot;&quot;&quot;days&quot;&quot;&quot;" name="interval_type"/>
 			<field name="user_id" ref="base.user_root"/>
-			<field eval="&quot;&quot;&quot;Report: OC Delay&quot;&quot;&quot;" name="name"/>
+			<field eval="&quot;&quot;&quot;Hubspot: Retrieve all partner (sync)&quot;&quot;&quot;" name="name"/>
 			<field eval="-1" name="numbercall"/>
 			<field eval="&quot;&quot;&quot;2015-05-05 11:15:00&quot;&quot;&quot;" name="nextcall"/>
 			<field eval="5" name="priority"/>
@@ -16,6 +16,6 @@
 			<field eval="1" name="interval_number"/>
 			<field eval="&quot;&quot;&quot;crm.excel.extract.report.wizard&quot;&quot;&quot;" name="model"/>
 		</record>
-	</data>-->
+	</data>
 	</data>
 </openerp>

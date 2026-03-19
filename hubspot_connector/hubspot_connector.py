@@ -703,6 +703,61 @@ class ResPartnerInherit(orm.Model):
         ctx['selected_partner_id'] = ids[0]
         return hubspot_pool.button_get_contact(cr, uid, [hubspot_id], context=ctx)
 
+    def hubspot_scheduled_retrieve_all_partner(self, cr, uid, context=None):
+        """ Retrieve all partner
+            GET https://api.hubapi.com/crm/v3/objects/contacts?limit=10'
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+        connector = self.browse(cr, uid, hubspot_id, context=context)
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Parameter:
+        # --------------------------------------------------------------------------------------------------------------
+        timeout = 15
+        partner_pool = self.pool.get('res.partner')
+        category_pool = self.pool.get('crm.newsletter.category.hubspot')
+
+        # --------------------------------------------------------------------------------------------------------------
+        # Read data from Hubspot:
+        # --------------------------------------------------------------------------------------------------------------
+        endpoint = connector.endpoint
+        token = connector.token
+        url = {
+            'companies': "{endpoint}/objects/{mode}?limit={limit}",
+            # 'contacts': "{}/objects/contacts?limit={{}}".format(endpoint),
+        }
+        headers = {
+            "Authorization": "Bearer {}".format(token),
+            "Content-Type": "application/json"
+        }
+
+        limit = 20
+        mode = 'companies'
+        field_name = 'hubspot_{}_ref'.format(mode)
+        while True:
+            try:
+                url = url[mode].format(
+                    endpoint=endpoint,
+                    mode=mode,
+                    limit=limit,
+                )
+
+                response = requests.get(url, headers=headers, timeout=timeout)
+                if response.ok:
+                    # Read data
+                    reply_json = response.json()
+                    # partner_pool.write(cr, uid, [partner.id], {
+                    #     field_name: new_hp_id,
+                    # }, context=context)
+                    # cr.commit()  # Commit to save immediately the ID:
+            except:
+                _logger.info('Errore in master loop (could be end of list!)\n'.format(sys.exc_info()))
+                break
+        return True
+
     def hubspot_update_single_partner(self, cr, uid, ids, context=None):
         """ Prepare context for call original method
         """
