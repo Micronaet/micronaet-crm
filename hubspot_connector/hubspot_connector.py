@@ -726,48 +726,57 @@ class ResPartnerInherit(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         endpoint = connector.endpoint
         token = connector.token
-        url = {
-            'companies': "{endpoint}/objects/{mode}?limit={limit}{after}",
-            # 'contacts': "{}/objects/contacts?limit={{}}".format(endpoint),
-        }
+        modes = ['companies', 'contacts']
+        mask = "{endpoint}/objects/{mode}?limit={limit}{after}",
         headers = {
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
         }
 
         limit = 20
-        mode = 'companies'
-        after = ''
-        field_name = 'hubspot_{}_ref'.format(mode)
-        while True:
-            try:
-                url = url[mode].format(
-                    endpoint=endpoint,
-                    mode=mode,
-                    limit=limit,
-                    after=after,
-                )
+        for mode in modes:
+            after = ''
+            field_name = 'hubspot_{}_ref'.format(mode)
+            _logger.info('Reading mode {}'.format(mode))
 
-                response = requests.get(url, headers=headers, timeout=timeout)
-                if response.ok:
-                    # Read data
-                    reply_json = response.json()
+            # Master loop:
+            while True:
+                try:
+                    url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
+                    response = requests.get(url, headers=headers, timeout=timeout)
+                    if response.ok:
+                        # Read data
+                        reply_json = response.json()
 
-                    # Create partner:
-                    # partner_pool.write(cr, uid, [partner.id], {
-                    #     field_name: new_hp_id,
-                    # }, context=context)
-                    # cr.commit()  # Commit to save immediately the ID:
+                        # HS data:
+                        # {u'archived': False,
+                        #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
+                        #  u'properties': {
+                        #      u'hs_lastmodifieddate': u'2026-03-16T16:17:19.365Z',
+                        #      u'hs_object_id': u'411466596590',
+                        #      u'createdate': u'2026-03-02T14:58:14.680Z',
+                        #      u'domain': u'anickassociates.com',
+                        #      u'name': u'ANNICK ASSOCIATES INC.'},
+                        #  u'updatedAt': u'2026-03-16T16:17:19.365Z',
+                        #  u'id': u'411466596590',
+                        #  u'createdAt': u'2026-03-02T14:58:14.680Z'}
 
-                    # Prepare next loop:
-                    after = reply_json.get('paging', {}).get('next', {}).get('after')
-                    if not after:
-                        break
+                        # Create partner:
+                        # partner_pool.write(cr, uid, [partner.id], {
+                        #     field_name: new_hp_id,
+                        # }, context=context)
+                        # cr.commit()  # Commit to save immediately the ID:
 
-                    after = '&{}'.format(after)  # Add as extra parameters
-            except:
-                _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
-                break
+                        # Prepare next loop:
+                        after = reply_json.get('paging', {}).get('next', {}).get('after')
+                        if not after:
+                            break
+
+                        after = '&{}'.format(after)  # Add as extra parameters
+                        break  # todo remove
+                except:
+                    _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
+                    break
         return True
 
     def hubspot_update_single_partner(self, cr, uid, ids, context=None):
