@@ -778,7 +778,7 @@ class ResPartnerInherit(orm.Model):
                             break
 
                         after = '&after={}'.format(after)  # Add as extra parameters
-                        break  # todo remove
+                        # break  # todo remove
                 except:
                     _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
                     break
