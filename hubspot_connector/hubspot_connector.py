@@ -740,7 +740,9 @@ class ResPartnerInherit(orm.Model):
             _logger.info('Reading mode {}'.format(mode))
 
             # Master loop:
+            loop = 0
             while True:
+                loop += 1
                 try:
                     url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
                     response = requests.get(url, headers=headers, timeout=timeout)
@@ -749,6 +751,9 @@ class ResPartnerInherit(orm.Model):
                         reply_json = response.json()
 
                         # HS data:
+                        for partner_json in reply_json['results']:
+                            _logger.info('{}-{}: {}'.format(loop, mode, partner_json))
+
                         # {u'archived': False,
                         #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
                         #  u'properties': {
