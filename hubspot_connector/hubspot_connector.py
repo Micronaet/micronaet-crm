@@ -711,7 +711,7 @@ class ResPartnerInherit(orm.Model):
 
         # Get connection:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
-        connector = self.browse(cr, uid, hubspot_id, context=context)
+        connector = hubspot_pool.browse(cr, uid, hubspot_id, context=context)
 
         # --------------------------------------------------------------------------------------------------------------
         # Parameter:
