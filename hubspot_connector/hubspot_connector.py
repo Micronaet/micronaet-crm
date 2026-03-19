@@ -727,7 +727,7 @@ class ResPartnerInherit(orm.Model):
         endpoint = connector.endpoint
         token = connector.token
         url = {
-            'companies': "{endpoint}/objects/{mode}?limit={limit}",
+            'companies': "{endpoint}/objects/{mode}?limit={limit}{after}",
             # 'contacts': "{}/objects/contacts?limit={{}}".format(endpoint),
         }
         headers = {
@@ -737,6 +737,7 @@ class ResPartnerInherit(orm.Model):
 
         limit = 20
         mode = 'companies'
+        after = ''
         field_name = 'hubspot_{}_ref'.format(mode)
         while True:
             try:
@@ -744,18 +745,28 @@ class ResPartnerInherit(orm.Model):
                     endpoint=endpoint,
                     mode=mode,
                     limit=limit,
+                    after=after,
                 )
 
                 response = requests.get(url, headers=headers, timeout=timeout)
                 if response.ok:
                     # Read data
                     reply_json = response.json()
+
+                    # Create partner:
                     # partner_pool.write(cr, uid, [partner.id], {
                     #     field_name: new_hp_id,
                     # }, context=context)
                     # cr.commit()  # Commit to save immediately the ID:
+
+                    # Prepare next loop:
+                    after = reply_json.get('paging', {}).get('next', {}).get('after')
+                    if not after:
+                        break
+
+                    after = '&{}'.format(after)  # Add as extra parameters
             except:
-                _logger.info('Errore in master loop (could be end of list!)\n'.format(sys.exc_info()))
+                _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
                 break
         return True
 
