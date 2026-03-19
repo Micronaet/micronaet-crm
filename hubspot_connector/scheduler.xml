@@ -1,6 +1,5 @@
 <?xml version="1.0" ?>
 <openerp>
-	<data>
 	  <data noupdate="1">
 		<record id="ir_cron_hubspot_scheduled_retrieve_all_partner" model="ir.cron">
 			<field eval="&quot;&quot;&quot;hubspot_scheduled_retrieve_all_partner&quot;&quot;&quot;" name="function"/>
@@ -16,6 +15,5 @@
 			<field eval="1" name="interval_number"/>
 			<field eval="&quot;&quot;&quot;crm.excel.extract.report.wizard&quot;&quot;&quot;" name="model"/>
 		</record>
-	</data>
 	</data>
 </openerp>
