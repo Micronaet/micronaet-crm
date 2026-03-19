@@ -772,7 +772,7 @@ class ResPartnerInherit(orm.Model):
                         if not after:
                             break
 
-                        after = '&{}'.format(after)  # Add as extra parameters
+                        after = '&after={}'.format(after)  # Add as extra parameters
                         break  # todo remove
                 except:
                     _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
