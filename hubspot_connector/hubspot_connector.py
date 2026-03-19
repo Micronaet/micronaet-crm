@@ -727,7 +727,7 @@ class ResPartnerInherit(orm.Model):
         endpoint = connector.endpoint
         token = connector.token
         modes = ['companies', 'contacts']
-        mask = "{endpoint}/objects/{mode}?limit={limit}{after}",
+        mask = "{endpoint}/objects/{mode}?limit={limit}{after}"
         headers = {
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
