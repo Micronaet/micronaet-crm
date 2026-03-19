@@ -752,7 +752,7 @@ class ResPartnerInherit(orm.Model):
 
                         # HS data:
                         for partner_json in reply_json['results']:
-                            _logger.info('{}-{}: {}'.format(loop, mode, partner_json))
+                            _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
 
                         # {u'archived': False,
                         #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
