@@ -707,6 +707,7 @@ class ResPartnerInherit(orm.Model):
         """ Retrieve all partner
             GET https://api.hubapi.com/crm/v3/objects/contacts?limit=10'
         """
+        pdb.set_trace()
         hubspot_pool = self.pool.get('hubspot.connector')
 
         # Get connection:
