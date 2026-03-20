@@ -726,18 +726,30 @@ class ResPartnerInherit(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         endpoint = connector.endpoint
         token = connector.token
-        modes = ['companies', 'contacts']
+        modes = {
+            'companies': 'company',  # Object - CRM
+            'contacts': 'contact',
+        }
+        property_mask = "{endpoint}/crm/v3/properties/{mode}"
         mask = "{endpoint}/objects/{mode}?limit={limit}{after}"
         headers = {
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
         }
 
+
         limit = 20
         for mode in modes:
             after = ''
             field_name = 'hubspot_{}_ref'.format(mode)
             _logger.info('Reading mode {}'.format(mode))
+
+            # ----------------------------------------------------------------------------------------------------------
+            # Get property:
+            # ----------------------------------------------------------------------------------------------------------
+            property_url = mask.format(endpoint=endpoint, mode=modes[mode])
+            property_response = requests.get(url, headers=headers, timeout=timeout)
+            pdb.set_trace()
 
             # Master loop:
             loop = 0
