@@ -805,7 +805,6 @@ class ResPartnerInherit(orm.Model):
             loop = 0
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
-            pdb.set_trace()
             while True:
                 loop += 1
                 try:
@@ -820,10 +819,11 @@ class ResPartnerInherit(orm.Model):
                             partner_field = partner_json['properties']
                             # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
                             name = partner_field['name']
-                            importa = partner_field['importa']
+                            importa = partner_field['importa'] or False
                             _logger.info('Azienda: {} Importa: {}'.format(name, importa))
 
                             if importa:
+                                pdb.set_trace()
                                 # hs_odoo_id = partner_field['odoo_id']
                                 hs_object_ids.append(partner_field['hs_object_id'])
 
