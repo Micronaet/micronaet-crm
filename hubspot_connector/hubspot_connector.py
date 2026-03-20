@@ -823,7 +823,7 @@ class ResPartnerInherit(orm.Model):
                             name = partner_field['name']
                             importa = partner_field['importa'] or False
                             hs_object_id = partner_field['hs_object_id']
-                            log_f.write('{}|{}\n'.format(name, hs_object_id))
+                            log_f.write(u'{}|{}\n'.format(name, hs_object_id))
                             if hs_object_id == 421233048823:
                                 pdb.set_trace()
                             _logger.info('Azienda: {} HD ID: {} Importa: {}'.format(name, hs_object_id, importa))
