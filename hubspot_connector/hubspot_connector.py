@@ -884,7 +884,7 @@ class ResPartnerInherit(orm.Model):
             property_params = ','.join(property_field['companies_all'])
             all_property = '?properties={}'.format(property_params)
             for hs_object_id in hs_object_ids:
-                company_url = "{endpoint}/objects/companies/{hs_object_id}?{}".format(
+                company_url = "{endpoint}/objects/companies/{hs_object_id}?{all_property}".format(
                     endpoint=endpoint, hs_object_id=hs_object_id, all_property=all_property)
 
                 response = requests.get(company_url, headers=headers, timeout=timeout)
