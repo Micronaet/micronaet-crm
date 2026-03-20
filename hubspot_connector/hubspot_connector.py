@@ -740,6 +740,8 @@ class ResPartnerInherit(orm.Model):
         property_field = {
             'companies': [
                 'importa',
+                'odoo_id',
+                'hs_object_id',
             ],
 
             'companies_all': [
