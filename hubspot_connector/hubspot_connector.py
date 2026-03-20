@@ -727,15 +727,48 @@ class ResPartnerInherit(orm.Model):
         token = connector.token
         modes = {
             'companies': 'company',  # Object - CRM
-            'contacts': 'contact',
+            # 'contacts': 'contact',
         }
-        property_mask = "{endpoint}/properties/{mode}"
-        mask = "{endpoint}/objects/{mode}?limit={limit}{after}"
+        # property_mask = "{endpoint}/properties/{mode}"
+        mask = "{endpoint}/objects/{mode}?limit={limit}{property}{after}"
+        # &properties=firstname,lastname,phone,mobilephone,email&associations=company
         headers = {
             "Authorization": "Bearer {}".format(token),
             "Content-Type": "application/json"
         }
 
+        property_field = {
+            'companies': [
+                'importa',
+                'address',
+                'address2',
+                'agente_di_riferimento',
+                'city',
+                'country',
+                'description',
+                'domain',
+                'fascia_di_scontistica',
+                'hs_country_code',
+                'website',
+                'zip',
+                'hs_object_id',
+                'regione',
+                'sconto_base',
+                'sconto_extra',
+                'sconto_pagamento',
+                'sconto_prestagionale',
+                'settore',
+                'state',
+                'timezone',
+                'tipo_di_pagamento',
+                'name',
+                'note',
+                'odoo_id',
+                'partita_iva',
+                'phone',
+                'provincia',
+                ],
+        }
 
         limit = 20
         for mode in modes:
@@ -746,6 +779,7 @@ class ResPartnerInherit(orm.Model):
             # ----------------------------------------------------------------------------------------------------------
             # Get property:
             # ----------------------------------------------------------------------------------------------------------
+            '''
             property_url = property_mask.format(endpoint=endpoint, mode=modes[mode])
             property_response = requests.get(property_url, headers=headers, timeout=timeout)
             if not property_response.ok:
@@ -757,13 +791,16 @@ class ResPartnerInherit(orm.Model):
                 _logger.info(item['name'])
                 property_list.append(item['name'])
             pdb.set_trace()
+            '''
+            property_params = ','.join(property_field[mode])
+            property = '&properties={}'.format(property_params)
 
             # Master loop:
             loop = 0
             while True:
                 loop += 1
                 try:
-                    url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
+                    url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
                         # Read data
