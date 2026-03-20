@@ -881,10 +881,11 @@ class ResPartnerInherit(orm.Model):
             # Retrieve loop:
             _logger.info('Mode: {} counter {}\n{}'.format(mode, counter, hs_object_ids))
 
-            pdb.set_trace()
+            property_params = ','.join(property_field['companies_all'])
+            all_property = '?properties={}'.format(property_params)
             for hs_object_id in hs_object_ids:
-                company_url = "{endpoint}/objects/companies/{hs_object_id}".format(
-                    endpoint=endpoint, hs_object_id=hs_object_id)
+                company_url = "{endpoint}/objects/companies/{hs_object_id}?{}".format(
+                    endpoint=endpoint, hs_object_id=hs_object_id, all_property=all_property)
 
                 response = requests.get(company_url, headers=headers, timeout=timeout)
 
@@ -905,9 +906,12 @@ class ResPartnerInherit(orm.Model):
                         partner_id = partner_ids[0]
                         # Update partner
                         partner_pool.write(cr, uid, [partner_id], partner_data, context=context)
+                        _logger.info('Update partner HS: {}'.format(partner_data['name']))
                     else:
                         # Create partner (only company!):
                         partner_id = partner_pool.create(cr, uid, partner_data, context=context)
+                        _logger.info('Create partner HS: {}'.format(partner_data['name']))
+
                     # cr.commit()  # Commit to save immediately the ID:
         return True
 
