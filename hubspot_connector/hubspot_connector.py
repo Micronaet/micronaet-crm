@@ -707,7 +707,6 @@ class ResPartnerInherit(orm.Model):
         """ Retrieve all partner
             GET https://api.hubapi.com/crm/v3/objects/contacts?limit=10'
         """
-        pdb.set_trace()
         hubspot_pool = self.pool.get('hubspot.connector')
 
         # Get connection:
@@ -749,6 +748,10 @@ class ResPartnerInherit(orm.Model):
             # ----------------------------------------------------------------------------------------------------------
             property_url = property_mask.format(endpoint=endpoint, mode=modes[mode])
             property_response = requests.get(property_url, headers=headers, timeout=timeout)
+            if not property_response.ok:
+                _logger.error('Cannot read {} property'.format(mode))
+                continue
+            property_json = property_response.json()
             pdb.set_trace()
 
             # Master loop:
