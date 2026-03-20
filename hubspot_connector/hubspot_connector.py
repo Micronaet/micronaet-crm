@@ -840,7 +840,8 @@ class ResPartnerInherit(orm.Model):
                         url = after_mask.format(
                             endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
                     else:
-                        url = mask.format(endpoint=endpoint, mode=mode, limit=limit, property=property)
+                        url = mask.format(
+                            endpoint=endpoint, mode=mode, limit=limit, property=property)
 
                     _logger.info('Calling {}'.format(url))
                     response = requests.get(url, headers=headers, timeout=timeout)
