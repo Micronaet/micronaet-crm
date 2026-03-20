@@ -797,7 +797,6 @@ class ResPartnerInherit(orm.Model):
             for item in property_json['results']:
                 _logger.info(item['name'])
                 property_list.append(item['name'])
-            pdb.set_trace()
             '''
             property_params = ','.join(property_field[mode])
             property = '&properties={}'.format(property_params)
@@ -806,6 +805,7 @@ class ResPartnerInherit(orm.Model):
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
             while True:
+                pdb.set_trace()
                 loop += 1
                 try:
                     url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
@@ -823,7 +823,6 @@ class ResPartnerInherit(orm.Model):
                             _logger.info('Azienda: {} Importa: {}'.format(name, importa))
 
                             if importa:
-                                pdb.set_trace()
                                 # hs_odoo_id = partner_field['odoo_id']
                                 hs_object_ids.append(partner_field['hs_object_id'])
 
