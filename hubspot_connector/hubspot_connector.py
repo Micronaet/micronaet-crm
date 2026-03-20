@@ -805,13 +805,14 @@ class ResPartnerInherit(orm.Model):
             loop = 0
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
+            pdb.set_trace()
             while True:
                 loop += 1
                 try:
                     url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
-                        # Read data
+                        # Read data:
                         reply_json = response.json()
 
                         # HS data:
@@ -830,8 +831,6 @@ class ResPartnerInherit(orm.Model):
                         #  u'properties': {
                         #      u'hs_lastmodifieddate': u'2026-03-16T16:17:19.365Z',
                         #      u'hs_object_id': u'411466596590',
-                        #      u'createdate': u'2026-03-02T14:58:14.680Z',
-                        #      u'domain': u'anickassociates.com',
                         #      u'name': u'ANNICK ASSOCIATES INC.'},
                         #  u'updatedAt': u'2026-03-16T16:17:19.365Z',
                         #  u'id': u'411466596590',
