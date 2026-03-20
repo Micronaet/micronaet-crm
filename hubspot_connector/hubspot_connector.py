@@ -730,7 +730,7 @@ class ResPartnerInherit(orm.Model):
             'companies': 'company',  # Object - CRM
             'contacts': 'contact',
         }
-        property_mask = "{endpoint}/crm/v3/properties/{mode}"
+        property_mask = "{endpoint}/properties/{mode}"
         mask = "{endpoint}/objects/{mode}?limit={limit}{after}"
         headers = {
             "Authorization": "Bearer {}".format(token),
