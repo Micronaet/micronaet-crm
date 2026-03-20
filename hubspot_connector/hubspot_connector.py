@@ -806,6 +806,7 @@ class ResPartnerInherit(orm.Model):
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
             log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
+            pdb.set_trace()
             while True:
                 loop += 1
                 try:
