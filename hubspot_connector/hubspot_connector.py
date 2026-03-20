@@ -752,6 +752,8 @@ class ResPartnerInherit(orm.Model):
                 _logger.error('Cannot read {} property'.format(mode))
                 continue
             property_json = property_response.json()
+            property = property_json['results']
+
             pdb.set_trace()
 
             # Master loop:
