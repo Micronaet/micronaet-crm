@@ -855,7 +855,8 @@ class ResPartnerInherit(orm.Model):
                             # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
 
                             name = partner_field['name']
-                            importa = partner_field['importa'] or False
+                            # importa = partner_field['importa'] or False
+                            importa = False
                             # odoo_id = partner_field['odoo_id']
                             hs_object_id = partner_field['hs_object_id']
                             if log_on_file:
