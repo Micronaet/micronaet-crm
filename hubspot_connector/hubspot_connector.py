@@ -906,7 +906,7 @@ class ResPartnerInherit(orm.Model):
                         partner_pool.write(cr, uid, [partner_ids[0]], partner_data, context=context)
                     else:
                         # Create partner (only company!):
-                        partner_pool.craete(cr, uid, [partner.id], context=context)
+                        partner_pool.create(cr, uid, [partner.id], partner_data, context=context)
                     # cr.commit()  # Commit to save immediately the ID:
         return True
 
