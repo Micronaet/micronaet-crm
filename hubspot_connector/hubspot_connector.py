@@ -747,8 +747,8 @@ class ResPartnerInherit(orm.Model):
             # ----------------------------------------------------------------------------------------------------------
             # Get property:
             # ----------------------------------------------------------------------------------------------------------
-            property_url = mask.format(endpoint=endpoint, mode=modes[mode])
-            property_response = requests.get(url, headers=headers, timeout=timeout)
+            property_url = property_mask.format(endpoint=endpoint, mode=modes[mode])
+            property_response = requests.get(property_url, headers=headers, timeout=timeout)
             pdb.set_trace()
 
             # Master loop:
