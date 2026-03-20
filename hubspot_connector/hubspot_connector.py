@@ -841,7 +841,7 @@ class ResPartnerInherit(orm.Model):
                     else:
                         url = mask.format(endpoint=endpoint, mode=mode, limit=limit, property=property)
 
-                    _logger.info('Calling {}...'.format(url))
+                    _logger.info('Calling {}'.format(url))
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
                         # Read data:
@@ -861,7 +861,7 @@ class ResPartnerInherit(orm.Model):
                             hs_object_id = partner_field['hs_object_id']
                             if log_on_file:
                                 log_f.write(u'{}|{}|{}\n'.format(name, hs_object_id, odoo_id))
-                            _logger.info('Azienda: {} HD ID: {} Importa: {}'.format(name, hs_object_id, importa))
+                            # _logger.info('Azienda: {} HD ID: {} Importa: {}'.format(name, hs_object_id, importa))
 
                             if importa:
                                 hs_object_ids.append(hs_object_id)
