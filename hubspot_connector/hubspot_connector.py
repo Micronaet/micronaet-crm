@@ -757,7 +757,7 @@ class ResPartnerInherit(orm.Model):
             # 'contacts': 'contact',
         }
         mask = "{endpoint}/objects/{mode}?limit={limit}{property}"
-        after_mask = "{endpoint}/objects/{mode}?limit={limit}{after}"
+        after_mask = "{endpoint}/objects/{mode}?limit={limit}{after}{property}"
 
         # &properties=firstname,lastname,phone,mobilephone,email&associations=company
         headers = {
@@ -837,7 +837,8 @@ class ResPartnerInherit(orm.Model):
                 loop += 1
                 try:
                     if after:
-                        url = after_mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
+                        url = after_mask.format(
+                            endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
                     else:
                         url = mask.format(endpoint=endpoint, mode=mode, limit=limit, property=property)
 
