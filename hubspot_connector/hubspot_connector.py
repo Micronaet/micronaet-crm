@@ -740,6 +740,10 @@ class ResPartnerInherit(orm.Model):
         property_field = {
             'companies': [
                 'importa',
+            ],
+
+            'companies_all': [
+                'importa',
                 'address',
                 'address2',
                 'agente_di_riferimento',
@@ -795,8 +799,9 @@ class ResPartnerInherit(orm.Model):
             property_params = ','.join(property_field[mode])
             property = '&properties={}'.format(property_params)
 
-            # Master loop:
             loop = 0
+            hs_object_ids = []
+            # Master loop (read all items and save only ID to be imported:
             while True:
                 loop += 1
                 try:
@@ -809,6 +814,10 @@ class ResPartnerInherit(orm.Model):
                         # HS data:
                         for partner_json in reply_json['results']:
                             _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
+
+                            if partner_json['importa']:
+                                # hs_odoo_id = partner_json['odoo_id']
+                                hs_object_ids.append(partner_json['hs_object_id'])
 
                         # {u'archived': False,
                         #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
@@ -838,6 +847,11 @@ class ResPartnerInherit(orm.Model):
                 except:
                     _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
                     break
+
+            # Retrieve loop:
+            pdb.set_trace()
+            for hs_object_id in hs_object_ids:
+                pass
         return True
 
     def hubspot_update_single_partner(self, cr, uid, ids, context=None):
