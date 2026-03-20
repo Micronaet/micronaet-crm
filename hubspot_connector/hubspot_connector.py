@@ -742,6 +742,7 @@ class ResPartnerInherit(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         # Parameter:
         # --------------------------------------------------------------------------------------------------------------
+        log_on_file = False
         timeout = 50
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
@@ -821,18 +822,18 @@ class ResPartnerInherit(orm.Model):
             # if False:
             #    test_url = "https://api.hubapi.com/crm/v3/objects/companies/421233048823"
             #    response = requests.get(test_url, headers=headers, timeout=timeout)
-            #    pdb.set_trace()
             #    if response.ok:
             #        reply_json = response.json()
 
             # Master loop (read all items and save only ID to be imported:
-            # log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
-            # log_f.write(u'Nome|HS ID|ODOO ID\n')
+            if log_on_file:
+                log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
+                log_f.write(u'Nome|HS ID|ODOO ID\n')
+
             while True:
                 loop += 1
                 try:
                     url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
-                    pdb.set_trace()
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
                         # Read data:
@@ -847,9 +848,8 @@ class ResPartnerInherit(orm.Model):
                             importa = partner_field['importa'] or False
                             # odoo_id = partner_field['odoo_id']
                             hs_object_id = partner_field['hs_object_id']
-                            # log_f.write(u'{}|{}|{}\n'.format(name, hs_object_id, odoo_id))
-                            if hs_object_id == 421233048823:
-                                pdb.set_trace()
+                            if log_on_file:
+                                log_f.write(u'{}|{}|{}\n'.format(name, hs_object_id, odoo_id))
                             _logger.info('Azienda: {} HD ID: {} Importa: {}'.format(name, hs_object_id, importa))
 
                             if importa:
