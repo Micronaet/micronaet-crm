@@ -805,7 +805,6 @@ class ResPartnerInherit(orm.Model):
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
             while True:
-                pdb.set_trace()
                 loop += 1
                 try:
                     url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
