@@ -704,6 +704,31 @@ class ResPartnerInherit(orm.Model):
         ctx['selected_partner_id'] = ids[0]
         return hubspot_pool.button_get_contact(cr, uid, [hubspot_id], context=ctx)
 
+    def hubspot_get_all_property(self, cr, uid, ids, mode, context=None):
+        """ Extract property
+        """
+        hubspot_pool = self.pool.get('hubspot.connector')
+
+        # Get connection:
+        hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
+        connector = hubspot_pool.browse(cr, uid, hubspot_id, context=context)
+        timeout = 50
+        endpoint = connector.endpoint
+        token = connector.token
+        headers = {
+            "Authorization": "Bearer {}".format(token),
+            "Content-Type": "application/json"
+        }
+
+        url = "{endpoint}/properties/{mode}".format(endpoint=endpoint, mode=mode)
+        response = requests.get(url, headers=headers, timeout=timeout)
+        property_list = []
+        if response.ok:
+            reply_json = response.json()
+            for item in reply_json['results']:
+                property_list.append(item['name'])
+        return property_list
+
     def hubspot_scheduled_retrieve_all_partner(self, cr, uid, context=None):
         """ Retrieve all partner
             GET https://api.hubapi.com/crm/v3/objects/contacts?limit=10'
@@ -730,8 +755,8 @@ class ResPartnerInherit(orm.Model):
             'companies': 'company',  # Object - CRM
             # 'contacts': 'contact',
         }
-        # property_mask = "{endpoint}/properties/{mode}"
         mask = "{endpoint}/objects/{mode}?limit={limit}{property}{after}"
+        link_mask = "{endpoint}/objects/{mode}{next_link}"
         # &properties=firstname,lastname,phone,mobilephone,email&associations=company
         headers = {
             "Authorization": "Bearer {}".format(token),
@@ -787,40 +812,33 @@ class ResPartnerInherit(orm.Model):
             # ----------------------------------------------------------------------------------------------------------
             # Get property:
             # ----------------------------------------------------------------------------------------------------------
-            '''
-            property_url = property_mask.format(endpoint=endpoint, mode=modes[mode])
-            property_response = requests.get(property_url, headers=headers, timeout=timeout)
-            if not property_response.ok:
-                _logger.error('Cannot read {} property'.format(mode))
-                continue
-            property_json = property_response.json()
-            property_list = []
-            for item in property_json['results']:
-                _logger.info(item['name'])
-                property_list.append(item['name'])
-            '''
             property_params = ','.join(property_field[mode])
             property = '&properties={}'.format(property_params)
 
             loop = 0
             hs_object_ids = []
+
+            # todo REMOVE:
+            # if False:
+            #    test_url = "https://api.hubapi.com/crm/v3/objects/companies/421233048823"
+            #    response = requests.get(test_url, headers=headers, timeout=timeout)
+            #    pdb.set_trace()
+            #    if response.ok:
+            #        reply_json = response.json()
+
             # Master loop (read all items and save only ID to be imported:
-            log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
-            log_f.write(u'Nome|HS ID|ODOO ID\n')
-
-            # todo
-            test_url = "https://api.hubapi.com/crm/v3/objects/companies/421233048823"
-            response = requests.get(test_url, headers=headers, timeout=timeout)
-            pdb.set_trace()
-            if response.ok:
-                reply_json = response.json()
-            # todo
-
-            pdb.set_trace()
+            # log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
+            # log_f.write(u'Nome|HS ID|ODOO ID\n')
             while True:
                 loop += 1
+                next_link = ''
                 try:
-                    url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
+                    if next_link:
+                        # "{endpoint}/objects/{mode}{next_link}"
+                        url = link_mask.format(endpoint=endpoint, mode=mode, next_link=next_link)
+                    else:
+                        url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
+
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
                         # Read data:
@@ -833,25 +851,15 @@ class ResPartnerInherit(orm.Model):
 
                             name = partner_field['name']
                             importa = partner_field['importa'] or False
-                            odoo_id = partner_field['odoo_id']
+                            # odoo_id = partner_field['odoo_id']
                             hs_object_id = partner_field['hs_object_id']
-                            log_f.write(u'{}|{}|{}\n'.format(name, hs_object_id, odoo_id))
+                            # log_f.write(u'{}|{}|{}\n'.format(name, hs_object_id, odoo_id))
                             if hs_object_id == 421233048823:
                                 pdb.set_trace()
                             _logger.info('Azienda: {} HD ID: {} Importa: {}'.format(name, hs_object_id, importa))
 
                             if importa:
                                 hs_object_ids.append(hs_object_id)
-
-                        # {u'archived': False,
-                        #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
-                        #  u'properties': {
-                        #      u'hs_lastmodifieddate': u'2026-03-16T16:17:19.365Z',
-                        #      u'hs_object_id': u'411466596590',
-                        #      u'name': u'ANNICK ASSOCIATES INC.'},
-                        #  u'updatedAt': u'2026-03-16T16:17:19.365Z',
-                        #  u'id': u'411466596590',
-                        #  u'createdAt': u'2026-03-02T14:58:14.680Z'}
 
                         # Create partner:
                         # partner_pool.write(cr, uid, [partner.id], {
@@ -860,12 +868,13 @@ class ResPartnerInherit(orm.Model):
                         # cr.commit()  # Commit to save immediately the ID:
 
                         # Prepare next loop:
-                        after = reply_json.get('paging', {}).get('next', {}).get('after')
-                        if not after:
-                            break
+                        # after = reply_json.get('paging', {}).get('next', {}).get('after')
+                        next_link = reply_json.get('paging', {}).get('next', {}).get('link')
 
-                        after = '&after={}'.format(after)  # Add as extra parameters
-                        # break  # todo remove
+                        # if not after:
+                        if not next_link:
+                            break
+                        # after = '&after={}'.format(after)  # Add as extra parameters
                 except:
                     _logger.info('Errore in master loop:\n'.format(sys.exc_info()))
                     break
