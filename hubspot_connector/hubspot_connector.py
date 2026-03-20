@@ -832,6 +832,7 @@ class ResPartnerInherit(orm.Model):
                 loop += 1
                 try:
                     url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
+                    pdb.set_trace()
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
                         # Read data:
@@ -853,16 +854,6 @@ class ResPartnerInherit(orm.Model):
 
                             if importa:
                                 hs_object_ids.append(hs_object_id)
-
-                        # {u'archived': False,
-                        #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
-                        #  u'properties': {
-                        #      u'hs_lastmodifieddate': u'2026-03-16T16:17:19.365Z',
-                        #      u'hs_object_id': u'411466596590',
-                        #      u'name': u'ANNICK ASSOCIATES INC.'},
-                        #  u'updatedAt': u'2026-03-16T16:17:19.365Z',
-                        #  u'id': u'411466596590',
-                        #  u'createdAt': u'2026-03-02T14:58:14.680Z'}
 
                         # Create partner:
                         # partner_pool.write(cr, uid, [partner.id], {
