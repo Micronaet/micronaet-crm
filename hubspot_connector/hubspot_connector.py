@@ -857,8 +857,7 @@ class ResPartnerInherit(orm.Model):
                             # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
 
                             name = partner_field['name']
-                            # importa = partner_field['importa'] or False
-                            importa = False
+                            importa = partner_field['importa'] or False
                             # odoo_id = partner_field['odoo_id']
                             hs_object_id = partner_field['hs_object_id']
                             if log_on_file:
@@ -880,8 +879,9 @@ class ResPartnerInherit(orm.Model):
                     break
 
             # Retrieve loop:
-            _logger.info('Mode: {} counter {}'.format(mode, counter))
-            for hs_object_id in hs_object_ids:
+            _logger.info('Mode: {} counter {}\n{}'.format(mode, counter, hs_object_ids))
+
+            for hs_object_id in []:   # hs_object_ids:
                 company_url = "https://api.hubapi.com/crm/v3/objects/companies/{}".format(hs_object_id)
                 response = requests.get(company_url, headers=headers, timeout=timeout)
                 if response.ok:
