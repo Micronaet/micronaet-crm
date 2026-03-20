@@ -739,6 +739,7 @@ class ResPartnerInherit(orm.Model):
 
         property_field = {
             'companies': [
+                'name',
                 'importa',
                 'odoo_id',
                 'hs_object_id',
@@ -816,6 +817,9 @@ class ResPartnerInherit(orm.Model):
                         # HS data:
                         for partner_json in reply_json['results']:
                             _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
+                            name = partner_json['name']
+                            importa = partner_json['importa']
+                            _logger.info('Azienda: {} Importa: {}'.format(name, importa))
 
                             if partner_json['importa']:
                                 # hs_odoo_id = partner_json['odoo_id']
