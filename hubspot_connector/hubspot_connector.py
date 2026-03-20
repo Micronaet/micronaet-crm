@@ -836,6 +836,7 @@ class ResPartnerInherit(orm.Model):
             while True:
                 loop += 1
                 try:
+                    pdb.set_trace()
                     if after:
                         url = after_mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
                     else:
