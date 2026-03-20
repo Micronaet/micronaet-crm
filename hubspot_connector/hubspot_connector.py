@@ -881,23 +881,33 @@ class ResPartnerInherit(orm.Model):
             # Retrieve loop:
             _logger.info('Mode: {} counter {}\n{}'.format(mode, counter, hs_object_ids))
 
-            for hs_object_id in []:   # hs_object_ids:
-                company_url = "https://api.hubapi.com/crm/v3/objects/companies/{}".format(hs_object_id)
+            pdb.set_trace()
+            for hs_object_id in hs_object_ids:
+                company_url = "{endpoint}/objects/companies/{hs_object_id}".format(
+                    endpoint=endpoint, hs_object_id=hs_object_id)
+
                 response = requests.get(company_url, headers=headers, timeout=timeout)
+
                 if response.ok:
                     reply_json = response.json()
+                    partner_json = reply_json['properties']
+                    partner_data = {
+                        'hubspot_companies_ref': hs_object_id,
+                        'is_company': True,
+                        'name': partner_json['name'],
+                    }
 
-                # Create partner (only company!):
-                partner_ids = partner_pool.search(cr, uid, [
-                    ('hubspot_companies_ref', '=', hs_object_id),
-                ], context=context)
-                if partner_ids:
-                    partner_pool.write(cr, uid, [partner.id], {
-                         field_name: new_hp_id,
-                    }, context=context)
-                else:
-                    partner_pool.crete(cr, uid, [partner.id], context=context)
-                # cr.commit()  # Commit to save immediately the ID:
+                    partner_ids = partner_pool.search(cr, uid, [
+                        ('hubspot_companies_ref', '=', hs_object_id),
+                    ], context=context)
+
+                    if partner_ids:
+                        # Update partner
+                        partner_pool.write(cr, uid, [partner_ids[0]], partner_data, context=context)
+                    else:
+                        # Create partner (only company!):
+                        partner_pool.craete(cr, uid, [partner.id], context=context)
+                    # cr.commit()  # Commit to save immediately the ID:
         return True
 
     def hubspot_update_single_partner(self, cr, uid, ids, context=None):
