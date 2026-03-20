@@ -817,14 +817,15 @@ class ResPartnerInherit(orm.Model):
 
                         # HS data:
                         for partner_json in reply_json['results']:
-                            _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
-                            name = partner_json['name']
-                            importa = partner_json['importa']
+                            partner_field = partner_field['properties']
+                            # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
+                            name = partner_field['name']
+                            importa = partner_field['importa']
                             _logger.info('Azienda: {} Importa: {}'.format(name, importa))
 
-                            if partner_json['importa']:
-                                # hs_odoo_id = partner_json['odoo_id']
-                                hs_object_ids.append(partner_json['hs_object_id'])
+                            if importa:
+                                # hs_odoo_id = partner_field['odoo_id']
+                                hs_object_ids.append(partner_field['hs_object_id'])
 
                         # {u'archived': False,
                         #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
