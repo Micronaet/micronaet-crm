@@ -830,6 +830,7 @@ class ResPartnerInherit(orm.Model):
                 log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
                 log_f.write(u'Nome|HS ID|ODOO ID\n')
 
+            counter = 0
             while True:
                 loop += 1
                 try:
@@ -841,6 +842,8 @@ class ResPartnerInherit(orm.Model):
 
                         # HS data:
                         for partner_json in reply_json['results']:
+                            counter += 1
+
                             partner_field = partner_json['properties']
                             # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
 
@@ -873,7 +876,7 @@ class ResPartnerInherit(orm.Model):
                     break
 
             # Retrieve loop:
-            pdb.set_trace()
+            _logger.info('Mode: {} counter {}'.format(mode, counter))
             for hs_object_id in hs_object_ids:
                 pass
         return True
