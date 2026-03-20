@@ -808,6 +808,14 @@ class ResPartnerInherit(orm.Model):
             log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
             log_f.write(u'Nome|HS ID|ODOO ID\n')
 
+            # todo
+            test_url = "https://api.hubapi.com/crm/v3/objects/companies/421233048823"
+            response = requests.get(test_url, headers=headers, timeout=timeout)
+            pdb.set_trace()
+            if response.ok:
+                reply_json = response.json()
+            # todo
+
             pdb.set_trace()
             while True:
                 loop += 1
