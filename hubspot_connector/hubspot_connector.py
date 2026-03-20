@@ -756,7 +756,9 @@ class ResPartnerInherit(orm.Model):
             'companies': 'company',  # Object - CRM
             # 'contacts': 'contact',
         }
-        mask = "{endpoint}/objects/{mode}?limit={limit}{property}{after}"
+        mask = "{endpoint}/objects/{mode}?limit={limit}{property}"
+        after_mask = "{endpoint}/objects/{mode}?limit={limit}{property}{after}"
+
         # &properties=firstname,lastname,phone,mobilephone,email&associations=company
         headers = {
             "Authorization": "Bearer {}".format(token),
@@ -834,7 +836,10 @@ class ResPartnerInherit(orm.Model):
             while True:
                 loop += 1
                 try:
-                    url = mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after, property=property)
+                    if after:
+                        url = after_mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
+                    else:
+                        url = mask.format(endpoint=endpoint, mode=mode, limit=limit, property=property)
                     response = requests.get(url, headers=headers, timeout=timeout)
                     if response.ok:
                         # Read data:
@@ -858,12 +863,6 @@ class ResPartnerInherit(orm.Model):
                             if importa:
                                 hs_object_ids.append(hs_object_id)
 
-                        # Create partner:
-                        # partner_pool.write(cr, uid, [partner.id], {
-                        #     field_name: new_hp_id,
-                        # }, context=context)
-                        # cr.commit()  # Commit to save immediately the ID:
-
                         # Prepare next loop:
                         after = reply_json.get('paging', {}).get('next', {}).get('after')
                         if not after:
@@ -878,7 +877,22 @@ class ResPartnerInherit(orm.Model):
             # Retrieve loop:
             _logger.info('Mode: {} counter {}'.format(mode, counter))
             for hs_object_id in hs_object_ids:
-                pass
+                company_url = "https://api.hubapi.com/crm/v3/objects/companies/{}".format(hs_object_id)
+                response = requests.get(company_url, headers=headers, timeout=timeout)
+                if response.ok:
+                    reply_json = response.json()
+
+                # Create partner (only company!):
+                partner_ids = partner_pool.search(cr, uid, [
+                    ('hubspot_companies_ref', '=', hs_object_id),
+                ], context=context)
+                if partner_ids:
+                    partner_pool.write(cr, uid, [partner.id], {
+                         field_name: new_hp_id,
+                    }, context=context)
+                else:
+                    partner_pool.crete(cr, uid, [partner.id], context=context)
+                # cr.commit()  # Commit to save immediately the ID:
         return True
 
     def hubspot_update_single_partner(self, cr, uid, ids, context=None):
