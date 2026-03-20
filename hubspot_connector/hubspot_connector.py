@@ -820,11 +820,14 @@ class ResPartnerInherit(orm.Model):
                             # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
                             name = partner_field['name']
                             importa = partner_field['importa'] or False
+                            hs_object_id = partner_field['hs_object_id']
+                            if hs_object_id == 421233048823:
+                                pdb.set_trace()
                             _logger.info('Azienda: {} Importa: {}'.format(name, importa))
 
                             if importa:
                                 # hs_odoo_id = partner_field['odoo_id']
-                                hs_object_ids.append(partner_field['hs_object_id'])
+                                hs_object_ids.append(hs_object_id)
 
                         # {u'archived': False,
                         #  u'url': u'https://app-eu1.hubspot.com/contacts/146267691/record/0-2/411466596590',
