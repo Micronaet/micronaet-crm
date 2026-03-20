@@ -833,10 +833,10 @@ class ResPartnerInherit(orm.Model):
                 log_f.write(u'Nome|HS ID|ODOO ID\n')
 
             counter = 0
+            pdb.set_trace()
             while True:
                 loop += 1
                 try:
-                    pdb.set_trace()
                     if after:
                         url = after_mask.format(endpoint=endpoint, mode=mode, limit=limit, after=after)
                     else:
