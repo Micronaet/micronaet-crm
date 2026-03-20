@@ -805,7 +805,7 @@ class ResPartnerInherit(orm.Model):
                 ],
         }
 
-        limit = 20
+        limit = 100
         for mode in modes:
             after = ''
             field_name = 'hubspot_{}_ref'.format(mode)
