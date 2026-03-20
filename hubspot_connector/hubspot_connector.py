@@ -717,7 +717,7 @@ class ResPartnerInherit(orm.Model):
         # --------------------------------------------------------------------------------------------------------------
         # Parameter:
         # --------------------------------------------------------------------------------------------------------------
-        timeout = 15
+        timeout = 50
         partner_pool = self.pool.get('res.partner')
         category_pool = self.pool.get('crm.newsletter.category.hubspot')
 
