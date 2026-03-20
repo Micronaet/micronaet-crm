@@ -806,6 +806,8 @@ class ResPartnerInherit(orm.Model):
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
             log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
+            log_f.write(u'Nome|HS ID|ODOO ID\n')
+
             pdb.set_trace()
             while True:
                 loop += 1
@@ -820,16 +822,17 @@ class ResPartnerInherit(orm.Model):
                         for partner_json in reply_json['results']:
                             partner_field = partner_json['properties']
                             # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
+
                             name = partner_field['name']
                             importa = partner_field['importa'] or False
+                            odoo_id = partner_field['odoo_id']
                             hs_object_id = partner_field['hs_object_id']
-                            log_f.write(u'{}|{}\n'.format(name, hs_object_id))
+                            log_f.write(u'{}|{}|{}\n'.format(name, hs_object_id, odoo_id))
                             if hs_object_id == 421233048823:
                                 pdb.set_trace()
                             _logger.info('Azienda: {} HD ID: {} Importa: {}'.format(name, hs_object_id, importa))
 
                             if importa:
-                                # hs_odoo_id = partner_field['odoo_id']
                                 hs_object_ids.append(hs_object_id)
 
                         # {u'archived': False,
