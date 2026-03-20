@@ -28,6 +28,7 @@ import logging
 import openerp
 import pdb
 import re
+import io
 import openerp.addons.decimal_precision as dp
 from openerp.osv import fields, osv, expression, orm
 from datetime import datetime, timedelta
@@ -804,7 +805,7 @@ class ResPartnerInherit(orm.Model):
             loop = 0
             hs_object_ids = []
             # Master loop (read all items and save only ID to be imported:
-            log_f = open('/tmp/hubspot.csv', 'w', encoding='utf-8')
+            log_f = io.open('/tmp/hubspot.csv', 'w', encoding='utf-8')
             while True:
                 loop += 1
                 try:
