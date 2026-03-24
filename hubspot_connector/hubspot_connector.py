@@ -893,7 +893,6 @@ class ResPartnerInherit(orm.Model):
                 if response.ok:
                     reply_json = response.json()
                     partner_json = reply_json['properties']
-                    pdb.set_trace()
                     country_code = partner_json['country']
                     agent_name = (partner_json['agente_di_riferimento'] or '').strip()
                     vat = False  # todo partner_json['partita_iva'] or False
