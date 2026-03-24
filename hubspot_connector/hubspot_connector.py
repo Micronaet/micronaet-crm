@@ -892,10 +892,36 @@ class ResPartnerInherit(orm.Model):
                 if response.ok:
                     reply_json = response.json()
                     partner_json = reply_json['properties']
+                    pdb.set_trace()
                     partner_data = {
                         'hubspot_companies_ref': hs_object_id,
                         'is_company': True,
                         'name': partner_json['name'],
+                        'street': partner_json['address'],
+                        'street2': partner_json['address2'],
+                        'city': partner_json['city'],
+                        'website': partner_json['website'],
+                        'zip': partner_json['zip'],
+                        #                 'agente_di_riferimento',
+                        #                 'country',
+                        #                 'description',
+                        #                 'domain',
+                        #                 'fascia_di_scontistica',
+                        #                 'hs_country_code',
+                        #                 'regione',
+                        #                 'sconto_base',
+                        #                 'sconto_extra',
+                        #                 'sconto_pagamento',
+                        #                 'sconto_prestagionale',
+                        #                 'settore',
+                        #                 'state',
+                        #                 'timezone',
+                        #                 'tipo_di_pagamento',
+                        #                 'note',
+                        #                 'odoo_id',
+                        #                 'partita_iva',
+                        #                 'phone',
+                        #                 'provincia',
                     }
 
                     partner_ids = partner_pool.search(cr, uid, [
