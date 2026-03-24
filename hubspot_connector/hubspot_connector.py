@@ -918,13 +918,13 @@ class ResPartnerInherit(orm.Model):
                     # --------------------------------------------------------------------------------------------------
                     # Country reference:
                     # --------------------------------------------------------------------------------------------------
-                    country_ids = country_pool.search(cr, uid, [
-                        ('code', '=', country_code),
-                    ], context=context)
-                    if country_ids:
-                        country_id = country_ids[0]
-                    else:
-                        country_id = False
+                    country_id = False
+                    if country_code:
+                        country_ids = country_pool.search(cr, uid, [
+                            ('code', '=', country_code),
+                        ], context=context)
+                        if country_ids:
+                            country_id = country_ids[0]
 
                     partner_data = {
                         'hubspot_companies_ref': hs_object_id,
