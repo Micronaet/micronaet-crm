@@ -734,6 +734,7 @@ class ResPartnerInherit(orm.Model):
             GET https://api.hubapi.com/crm/v3/objects/contacts?limit=10'
         """
         hubspot_pool = self.pool.get('hubspot.connector')
+        country_pool = self.pool.get('res.country')
 
         # Get connection:
         hubspot_id = hubspot_pool.get_company_hubspot_connector(cr, uid, context=context)
@@ -893,36 +894,71 @@ class ResPartnerInherit(orm.Model):
                     reply_json = response.json()
                     partner_json = reply_json['properties']
                     pdb.set_trace()
+                    country_code = partner_json['country']
+                    agent_name = (partner_json['agente_di_riferimento'] or '').strip()
+                    vat = False  # todo partner_json['partita_iva'] or False
+
+                    discount_rates = ''  #  sconto_base sconto_prestagionale fascia_di_scontistica sconto_extra
+
+                    sector = partner_json['settore']
+                    province_code = partner_json['provincia']
+                    region_name = partner_json['regione']
+
+                    # --------------------------------------------------------------------------------------------------
+                    # Agent reference:
+                    # --------------------------------------------------------------------------------------------------
+                    agent_id = False
+                    if agent_name:
+                        agent_ids = self.browse(cr, uid, [
+                            ('name', '=', agent_name),
+                            ('is_agent', '=', True),
+                        ], context=context)
+                        if agent_ids:
+                            agent_id = agent_ids[0]
+
+                    # --------------------------------------------------------------------------------------------------
+                    # Country reference:
+                    # --------------------------------------------------------------------------------------------------
+                    country_ids = country_pool.search(cr, uid, [
+                        ('code', '=', country_code),
+                    ], context=context)
+                    if country_ids:
+                        country_id = country_ids[0]
+                    else:
+                        country_id = False
+
                     partner_data = {
                         'hubspot_companies_ref': hs_object_id,
                         'is_company': True,
                         'name': partner_json['name'],
+                        'agent_id': agent_id,
+                        'is_agent': False,
+                        'phone': partner_json['phone'],
+
                         'street': partner_json['address'],
                         'street2': partner_json['address2'],
-                        'city': partner_json['city'],
-                        'website': partner_json['website'],
                         'zip': partner_json['zip'],
-                        #                 'agente_di_riferimento',
-                        #                 'settore',
-                        #                 'state',
-                        #                 'country',
-                        #                 'regione',
-                        #                 'note',
-                        #                 'partita_iva',
-                        #                 'phone',
-                        #                 'provincia',
+                        'city': partner_json['city'],
+                        'country_id': country_id,
+                        'website': partner_json['website'],
+                        'vat': vat,
+                        'discount_rates': discount_rates,
+                        'comment': ('{}\n{}'.format(
+                            partner_json['note'] or '',
+                            partner_json['description'] or '',
+                        )).strip(),
+                        # 'settore',
+                        # 'state',
+                        # 'regione',
 
-                        #                 'odoo_id',
-                        #                 'sconto_base',
-                        #                 'sconto_extra',
-                        #                 'sconto_pagamento',
-                        #                 'sconto_prestagionale',
-                        #                 'description',
-                        #                 'domain',
-                        #                 'fascia_di_scontistica',
-                        #                 'hs_country_code',
-                        #                 'timezone',
-                        #                 'tipo_di_pagamento',
+                        # 'sconto_base',
+                        # 'sconto_extra',
+                        # 'sconto_pagamento',
+                        # 'sconto_prestagionale',
+                        # 'fascia_di_scontistica',
+                        # 'domain',
+                        # 'timezone',
+                        # 'tipo_di_pagamento',
                     }
 
                     partner_ids = partner_pool.search(cr, uid, [
