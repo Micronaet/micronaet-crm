@@ -908,7 +908,7 @@ class ResPartnerInherit(orm.Model):
                     # --------------------------------------------------------------------------------------------------
                     agent_id = False
                     if agent_name:
-                        agent_ids = self.browse(cr, uid, [
+                        agent_ids = self.search(cr, uid, [
                             ('name', '=', agent_name),
                             ('is_agent', '=', True),
                         ], context=context)
