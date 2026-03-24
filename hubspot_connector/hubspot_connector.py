@@ -882,7 +882,7 @@ class ResPartnerInherit(orm.Model):
             _logger.info('Mode: {} counter {}\n{}'.format(mode, counter, hs_object_ids))
 
             property_params = ','.join(property_field['companies_all'])
-            all_property = '?properties={}'.format(property_params)
+            all_property = 'properties={}'.format(property_params)
             for hs_object_id in hs_object_ids:
                 company_url = "{endpoint}/objects/companies/{hs_object_id}?{all_property}".format(
                     endpoint=endpoint, hs_object_id=hs_object_id, all_property=all_property)
@@ -903,25 +903,26 @@ class ResPartnerInherit(orm.Model):
                         'website': partner_json['website'],
                         'zip': partner_json['zip'],
                         #                 'agente_di_riferimento',
+                        #                 'settore',
+                        #                 'state',
                         #                 'country',
-                        #                 'description',
-                        #                 'domain',
-                        #                 'fascia_di_scontistica',
-                        #                 'hs_country_code',
                         #                 'regione',
+                        #                 'note',
+                        #                 'partita_iva',
+                        #                 'phone',
+                        #                 'provincia',
+
+                        #                 'odoo_id',
                         #                 'sconto_base',
                         #                 'sconto_extra',
                         #                 'sconto_pagamento',
                         #                 'sconto_prestagionale',
-                        #                 'settore',
-                        #                 'state',
+                        #                 'description',
+                        #                 'domain',
+                        #                 'fascia_di_scontistica',
+                        #                 'hs_country_code',
                         #                 'timezone',
                         #                 'tipo_di_pagamento',
-                        #                 'note',
-                        #                 'odoo_id',
-                        #                 'partita_iva',
-                        #                 'phone',
-                        #                 'provincia',
                     }
 
                     partner_ids = partner_pool.search(cr, uid, [
