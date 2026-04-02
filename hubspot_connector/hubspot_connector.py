@@ -908,7 +908,7 @@ class ResPartnerInherit(orm.Model):
                     agent_name = (partner_json['agente_di_riferimento'] or '').strip()
                     vat = False  # todo partner_json['partita_iva'] or False
 
-                    discount_rates = ''  #  sconto_base sconto_prestagionale fascia_di_scontistica sconto_extra
+                    discount_rates = ''
                     for discount_field in discount_order:
                         discount_rate = partner_json[discount_field]
                         if not discount_rate:
