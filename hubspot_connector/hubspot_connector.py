@@ -909,10 +909,14 @@ class ResPartnerInherit(orm.Model):
                     vat = False  # todo partner_json['partita_iva'] or False
 
                     discount_rates = ''  #  sconto_base sconto_prestagionale fascia_di_scontistica sconto_extra
-                    pdb.set_trace()
                     for discount_field in discount_order:
                         discount_rate = partner_json[discount_field]
-                        _logger.info(discount_rate)
+                        if not discount_rate:
+                            continue
+                        discount_rates += discount_rate
+
+                    discount_rates = ''  # TODO debug and activate!
+                    # todo call also function to generate real value!
 
                     sector = partner_json['settore']
                     province_code = partner_json['provincia']
@@ -969,6 +973,7 @@ class ResPartnerInherit(orm.Model):
                         # 'sconto_extra',
                         # 'sconto_pagamento',
                         # 'sconto_prestagionale',
+
                         # 'fascia_di_scontistica',
                         # 'domain',
                         # 'timezone',
