@@ -789,10 +789,13 @@ class ResPartnerInherit(orm.Model):
                 'zip',
                 'hs_object_id',
                 'regione',
+
                 'sconto_base',
+                'sconto_volume',
+                'sconto_prestagionale',
                 'sconto_extra',
                 'sconto_pagamento',
-                'sconto_prestagionale',
+
                 'settore',
                 'state',
                 'timezone',
@@ -805,6 +808,14 @@ class ResPartnerInherit(orm.Model):
                 'provincia',
                 ],
         }
+
+        discount_order = (
+            'sconto_base',
+            'sconto_volume',
+            'sconto_prestagionale',
+            'sconto_extra',
+            'sconto_pagamento',
+        )
 
         limit = 100
         for mode in modes:
@@ -898,6 +909,10 @@ class ResPartnerInherit(orm.Model):
                     vat = False  # todo partner_json['partita_iva'] or False
 
                     discount_rates = ''  #  sconto_base sconto_prestagionale fascia_di_scontistica sconto_extra
+                    pdb.set_trace()
+                    for discount_field in discount_order:
+                        discount_rate = partner_json['discount_field']
+                        _logger.info(discount_rate)
 
                     sector = partner_json['settore']
                     province_code = partner_json['provincia']
