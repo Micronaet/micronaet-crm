@@ -915,7 +915,7 @@ class ResPartnerInherit(orm.Model):
                             continue
                         discount_rates += discount_rate
 
-                    discount_rates = ''  # TODO debug and activate!
+                    discount_rates = ''  # TODO after debug remove!
                     # todo call also function to generate real value!
 
                     sector = partner_json['settore']
