@@ -810,11 +810,11 @@ class ResPartnerInherit(orm.Model):
         }
 
         discount_order = (
-            'sconto_base',
-            # 'sconto_volume',
-            'sconto_prestagionale',
-            'sconto_extra',
-            'sconto_pagamento',
+            'sconto_base',  # Sconto base
+            'fascia_di_scontistica',  # Sconto volume
+            'sconto_prestagionale',  # Sconto prestagionale
+            'sconto_extra',  # Sconto extra
+            'sconto_pagamento',  # Sconto Pagamento
         )
 
         limit = 100
@@ -909,11 +909,19 @@ class ResPartnerInherit(orm.Model):
                     vat = False  # todo partner_json['partita_iva'] or False
 
                     discount_rates = ''
+                    pdb.set_trace()
                     for discount_field in discount_order:
                         discount_rate = partner_json[discount_field]
                         if not discount_rate:
                             continue
-                        discount_rates += discount_rate
+
+                        # Update discount string:
+                        if discount_rate:
+                            discount_rate += '+'
+                        discount_rates += str(discount_rate)
+
+                    if discount_rates:
+                        partner_pool.onchange_discount_rates(cr, uid, ids, discount_rates, context=context)
 
                     discount_rates = ''  # TODO after debug remove!
                     # todo call also function to generate real value!
