@@ -908,23 +908,25 @@ class ResPartnerInherit(orm.Model):
                     agent_name = (partner_json['agente_di_riferimento'] or '').strip()
                     vat = False  # todo partner_json['partita_iva'] or False
 
+                    # --------------------------------------------------------------------------------------------------
+                    # Discount:
+                    # --------------------------------------------------------------------------------------------------
                     discount_rates = ''
-                    pdb.set_trace()
+                    discount = {}
                     for discount_field in discount_order:
                         discount_rate = partner_json[discount_field]
                         if not discount_rate:
                             continue
 
                         # Update discount string:
-                        if discount_rate:
+                        if discount_rates:
                             discount_rate += '+'
-                        discount_rates += str(discount_rate)
+                        discount_rates += discount_rate
 
                     if discount_rates:
-                        partner_pool.onchange_discount_rates(cr, uid, ids, discount_rates, context=context)
-
-                    discount_rates = ''  # TODO after debug remove!
-                    # todo call also function to generate real value!
+                        # {'value': {'discount_value': 55.0, 'discount_rates': '50 + 10'}}
+                        discount = partner_pool.onchange_discount_rates(
+                            cr, uid, ids, discount_rates, context=context).get('value')
 
                     sector = partner_json['settore']
                     province_code = partner_json['provincia']
@@ -968,7 +970,7 @@ class ResPartnerInherit(orm.Model):
                         'country_id': country_id,
                         'website': partner_json['website'],
                         'vat': vat,
-                        'discount_rates': discount_rates,
+                        # 'discount_rates': discount_rates,
                         'comment': ('{}\n{}'.format(
                             partner_json['note'] or '',
                             partner_json['description'] or '',
@@ -987,6 +989,8 @@ class ResPartnerInherit(orm.Model):
                         # 'timezone',
                         # 'tipo_di_pagamento',
                     }
+                    if discount:
+                        partner_data.update(discount)
 
                     partner_ids = partner_pool.search(cr, uid, [
                         ('hubspot_companies_ref', '=', hs_object_id),
