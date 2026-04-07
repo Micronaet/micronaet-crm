@@ -917,16 +917,12 @@ class ResPartnerInherit(orm.Model):
                         discount_rate = partner_json[discount_field]
                         if not discount_rate:
                             continue
-
-                        # Update discount string:
-                        if discount_rates:
-                            discount_rate += '+'
-                        discount_rates += discount_rate
+                        discount_rates += '{}+'.format(discount_rate)
 
                     if discount_rates:
                         # {'value': {'discount_value': 55.0, 'discount_rates': '50 + 10'}}
                         discount = partner_pool.onchange_discount_rates(
-                            cr, uid, False, discount_rates, context=context).get('value')
+                            cr, uid, False, discount_rates.rstrip('+'), context=context).get('value')
 
                     sector = partner_json['settore']
                     province_code = partner_json['provincia']
