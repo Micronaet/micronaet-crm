@@ -866,7 +866,6 @@ class ResPartnerInherit(orm.Model):
                             counter += 1
 
                             partner_field = partner_json['properties']
-                            _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
 
                             name = partner_field['name']
                             importa = partner_field['importa'] or False
@@ -911,6 +910,8 @@ class ResPartnerInherit(orm.Model):
                     # --------------------------------------------------------------------------------------------------
                     # Discount:
                     # --------------------------------------------------------------------------------------------------
+                    _logger.info('DATA: {}-{}: {}'.format(loop, mode, partner_json))
+
                     discount_rates = ''
                     discount = {}
                     for discount_field in discount_order:
