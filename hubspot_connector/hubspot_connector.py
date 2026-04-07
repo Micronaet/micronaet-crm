@@ -926,7 +926,7 @@ class ResPartnerInherit(orm.Model):
                     if discount_rates:
                         # {'value': {'discount_value': 55.0, 'discount_rates': '50 + 10'}}
                         discount = partner_pool.onchange_discount_rates(
-                            cr, uid, ids, discount_rates, context=context).get('value')
+                            cr, uid, False, discount_rates, context=context).get('value')
 
                     sector = partner_json['settore']
                     province_code = partner_json['provincia']
