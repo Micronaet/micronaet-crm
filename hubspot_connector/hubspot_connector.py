@@ -920,6 +920,7 @@ class ResPartnerInherit(orm.Model):
                         discount_rates += '{}+'.format(discount_rate)
 
                     if discount_rates:
+                        _logger.info('Discount rates: {}'.format(discount_rates))
                         # {'value': {'discount_value': 55.0, 'discount_rates': '50 + 10'}}
                         discount = partner_pool.onchange_discount_rates(
                             cr, uid, False, discount_rates.rstrip('+'), context=context).get('value')
