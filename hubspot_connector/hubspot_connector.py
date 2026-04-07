@@ -866,7 +866,7 @@ class ResPartnerInherit(orm.Model):
                             counter += 1
 
                             partner_field = partner_json['properties']
-                            # _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
+                            _logger.info('{}-{}: {}'.format(loop, mode, partner_json['properties']))
 
                             name = partner_field['name']
                             importa = partner_field['importa'] or False
