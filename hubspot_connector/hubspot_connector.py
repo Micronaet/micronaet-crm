@@ -790,11 +790,11 @@ class ResPartnerInherit(orm.Model):
                 'hs_object_id',
                 'regione',
 
-                'sconto_base',
-                # 'sconto_volume',
-                'sconto_prestagionale',
-                'sconto_extra',
-                'sconto_pagamento',
+                'sconto_base',  # Sconto base
+                'fascia_di_scontistica',  # Sconto volume
+                'sconto_prestagionale',  # Sconto prestagionale
+                'sconto_extra',  # Sconto extra
+                'sconto_pagamento',  # Sconto Pagamento
 
                 'settore',
                 'state',
