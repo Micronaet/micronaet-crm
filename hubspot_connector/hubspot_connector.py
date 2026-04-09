@@ -783,7 +783,6 @@ class ResPartnerInherit(orm.Model):
                 'country',
                 'description',
                 'domain',
-                'fascia_di_scontistica',
                 'hs_country_code',
                 'website',
                 'zip',
@@ -791,7 +790,7 @@ class ResPartnerInherit(orm.Model):
                 'regione',
 
                 'sconto_base',  # Sconto base
-                'fascia_di_scontistica',  # Sconto volume
+                'sconto_volume',  # Sconto volume
                 'sconto_prestagionale',  # Sconto prestagionale
                 'sconto_extra',  # Sconto extra
                 'sconto_pagamento',  # Sconto Pagamento
@@ -811,7 +810,7 @@ class ResPartnerInherit(orm.Model):
 
         discount_order = (
             'sconto_base',  # Sconto base
-            'fascia_di_scontistica',  # Sconto volume
+            'sconto_volume',  # Sconto volume
             'sconto_prestagionale',  # Sconto prestagionale
             'sconto_extra',  # Sconto extra
             'sconto_pagamento',  # Sconto Pagamento
@@ -982,7 +981,7 @@ class ResPartnerInherit(orm.Model):
                         # 'sconto_pagamento',
                         # 'sconto_prestagionale',
 
-                        # 'fascia_di_scontistica',
+                        # 'sconto_volume',
                         # 'domain',
                         # 'timezone',
                         # 'tipo_di_pagamento',
